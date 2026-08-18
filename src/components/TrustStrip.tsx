@@ -1,3 +1,8 @@
+"use client";
+
+import { motion } from "framer-motion";
+import { fadeRise, staggerContainer, VIEWPORT } from "@/lib/motion";
+
 const TRUST_ITEMS = [
   {
     label: "Insulated 12hrs",
@@ -49,10 +54,17 @@ const TRUST_ITEMS = [
 export default function TrustStrip() {
   return (
     <div className="max-w-[1400px] w-full mx-auto mt-6 sm:mt-8">
-      <div className="bg-[#e9ecf6] rounded-4xl px-4 sm:px-8 py-5 sm:py-6 flex flex-wrap sm:flex-nowrap items-center justify-between gap-y-4">
+      <motion.div
+        initial="hidden"
+        whileInView="visible"
+        viewport={VIEWPORT}
+        variants={staggerContainer()}
+        className="bg-[#e9ecf6] rounded-4xl px-4 sm:px-8 py-5 sm:py-6 flex flex-wrap sm:flex-nowrap items-center justify-between gap-y-4"
+      >
         {TRUST_ITEMS.map((item, i) => (
-          <div
+          <motion.div
             key={item.label}
+            variants={fadeRise}
             className={`flex items-center gap-2.5 w-1/2 sm:w-auto justify-center sm:justify-start px-2 ${
               i > 0 ? "sm:border-l sm:border-[#183fad]/15 sm:pl-6" : ""
             }`}
@@ -71,9 +83,9 @@ export default function TrustStrip() {
             <span className="text-xs sm:text-sm uppercase tracking-wide font-medium text-center sm:text-left">
               {item.label}
             </span>
-          </div>
+          </motion.div>
         ))}
-      </div>
+      </motion.div>
     </div>
   );
 }

@@ -2,7 +2,9 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { AnimatePresence, motion } from "framer-motion";
 import { useCart } from "@/context/CartContext";
+import { DURATION, EASE, STAGGER } from "@/lib/motion";
 
 const NAV_LINKS = [
   { href: "/", label: "Home" },
@@ -10,6 +12,21 @@ const NAV_LINKS = [
   { href: "/company", label: "Company" },
   { href: "/stores", label: "Stores" },
 ];
+
+const menuVariants = {
+  hidden: { height: 0, opacity: 0 },
+  visible: {
+    height: "auto",
+    opacity: 1,
+    transition: { duration: DURATION.base, ease: EASE, staggerChildren: STAGGER.tight },
+  },
+  exit: { height: 0, opacity: 0, transition: { duration: DURATION.fast, ease: EASE } },
+};
+
+const menuItemVariants = {
+  hidden: { opacity: 0, x: -8 },
+  visible: { opacity: 1, x: 0, transition: { duration: DURATION.fast } },
+};
 
 export default function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -57,15 +74,25 @@ export default function Navbar() {
                 d="M2.25 3h1.386c.51 0 .955.343 1.087.835l.383 1.437M7.5 14.25a3 3 0 0 0-3 3h15.75m-12.75-3h11.218c1.121-2.3 2.1-4.684 2.924-7.138a60.114 60.114 0 0 0-16.536-1.84M7.5 14.25 5.106 5.272M6 20.25a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Zm12.75 0a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Z"
               />
             </svg>
-            {itemCount > 0 && (
-              <span className="absolute -top-0.5 -right-0.5 flex items-center justify-center min-w-4 h-4 px-1 rounded-full bg-[#F1BF0A] text-[#090909] text-[10px] font-semibold leading-none">
-                {itemCount}
-              </span>
-            )}
+            <AnimatePresence>
+              {itemCount > 0 && (
+                <motion.span
+                  key={itemCount}
+                  initial={{ scale: 1 }}
+                  animate={{ scale: [1, 1.3, 1] }}
+                  exit={{ scale: 0, opacity: 0 }}
+                  transition={{ duration: DURATION.base }}
+                  className="absolute -top-0.5 -right-0.5 flex items-center justify-center min-w-4 h-4 px-1 rounded-full bg-[#F1BF0A] text-[#090909] text-[10px] font-semibold leading-none"
+                >
+                  {itemCount}
+                </motion.span>
+              )}
+            </AnimatePresence>
           </Link>
 
-          <button
+          <motion.button
             type="button"
+            whileTap={{ scale: 0.9 }}
             className="md:hidden cursor-pointer rounded focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#F1BF0A]"
             aria-label={menuOpen ? "Close menu" : "Open menu"}
             aria-expanded={menuOpen}
@@ -85,7 +112,7 @@ export default function Navbar() {
                 />
               </svg>
             )}
-          </button>
+          </motion.button>
         </div>
 
         <Link
@@ -102,35 +129,41 @@ export default function Navbar() {
       </div>
 
       {/* Mobile menu panel */}
-      <div
-        id="mobile-menu"
-        className={`md:hidden absolute top-full left-0 right-0 mt-2 bg-[#183fad] text-white rounded-3xl shadow-lg overflow-hidden transition-[max-height,opacity] duration-300 ease-in-out z-30 ${
-          menuOpen ? "max-h-80 opacity-100" : "max-h-0 opacity-0 pointer-events-none"
-        }`}
-      >
-        <ul className="flex flex-col divide-y divide-white/10">
-          {NAV_LINKS.map((link) => (
-            <li key={link.href}>
-              <Link
-                href={link.href}
-                className="block px-6 py-3.5 hover:bg-white/10 hover:text-[#F1BF0A] transition-colors"
-                onClick={() => setMenuOpen(false)}
-              >
-                {link.label}
-              </Link>
-            </li>
-          ))}
-          <li>
-            <Link
-              href="/shop"
-              className="block px-6 py-3.5 font-semibold text-[#F1BF0A] hover:bg-white/10 transition-colors"
-              onClick={() => setMenuOpen(false)}
-            >
-              Explore Collection
-            </Link>
-          </li>
-        </ul>
-      </div>
+      <AnimatePresence>
+        {menuOpen && (
+          <motion.div
+            id="mobile-menu"
+            variants={menuVariants}
+            initial="hidden"
+            animate="visible"
+            exit="exit"
+            className="md:hidden absolute top-full left-0 right-0 mt-2 bg-[#183fad] text-white rounded-3xl shadow-lg overflow-hidden z-30"
+          >
+            <ul className="flex flex-col divide-y divide-white/10">
+              {NAV_LINKS.map((link) => (
+                <motion.li key={link.href} variants={menuItemVariants}>
+                  <Link
+                    href={link.href}
+                    className="block px-6 py-3.5 hover:bg-white/10 hover:text-[#F1BF0A] transition-colors"
+                    onClick={() => setMenuOpen(false)}
+                  >
+                    {link.label}
+                  </Link>
+                </motion.li>
+              ))}
+              <motion.li variants={menuItemVariants}>
+                <Link
+                  href="/shop"
+                  className="block px-6 py-3.5 font-semibold text-[#F1BF0A] hover:bg-white/10 transition-colors"
+                  onClick={() => setMenuOpen(false)}
+                >
+                  Explore Collection
+                </Link>
+              </motion.li>
+            </ul>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </nav>
   );
 }

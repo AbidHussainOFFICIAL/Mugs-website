@@ -1,8 +1,19 @@
+"use client";
+
 import Link from "next/link";
+import { motion } from "framer-motion";
+import { fadeRise, VIEWPORT } from "@/lib/motion";
 
 export default function CollectionHeader() {
   return (
-    <div id="collection" className="flex flex-col md:flex-row md:items-end md:justify-between gap-3 md:gap-8 scroll-mt-6">
+    <motion.div
+      id="collection"
+      initial="hidden"
+      whileInView="visible"
+      viewport={VIEWPORT}
+      variants={fadeRise}
+      className="flex flex-col md:flex-row md:items-end md:justify-between gap-3 md:gap-8 scroll-mt-6"
+    >
       <div className="flex items-center justify-between gap-3">
         <h1 className="font-anton text-3xl/9 sm:text-4xl/11 md:text-5xl/14 lg:text-6xl/16">
           EXPLORE <span className="hidden sm:inline">THE </span><br className="hidden md:inline" />
@@ -33,6 +44,6 @@ export default function CollectionHeader() {
           <span className="relative z-10">Explore Collection</span>
         </Link>
       </div>
-    </div>
+    </motion.div>
   );
 }

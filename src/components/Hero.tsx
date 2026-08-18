@@ -2,6 +2,8 @@
 
 import Image from "next/image";
 import Link from "next/link";
+import { motion, useReducedMotion } from "framer-motion";
+import { DURATION, EASE } from "@/lib/motion";
 
 function scrollToCollection() {
   document.getElementById("collection")?.scrollIntoView({ behavior: "smooth" });
@@ -12,9 +14,43 @@ function scrollToTop() {
 }
 
 export default function Hero() {
+  const shouldReduceMotion = useReducedMotion();
+
+  const logoProps = shouldReduceMotion
+    ? {}
+    : {
+        initial: { opacity: 0 },
+        animate: { opacity: 1 },
+        transition: { duration: DURATION.base, ease: EASE },
+      };
+
+  const panelProps = shouldReduceMotion
+    ? {}
+    : {
+        initial: { opacity: 0, y: 16 },
+        animate: { opacity: 1, y: 0 },
+        transition: { duration: DURATION.base, ease: EASE, delay: 0.1 },
+      };
+
+  const statProps = shouldReduceMotion
+    ? {}
+    : {
+        initial: { opacity: 0, y: 16 },
+        animate: { opacity: 1, y: 0 },
+        transition: { duration: DURATION.base, ease: EASE, delay: 0.2 },
+      };
+
+  const mugProps = shouldReduceMotion
+    ? {}
+    : {
+        initial: { opacity: 0, scale: 0.96 },
+        animate: { opacity: 1, scale: 1 },
+        transition: { duration: DURATION.slow, ease: EASE, delay: 0.3 },
+      };
+
   return (
     <header className="max-w-[1400px] w-full mx-auto bg-[#183fad] text-white px-3.5 sm:px-6 lg:px-8 pb-3.5 pt-3 sm:pt-5 lg:pt-7 rounded-tl-4xl rounded-b-4xl relative z-0 overflow-hidden">
-      <div className="mx-auto flex justify-center w-[88%] sm:w-[80%] md:w-[74%] lg:w-[64%] h-[14vh] sm:h-[16vh] md:h-[18vh] lg:h-[25vh] max-h-[230px] lg:max-h-[300px] min-h-[80px]">
+      <motion.div {...logoProps} className="mx-auto flex justify-center w-[88%] sm:w-[80%] md:w-[74%] lg:w-[64%] h-[14vh] sm:h-[16vh] md:h-[18vh] lg:h-[25vh] max-h-[230px] lg:max-h-[300px] min-h-[80px]">
         <svg viewBox="0 0 39 11" preserveAspectRatio="none" fill="none" xmlns="http://www.w3.org/2000/svg" className="h-full w-full" role="img" aria-label="Mugsy's Mugs">
           <path d="M0 10.418V0.105469H3.14062L4.00781 6.39258L4.86914 0.105469H8.03906V10.418H6.15234V2.98828L4.96875 10.418H3.11719L1.86328 2.98828V10.418H0Z" fill="white" />
           <path d="M11.3379 10.5117C10.4785 10.5117 9.8457 10.2715 9.43945 9.79102C9.0332 9.30664 8.83008 8.5957 8.83008 7.6582V0.105469H10.834V7.57617C10.834 7.74805 10.8438 7.91406 10.8633 8.07422C10.8828 8.23047 10.9277 8.35938 10.998 8.46094C11.0684 8.5625 11.1816 8.61328 11.3379 8.61328C11.498 8.61328 11.6133 8.56445 11.6836 8.4668C11.7539 8.36523 11.7969 8.23438 11.8125 8.07422C11.832 7.91406 11.8418 7.74805 11.8418 7.57617V0.105469H13.8457V7.6582C13.8457 8.5957 13.6426 9.30664 13.2363 9.79102C12.8301 10.2715 12.1973 10.5117 11.3379 10.5117Z" fill="white" />
@@ -24,9 +60,9 @@ export default function Hero() {
           <path d="M31.5527 3.12891L31.9395 1.74609H31.1953V0H33.3867V1.69336L32.7891 3.12891H31.5527Z" fill="white" />
           <path d="M36.5977 10.5117C35.6562 10.5117 34.9766 10.2773 34.5586 9.80859C34.1445 9.33984 33.9375 8.59375 33.9375 7.57031V6.5625H35.9766V7.85156C35.9766 8.08984 36.0117 8.27734 36.082 8.41406C36.1562 8.54688 36.2832 8.61328 36.4629 8.61328C36.6504 8.61328 36.7793 8.55859 36.8496 8.44922C36.9238 8.33984 36.9609 8.16016 36.9609 7.91016C36.9609 7.59375 36.9297 7.33008 36.8672 7.11914C36.8047 6.9043 36.6953 6.70117 36.5391 6.50977C36.3867 6.31445 36.1738 6.08789 35.9004 5.83008L34.9746 4.95117C34.2832 4.29883 33.9375 3.55273 33.9375 2.71289C33.9375 1.83398 34.1406 1.16406 34.5469 0.703125C34.957 0.242188 35.5488 0.0117188 36.3223 0.0117188C37.2676 0.0117188 37.9375 0.263672 38.332 0.767578C38.7305 1.27148 38.9297 2.03711 38.9297 3.06445H36.832V2.35547C36.832 2.21484 36.791 2.10547 36.709 2.02734C36.6309 1.94922 36.5234 1.91016 36.3867 1.91016C36.2227 1.91016 36.1016 1.95703 36.0234 2.05078C35.9492 2.14062 35.9121 2.25781 35.9121 2.40234C35.9121 2.54688 35.9512 2.70312 36.0293 2.87109C36.1074 3.03906 36.2617 3.23242 36.4922 3.45117L37.6816 4.59375C37.9199 4.82031 38.1387 5.06055 38.3379 5.31445C38.5371 5.56445 38.6973 5.85742 38.8184 6.19336C38.9395 6.52539 39 6.93164 39 7.41211C39 8.38086 38.8203 9.14062 38.4609 9.69141C38.1055 10.2383 37.4844 10.5117 36.5977 10.5117Z" fill="white" />
         </svg>
-      </div>
+      </motion.div>
 
-      <div className="mt-2 sm:mt-4 lg:mt-10 pt-5 sm:pt-7 bg-[#4565bc] rounded-4xl">
+      <motion.div {...panelProps} className="mt-2 sm:mt-4 lg:mt-10 pt-5 sm:pt-7 bg-[#4565bc] rounded-4xl">
         <div className="flex flex-col sm:flex-row sm:items-stretch justify-between sm:bg-[#4565bc] rounded-b-4xl relative z-10 px-3 sm:px-6 pb-4 sm:pb-6">
           <div className="flex flex-col justify-between">
             <h2 className="text-[#F1BF0A] text-3xl sm:text-4xl lg:text-5xl">PREMIUM</h2>
@@ -34,7 +70,7 @@ export default function Hero() {
               Engineered for everyday adventures. Durable, lightweight, and built to move with you wherever the journey leads.
             </p>
           </div>
-          <div className="bg-[#abb9de] rounded-2xl p-4 text-[#090909] sm:max-w-[230px]">
+          <motion.div {...statProps} className="bg-[#abb9de] rounded-2xl p-4 text-[#090909] sm:max-w-[230px]">
             <div className="flex items-center gap-4">
               <span className="text-4xl">98%</span>
               <div className="-space-x-3 my-2 sm:my-4">
@@ -44,7 +80,7 @@ export default function Hero() {
               </div>
             </div>
             <p className="text-sm">Customer satisfaction rating across all orders</p>
-          </div>
+          </motion.div>
         </div>
 
         <div className="flex items-stretch justify-between relative z-5 after:content-[''] after:absolute after:-top-1/2 after:left-0 after:h-20 after:w-24 after:bg-[#183fad] after:-z-5 before:content-[''] before:absolute before:-top-1/2 before:right-0 before:h-20 before:w-24 before:bg-[#183fad] before:-z-5 after:hidden sm:after:block before:hidden sm:before:block">
@@ -65,8 +101,9 @@ export default function Hero() {
           <div className="hidden sm:block bg-[#4565bc] flex-1 rounded-b-4xl relative z-10"></div>
 
           <div className="hidden sm:flex items-center gap-3 bg-[#183fad] p-6 rounded-tl-4xl rounded-br-4xl relative after:content-[''] after:absolute after:bottom-0 after:-left-1/2 after:h-1/2 after:w-full after:bg-[#183fad] after:-z-5">
-            <button
+            <motion.button
               type="button"
+              whileTap={{ scale: 0.9 }}
               aria-label="Scroll back to top"
               onClick={scrollToTop}
               className="flex items-center bg-[#F1BF0A] rounded-full p-1.5 text-[#090909] whitespace-nowrap relative after:content-[''] after:absolute after:top-1/2 after:-translate-y-1/2 after:left-1.5 after:rounded-full after:bg-white after:h-9 after:w-9 after:transition-[width,left] after:duration-[2000ms] after:ease-[linear(0,0.014_0.4%,0.054_0.8%,0.228_1.7%,1.141_4.6%,1.402_5.6%,1.565_6.6%,1.599_7%,1.617_7.5%,1.611_7.9%,1.58_8.4%,1.47_9.3%,0.924_12.1%,0.747_13.2%,0.655_14.1%,0.633_14.5%,0.62_15%,0.622_15.4%,0.639_15.9%,0.705_16.8%,1.052_19.7%,1.159_20.8%,1.214_21.7%,1.235_22.6%,1.221_23.5%,1.18_24.4%,0.972_27.2%,0.905_28.3%,0.869_29.2%,0.855_30.1%,0.862_31%,0.887_31.9%,1.06_35.9%,1.081_36.8%,1.089_37.7%,1.084_38.6%,1.069_39.5%,0.964_43.4%,0.945_45.2%,0.954_46.8%,1.019_50.7%,1.034_52.7%,1.029_54.3%,0.989_58.2%,0.979_60.3%,1.013_67.8%,0.992_75.3%,1.005_82.7%,0.997_90.4%,1)] overflow-hidden hover:after:size-full hover:after:left-0 cursor-pointer focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
@@ -76,9 +113,10 @@ export default function Hero() {
                   <path strokeLinecap="round" strokeLinejoin="round" d="M6.75 15.75 3 12m0 0 3.75-3.75M3 12h18" />
                 </svg>
               </span>
-            </button>
-            <button
+            </motion.button>
+            <motion.button
               type="button"
+              whileTap={{ scale: 0.9 }}
               aria-label="Scroll to the collection"
               onClick={scrollToCollection}
               className="flex items-center bg-[#F1BF0A] rounded-full p-1.5 text-[#090909] whitespace-nowrap relative after:content-[''] after:absolute after:top-1/2 after:-translate-y-1/2 after:left-1.5 after:rounded-full after:bg-white after:h-9 after:w-9 after:transition-[width,left] after:duration-[2000ms] after:ease-[linear(0,0.014_0.4%,0.054_0.8%,0.228_1.7%,1.141_4.6%,1.402_5.6%,1.565_6.6%,1.599_7%,1.617_7.5%,1.611_7.9%,1.58_8.4%,1.47_9.3%,0.924_12.1%,0.747_13.2%,0.655_14.1%,0.633_14.5%,0.62_15%,0.622_15.4%,0.639_15.9%,0.705_16.8%,1.052_19.7%,1.159_20.8%,1.214_21.7%,1.235_22.6%,1.221_23.5%,1.18_24.4%,0.972_27.2%,0.905_28.3%,0.869_29.2%,0.855_30.1%,0.862_31%,0.887_31.9%,1.06_35.9%,1.081_36.8%,1.089_37.7%,1.084_38.6%,1.069_39.5%,0.964_43.4%,0.945_45.2%,0.954_46.8%,1.019_50.7%,1.034_52.7%,1.029_54.3%,0.989_58.2%,0.979_60.3%,1.013_67.8%,0.992_75.3%,1.005_82.7%,0.997_90.4%,1)] overflow-hidden hover:after:size-full hover:after:left-0 cursor-pointer focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
@@ -88,22 +126,24 @@ export default function Hero() {
                   <path strokeLinecap="round" strokeLinejoin="round" d="M17.25 8.25 21 12m0 0-3.75 3.75M21 12H3" />
                 </svg>
               </span>
-            </button>
+            </motion.button>
           </div>
         </div>
-      </div>
+      </motion.div>
 
-      <Image
-        src="https://i.postimg.cc/YqVLr48H/mug.png"
-        alt=""
-        role="presentation"
-        width={780}
-        height={780}
-        priority
-        className="hidden md:block object-contain h-[62vh] sm:h-[66vh] md:h-[70vh] lg:h-[71vh] max-h-[720px] lg:max-h-[780px] absolute -bottom-0 sm:-bottom-1 lg:-bottom-1 left-[51%] -translate-x-1/2 z-100 select-none pointer-events-none w-auto"
-        draggable={false}
-        style={{ filter: "drop-shadow(5px 5px 10px rgba(0, 0, 0, 0.5))" }}
-      />
+      <motion.div {...mugProps} className="hidden md:block absolute -bottom-0 sm:-bottom-1 lg:-bottom-1 left-[51%] -translate-x-1/2 z-100">
+        <Image
+          src="https://i.postimg.cc/YqVLr48H/mug.png"
+          alt=""
+          role="presentation"
+          width={780}
+          height={780}
+          priority
+          className="object-contain h-[62vh] sm:h-[66vh] md:h-[70vh] lg:h-[71vh] max-h-[720px] lg:max-h-[780px] select-none pointer-events-none w-auto"
+          draggable={false}
+          style={{ filter: "drop-shadow(5px 5px 10px rgba(0, 0, 0, 0.5))" }}
+        />
+      </motion.div>
     </header>
   );
 }
