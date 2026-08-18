@@ -1,9 +1,12 @@
+export type ProductCategory = "travel" | "camp" | "gift";
+
 export interface Product {
   slug: string;
   name: string;
   price: number;
   originalPrice: number;
   image: string;
+  category: ProductCategory;
 }
 
 export const products: Product[] = [
@@ -13,6 +16,7 @@ export const products: Product[] = [
     price: 120,
     originalPrice: 200,
     image: "https://i.postimg.cc/1zN0rTcN/img-1.jpg",
+    category: "travel",
   },
   {
     slug: "the-camper",
@@ -20,6 +24,7 @@ export const products: Product[] = [
     price: 80,
     originalPrice: 200,
     image: "https://i.postimg.cc/zGQSW-5Wk/img-2.jpg",
+    category: "camp",
   },
   {
     slug: "the-couple",
@@ -27,6 +32,7 @@ export const products: Product[] = [
     price: 150,
     originalPrice: 200,
     image: "https://i.postimg.cc/Bv15BycF/img-3.jpg",
+    category: "gift",
   },
   {
     slug: "the-ridge",
@@ -34,6 +40,7 @@ export const products: Product[] = [
     price: 70,
     originalPrice: 200,
     image: "https://i.postimg.cc/tgVdNftx/img-4.jpg",
+    category: "camp",
   },
   {
     slug: "dreams",
@@ -41,6 +48,7 @@ export const products: Product[] = [
     price: 60,
     originalPrice: 200,
     image: "https://i.postimg.cc/0NJG03dm/img-5.jpg",
+    category: "gift",
   },
   {
     slug: "van-life",
@@ -48,6 +56,7 @@ export const products: Product[] = [
     price: 110,
     originalPrice: 200,
     image: "https://i.postimg.cc/YSmNzVfY/img-6.jpg",
+    category: "camp",
   },
   {
     slug: "the-bold",
@@ -55,6 +64,7 @@ export const products: Product[] = [
     price: 140,
     originalPrice: 200,
     image: "https://i.postimg.cc/KYg7DVrt/img-7.jpg",
+    category: "travel",
   },
   {
     slug: "the-traveler",
@@ -62,6 +72,7 @@ export const products: Product[] = [
     price: 180,
     originalPrice: 200,
     image: "https://i.postimg.cc/9fqPYStG/img-8.jpg",
+    category: "travel",
   },
   {
     slug: "the-savor",
@@ -69,5 +80,6 @@ export const products: Product[] = [
     price: 50,
     originalPrice: 200,
     image: "https://i.postimg.cc/25Bd7JFQ/img-9.jpg",
+    category: "gift",
   },
 ];
