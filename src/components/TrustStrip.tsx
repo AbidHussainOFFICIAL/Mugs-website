@@ -6,35 +6,21 @@ import { fadeRise, staggerContainer, VIEWPORT } from "@/lib/motion";
 const TRUST_ITEMS = [
   {
     label: "Insulated 12hrs",
-    icon: (
-      <>
-        <circle cx="12" cy="12" r="9" />
-        <path strokeLinecap="round" strokeLinejoin="round" d="M12 7.5v4.5l3 1.5" />
-      </>
-    ),
+    icon: <path strokeLinecap="round" strokeLinejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />,
   },
   {
     label: "Lifetime Warranty",
     icon: (
-      <>
-        <path
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          d="M12 3c-2.755 0-5.455.232-8.083.678a1 1 0 0 0-.826.994v2.146c0 5.51 3.212 10.335 7.834 12.564.316.152.663.152.978 0 4.623-2.229 7.834-7.054 7.834-12.564V4.672a1 1 0 0 0-.826-.994A48.973 48.973 0 0 0 12 3Z"
-        />
-        <path strokeLinecap="round" strokeLinejoin="round" d="m9 12.75 2.25 2.25 3.75-5.25" />
-      </>
+      <path
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        d="M9 12.75 11.25 15 15 9.75m-3-7.036A11.959 11.959 0 0 1 3.598 6 11.99 11.99 0 0 0 3 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285Z"
+      />
     ),
   },
   {
     label: "Free Returns",
-    icon: (
-      <path
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        d="M16.023 9.348h4.992v-4.99m0 4.99a8.25 8.25 0 0 0-13.803-3.7L3.03 9.348m0 0H8.02M3.03 9.348v-4.99M3.03 9.348 6.21 12.53a8.25 8.25 0 0 0 13.803-3.7m0 0h-4.99"
-      />
-    ),
+    icon: <path strokeLinecap="round" strokeLinejoin="round" d="M9 15 3 9m0 0 6-6M3 9h12a6 6 0 0 1 0 12h-3" />,
   },
   {
     label: "2,000 Units Only",
