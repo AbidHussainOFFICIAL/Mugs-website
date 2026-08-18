@@ -1,36 +1,57 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Mugsy's Mugs — component structure
 
-## Getting Started
+This splits the original single-file page into focused pieces so each section
+can be edited independently.
 
-First, run the development server:
-
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+```
+app/
+  layout.tsx      Root layout — imports globals.css, sets page metadata
+  globals.css     Font import (Anton + Inter) and the .font-anton utility
+  page.tsx        Composes the whole page from the components below
+components/
+  Navbar.tsx           Top nav bar (logo, links, mobile menu button, Explore Collection pill)
+  Hero.tsx             Blue header: wordmark SVG, PREMIUM panel, stat card, Shop Now, big mug image
+  CollectionHeader.tsx "EXPLORE COLLECTION" heading + intro paragraph + CTA (mobile arrow / desktop pill)
+  ProductGrid.tsx      Maps product data into ProductCard components
+  ProductCard.tsx      A single product tile (price badge, cart/heart buttons, image)
+  Footer.tsx           Footer nav, social icons, copyright line
+data/
+  products.ts     Product interface + the product array — edit this to add/remove/change products
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## What to edit where
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+- **Change a product's name/price/image** → `data/products.ts`
+- **Change the product card layout/styling** → `components/ProductCard.tsx`
+- **Change the hero copy, mug size, or PREMIUM panel** → `components/Hero.tsx`
+- **Change the "EXPLORE COLLECTION" heading/intro** → `components/CollectionHeader.tsx`
+- **Change nav links or the logo** → `components/Navbar.tsx`
+- **Change footer links/socials/copyright** → `components/Footer.tsx`
+- **Change fonts or global body styles** → `app/globals.css`
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Setup notes
 
-## Learn More
+- These files assume the `@/*` import alias (the Next.js default when you
+  scaffold with `create-next-app` and answer "yes" to the import alias
+  prompt). If your `tsconfig.json` doesn't have it, add:
 
-To learn more about Next.js, take a look at the following resources:
+  ```json
+  {
+    "compilerOptions": {
+      "paths": {
+        "@/*": ["./*"]
+      }
+    }
+  }
+  ```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+  or swap the `@/components/...` / `@/data/...` imports for relative paths
+  (`../components/...`) to match your project's structure.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+- Drop `products.ts` under whichever folder you keep shared data in (some
+  projects use `lib/` or `src/data/` instead of a top-level `data/` folder —
+  just update the import paths in `ProductGrid.tsx` and `ProductCard.tsx` to
+  match).
 
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- All Tailwind classes are unchanged from the working single-file version —
+  this is purely a structural split, no visual changes.
