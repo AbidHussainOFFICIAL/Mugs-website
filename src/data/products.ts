@@ -7,6 +7,8 @@ export interface Product {
   originalPrice: number;
   image: string;
   category: ProductCategory;
+  inStock: boolean;
+  tags: string[];
 }
 
 export const products: Product[] = [
@@ -17,6 +19,8 @@ export const products: Product[] = [
     originalPrice: 200,
     image: "https://i.postimg.cc/1zN0rTcN/img-1.jpg",
     category: "travel",
+    inStock: true,
+    tags: ["classic", "everyday", "stainless steel"],
   },
   {
     slug: "the-camper",
@@ -25,6 +29,8 @@ export const products: Product[] = [
     originalPrice: 200,
     image: "https://i.postimg.cc/zGQSW-5Wk/img-2.jpg",
     category: "camp",
+    inStock: true,
+    tags: ["camping", "outdoor", "rugged"],
   },
   {
     slug: "the-couple",
@@ -33,6 +39,8 @@ export const products: Product[] = [
     originalPrice: 200,
     image: "https://i.postimg.cc/Bv15BycF/img-3.jpg",
     category: "gift",
+    inStock: true,
+    tags: ["gift", "couple", "pair"],
   },
   {
     slug: "the-ridge",
@@ -41,6 +49,8 @@ export const products: Product[] = [
     originalPrice: 200,
     image: "https://i.postimg.cc/tgVdNftx/img-4.jpg",
     category: "camp",
+    inStock: true,
+    tags: ["camping", "mountain", "rugged"],
   },
   {
     slug: "dreams",
@@ -49,6 +59,8 @@ export const products: Product[] = [
     originalPrice: 200,
     image: "https://i.postimg.cc/0NJG03dm/img-5.jpg",
     category: "gift",
+    inStock: true,
+    tags: ["gift", "cute", "pastel"],
   },
   {
     slug: "van-life",
@@ -57,6 +69,8 @@ export const products: Product[] = [
     originalPrice: 200,
     image: "https://i.postimg.cc/YSmNzVfY/img-6.jpg",
     category: "camp",
+    inStock: true,
+    tags: ["van", "roadtrip", "travel"],
   },
   {
     slug: "the-bold",
@@ -65,6 +79,8 @@ export const products: Product[] = [
     originalPrice: 200,
     image: "https://i.postimg.cc/KYg7DVrt/img-7.jpg",
     category: "travel",
+    inStock: true,
+    tags: ["bold", "commute", "insulated"],
   },
   {
     slug: "the-traveler",
@@ -73,6 +89,8 @@ export const products: Product[] = [
     originalPrice: 200,
     image: "https://i.postimg.cc/9fqPYStG/img-8.jpg",
     category: "travel",
+    inStock: true,
+    tags: ["travel", "airport", "premium"],
   },
   {
     slug: "the-savor",
@@ -81,5 +99,7 @@ export const products: Product[] = [
     originalPrice: 200,
     image: "https://i.postimg.cc/25Bd7JFQ/img-9.jpg",
     category: "gift",
+    inStock: true,
+    tags: ["gift", "coffee", "savor"],
   },
 ];
