@@ -1,4 +1,8 @@
+"use client";
+
 import Link from "next/link";
+import { AnimatePresence, motion } from "framer-motion";
+import { DURATION } from "@/lib/motion";
 
 interface Crumb {
   label: string;
@@ -38,9 +42,18 @@ export default function PageHeaderBanner({
 
       <div className="flex items-center gap-3 sm:gap-4 flex-wrap">
         {count && (
-          <span className="bg-[#abb9de] rounded-2xl px-3 py-1.5 sm:px-4 sm:py-2 text-[#090909] text-xs sm:text-sm font-medium whitespace-nowrap">
-            {count}
-          </span>
+          <AnimatePresence mode="wait">
+            <motion.span
+              key={count}
+              initial={{ opacity: 0, y: 2 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -2 }}
+              transition={{ duration: DURATION.fast }}
+              className="bg-[#abb9de] rounded-2xl px-3 py-1.5 sm:px-4 sm:py-2 text-[#090909] text-xs sm:text-sm font-medium whitespace-nowrap"
+            >
+              {count}
+            </motion.span>
+          </AnimatePresence>
         )}
         <h1 className="font-anton text-3xl sm:text-4xl lg:text-5xl text-[#F1BF0A]">{title}</h1>
       </div>

@@ -2,6 +2,8 @@
 
 import { useEffect, useRef, useState } from "react";
 import type { ReactNode } from "react";
+import { AnimatePresence, motion } from "framer-motion";
+import { DURATION } from "@/lib/motion";
 
 export default function FilterDropdown({
   label,
@@ -25,8 +27,9 @@ export default function FilterDropdown({
 
   return (
     <div ref={ref} className="relative">
-      <button
+      <motion.button
         type="button"
+        whileTap={{ scale: 0.96 }}
         onClick={() => setOpen((o) => !o)}
         aria-haspopup="true"
         aria-expanded={open}
@@ -46,13 +49,22 @@ export default function FilterDropdown({
         >
           <path strokeLinecap="round" strokeLinejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" />
         </svg>
-      </button>
+      </motion.button>
 
-      {open && (
-        <div className="absolute left-0 z-30 mt-2 w-64 rounded-2xl bg-white shadow-lg border border-[#183fad]/10 p-4">
-          {children}
-        </div>
-      )}
+      <AnimatePresence>
+        {open && (
+          <motion.div
+            initial={{ opacity: 0, y: -4, scale: 0.98 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: -4, scale: 0.98 }}
+            transition={{ duration: DURATION.fast }}
+            style={{ transformOrigin: "top left" }}
+            className="absolute left-0 z-30 mt-2 w-64 rounded-2xl bg-white shadow-lg border border-[#183fad]/10 p-4"
+          >
+            {children}
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }

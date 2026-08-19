@@ -1,5 +1,6 @@
 "use client";
 
+import { motion } from "framer-motion";
 import type { ProductCategory } from "@/data/products";
 import type { SortOption } from "@/lib/useProductFilters";
 import SortDropdown from "@/components/SortDropdown";
@@ -51,9 +52,10 @@ export default function FilterControls({
           {CATEGORIES.map((c) => {
             const isActive = category === c.value;
             return (
-              <button
+              <motion.button
                 key={c.value}
                 type="button"
+                whileTap={{ scale: 0.96 }}
                 onClick={() => setCategory(c.value)}
                 aria-pressed={isActive}
                 className={`rounded-full px-4 py-1.5 text-sm font-medium border border-[#F1BF0A] transition-colors duration-150 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#183fad] ${
@@ -61,7 +63,7 @@ export default function FilterControls({
                 }`}
               >
                 {c.label}
-              </button>
+              </motion.button>
             );
           })}
         </div>
@@ -85,8 +87,9 @@ export default function FilterControls({
 
       <div>
         <h3 className="font-anton text-sm tracking-wide mb-2">AVAILABILITY</h3>
-        <button
+        <motion.button
           type="button"
+          whileTap={{ scale: 0.97 }}
           role="switch"
           aria-checked={inStockOnly}
           onClick={() => setInStockOnly(!inStockOnly)}
@@ -104,7 +107,7 @@ export default function FilterControls({
             />
           </span>
           <span className="text-sm font-medium">In Stock Only</span>
-        </button>
+        </motion.button>
       </div>
 
       <button

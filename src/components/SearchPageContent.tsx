@@ -2,6 +2,7 @@
 
 import { useMemo, useState } from "react";
 import Link from "next/link";
+import { motion } from "framer-motion";
 import PageHeaderBanner from "@/components/PageHeaderBanner";
 import SearchInput from "@/components/SearchInput";
 import DesktopFilterRow from "@/components/DesktopFilterRow";
@@ -72,20 +73,22 @@ export default function SearchPageContent() {
         {hasQuery && (
           <>
             <div className="lg:hidden flex gap-2 mt-6">
-              <button
+              <motion.button
                 type="button"
+                whileTap={{ scale: 0.96 }}
                 onClick={() => setSheetOpen(true)}
                 className="flex-1 flex items-center justify-center gap-2 rounded-full border border-[#F1BF0A] py-2 text-sm font-medium focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#183fad]"
               >
                 Filter
-              </button>
-              <button
+              </motion.button>
+              <motion.button
                 type="button"
+                whileTap={{ scale: 0.96 }}
                 onClick={() => setSheetOpen(true)}
                 className="flex-1 flex items-center justify-center gap-2 rounded-full border border-[#F1BF0A] py-2 text-sm font-medium focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#183fad]"
               >
                 Sort
-              </button>
+              </motion.button>
             </div>
 
             <MobileFilterSheet open={sheetOpen} onClose={() => setSheetOpen(false)} resultCount={filtered.length} {...filterProps} clearAll={clearAll} />

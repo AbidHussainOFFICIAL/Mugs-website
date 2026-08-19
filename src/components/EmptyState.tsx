@@ -2,6 +2,8 @@
 
 import Link from "next/link";
 import type { ReactNode } from "react";
+import { motion } from "framer-motion";
+import { DURATION, EASE } from "@/lib/motion";
 
 const CTA_CLASSNAME =
   "mt-6 inline-flex items-center gap-2 bg-[#F1BF0A] rounded-full py-1.5 pl-1.5 pr-4 text-[#090909] whitespace-nowrap relative after:content-[''] after:absolute after:top-1/2 after:-translate-y-1/2 after:left-1.5 after:rounded-full after:bg-white after:h-9 after:w-9 hover:after:w-full after:transition-[width] after:duration-[1600ms] after:ease-[linear(0,0.029_0.8%,0.13_1.8%,0.908_7.2%,1.051_9.1%,1.112_11.2%,1.116_12.2%,1.106_13.4%,1.007_19.5%,0.987_23.1%,1.001_35%,1)] overflow-hidden hover:after:h-full hover:after:left-0";
@@ -35,7 +37,12 @@ export default function EmptyState({
   onCtaClick?: () => void;
 }) {
   return (
-    <div className="flex flex-col items-center text-center py-16 sm:py-24 px-4">
+    <motion.div
+      initial={{ opacity: 0, y: 12 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: DURATION.base, ease: EASE }}
+      className="flex flex-col items-center text-center py-16 sm:py-24 px-4"
+    >
       <div className="flex items-center justify-center bg-[#F1BF0A] rounded-full size-16 mb-5">{icon}</div>
       <h2 className="font-anton text-2xl sm:text-3xl">{title}</h2>
       <p className="mt-2 text-[#5b5f6b] max-w-sm">{description}</p>
@@ -48,6 +55,6 @@ export default function EmptyState({
           <CtaContent label={ctaLabel} />
         </Link>
       ) : null}
-    </div>
+    </motion.div>
   );
 }
