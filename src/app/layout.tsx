@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Anton, Inter } from "next/font/google";
 import { CartProvider } from "@/context/CartContext";
 import { WishlistProvider } from "@/context/WishlistContext";
+import { ReviewsProvider } from "@/context/ReviewsContext";
 import "./styles.css";
 
 const inter = Inter({
@@ -64,7 +65,9 @@ export default function RootLayout({
     <html lang="en" className={`${inter.variable} ${anton.variable}`}>
       <body>
         <CartProvider>
-          <WishlistProvider>{children}</WishlistProvider>
+          <WishlistProvider>
+            <ReviewsProvider>{children}</ReviewsProvider>
+          </WishlistProvider>
         </CartProvider>
       </body>
     </html>

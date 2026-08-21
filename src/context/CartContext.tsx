@@ -5,13 +5,20 @@ import type { Product } from "@/data/products";
 
 interface CartItem extends Product {
   quantity: number;
+  selectedColor?: string;
+  selectedSize?: string;
+}
+
+interface CartVariant {
+  selectedColor?: string;
+  selectedSize?: string;
 }
 
 interface CartContextValue {
   items: CartItem[];
   itemCount: number;
-  addItem: (product: Product) => void;
-  removeItem: (slug: string) => void;
+  addItem: (product: Product, quantity?: number, variant?: CartVariant) => void;
+  removeItem: (slug: string, selectedColor?: string, selectedSize?: string) => void;
 }
 
 const CartContext = createContext<CartContextValue | undefined>(undefined);
@@ -19,20 +26,33 @@ const CartContext = createContext<CartContextValue | undefined>(undefined);
 export function CartProvider({ children }: { children: React.ReactNode }) {
   const [items, setItems] = useState<CartItem[]>([]);
 
-  const addItem = useCallback((product: Product) => {
+  const addItem = useCallback((product: Product, quantity: number = 1, variant?: CartVariant) => {
     setItems((prev) => {
-      const existing = prev.find((item) => item.slug === product.slug);
+      const existing = prev.find(
+        (item) =>
+          item.slug === product.slug &&
+          item.selectedColor === variant?.selectedColor &&
+          item.selectedSize === variant?.selectedSize
+      );
       if (existing) {
-        return prev.map((item) =>
-          item.slug === product.slug ? { ...item, quantity: item.quantity + 1 } : item
-        );
+        return prev.map((item) => (item === existing ? { ...item, quantity: item.quantity + quantity } : item));
       }
-      return [...prev, { ...product, quantity: 1 }];
+      return [
+        ...prev,
+        { ...product, quantity, selectedColor: variant?.selectedColor, selectedSize: variant?.selectedSize },
+      ];
     });
   }, []);
 
-  const removeItem = useCallback((slug: string) => {
-    setItems((prev) => prev.filter((item) => item.slug !== slug));
+  // Keyed by slug + variant, not slug alone — two lines of the same product
+  // in different colors/sizes are distinct cart entries and must be
+  // removable independently.
+  const removeItem = useCallback((slug: string, selectedColor?: string, selectedSize?: string) => {
+    setItems((prev) =>
+      prev.filter(
+        (item) => !(item.slug === slug && item.selectedColor === selectedColor && item.selectedSize === selectedSize)
+      )
+    );
   }, []);
 
   const itemCount = useMemo(() => items.reduce((sum, item) => sum + item.quantity, 0), [items]);

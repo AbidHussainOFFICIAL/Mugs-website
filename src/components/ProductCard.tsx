@@ -8,6 +8,7 @@ import type { Product } from "@/data/products";
 import { useCart } from "@/context/CartContext";
 import { useWishlist } from "@/context/WishlistContext";
 import { DURATION } from "@/lib/motion";
+import PriceBadge from "@/components/PriceBadge";
 
 export default function ProductCard({
   product,
@@ -33,10 +34,7 @@ export default function ProductCard({
     <>
       <div>
         <div className="flex ">
-          <div className="pl-3 flex-1 bg-[#e9ecf6] flex gap-2 items-center rounded-tr-2xl relative after:content-[''] after:absolute after:top-0 after:right-0 after:h-1/2 after:w-1/2 after:bg-white after:-z-5">
-            <span className="line-through text-[#b7bac5]">${product.originalPrice}</span>
-            <span className="font-semibold">${product.price}</span>
-          </div>
+          <PriceBadge price={product.price} originalPrice={product.originalPrice} className="flex-1" />
           <div className="flex items-center gap-1 bg-white pl-1.5 pr-px pt-1 pb-1.5 rounded-bl-3xl rounded-tr-3xl relative after:content-[''] after:absolute after:bottom-0 after:left-0 after:h-1/2 after:w-1/2 after:bg-[#e9ecf6] after:-z-5">
             <motion.button
               type="button"

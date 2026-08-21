@@ -1,7 +1,7 @@
 "use client";
 
-import Link from "next/link";
 import { AnimatePresence, motion } from "framer-motion";
+import Breadcrumb from "@/components/Breadcrumb";
 import { DURATION } from "@/lib/motion";
 
 interface Crumb {
@@ -20,25 +20,9 @@ export default function PageHeaderBanner({
 }) {
   return (
     <header className="max-w-[1400px] w-full mx-auto bg-[#183fad] text-white px-3.5 sm:px-6 lg:px-8 py-6 sm:py-8 lg:py-10 rounded-tl-4xl rounded-b-4xl overflow-hidden">
-      <nav aria-label="Breadcrumb" className="text-xs sm:text-sm mb-3 sm:mb-4">
-        <ol className="flex flex-wrap items-center gap-1.5">
-          {breadcrumb.map((crumb, i) => {
-            const isLast = i === breadcrumb.length - 1;
-            return (
-              <li key={crumb.label} className="flex items-center gap-1.5">
-                {crumb.href && !isLast ? (
-                  <Link href={crumb.href} className="text-white/50 hover:text-white transition-colors">
-                    {crumb.label}
-                  </Link>
-                ) : (
-                  <span className={isLast ? "text-white" : "text-white/50"}>{crumb.label}</span>
-                )}
-                {!isLast && <span className="text-white/50">/</span>}
-              </li>
-            );
-          })}
-        </ol>
-      </nav>
+      <div className="mb-3 sm:mb-4">
+        <Breadcrumb items={breadcrumb} variant="dark" />
+      </div>
 
       <div className="flex items-center justify-between gap-3 sm:gap-4 flex-wrap">
         <h1 className="font-anton text-3xl sm:text-4xl lg:text-5xl text-[#F1BF0A]">{title}</h1>

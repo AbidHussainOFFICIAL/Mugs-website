@@ -26,17 +26,27 @@ export default function CartPage() {
         ) : (
           <div className="mt-6 flex flex-col gap-4 max-w-2xl">
             {items.map((item) => (
-              <div key={item.slug} className="flex items-center gap-4 bg-[#e9ecf6] rounded-2xl p-3">
+              <div
+                key={`${item.slug}-${item.selectedColor ?? ""}-${item.selectedSize ?? ""}`}
+                className="flex items-center gap-4 bg-[#e9ecf6] rounded-2xl p-3"
+              >
                 <Image src={item.image} alt={item.name} width={72} height={72} className="rounded-xl object-cover size-18 shrink-0" />
                 <div className="flex-1 min-w-0">
                   <p className="truncate font-medium">{item.name}</p>
+                  {(item.selectedColor || item.selectedSize) && (
+                    <p className="text-xs text-[#5b5f6b]">
+                      {item.selectedColor}
+                      {item.selectedColor && item.selectedSize ? " · " : ""}
+                      {item.selectedSize}
+                    </p>
+                  )}
                   <p className="text-sm text-[#5b5f6b]">
                     Qty {item.quantity} · ${item.price} each
                   </p>
                 </div>
                 <button
                   type="button"
-                  onClick={() => removeItem(item.slug)}
+                  onClick={() => removeItem(item.slug, item.selectedColor, item.selectedSize)}
                   aria-label={`Remove ${item.name} from cart`}
                   className="text-sm underline hover:text-[#183fad] shrink-0 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#183fad] rounded"
                 >
