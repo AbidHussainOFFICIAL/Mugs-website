@@ -36,7 +36,7 @@ export default function Navbar() {
   const { count: wishlistCount } = useWishlist();
 
   return (
-    <nav className="flex items-center justify-between max-w-[1400px] w-full mx-auto relative z-20 overflow-hidden">
+    <nav className="flex items-center justify-between max-w-[1400px] w-full mx-auto relative z-20">
       <Link
         href="/"
         className="flex items-center gap-1.5 bg-white px-3 sm:px-5 rounded-br-4xl relative after:content-[''] after:absolute after:bg-[#183fad] after:w-1/2 after:h-1/2 after:-bottom-1 after:-right-1 after:-z-5 self-stretch w-full max-w-45 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#183fad]"

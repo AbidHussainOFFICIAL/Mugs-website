@@ -20,6 +20,7 @@ export default function WishlistPageContent() {
         <ProductGrid
           products={items}
           showWishlistOnMobile
+          showCartOnMobile={false}
           emptyState={
             <EmptyState
               icon={

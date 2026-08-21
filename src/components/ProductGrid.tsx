@@ -25,6 +25,8 @@ interface ProductGridProps {
   loading?: boolean;
   /** Shows the wishlist heart on mobile too (used by the Wishlist page, where removing IS the primary action). */
   showWishlistOnMobile?: boolean;
+  /** Hides the add-to-cart button on mobile — used by the Wishlist page so only the heart (remove) icon shows, avoiding two icons crowding/clipping on small screens. */
+  showCartOnMobile?: boolean;
   /** Grid columns at the xl breakpoint. Default 4 (unchanged Home page layout); pass 5 on pages with no sidebar eating width. */
   desktopColumns?: 4 | 5;
 }
@@ -35,6 +37,7 @@ export default function ProductGrid({
   emptyMessage = "No products in this category yet.",
   loading = false,
   showWishlistOnMobile = false,
+  showCartOnMobile = true,
   desktopColumns = 4,
 }: ProductGridProps) {
   const [active, setActive] = useState<ProductCategory | "all">("all");
@@ -75,23 +78,28 @@ export default function ProductGrid({
 
       {filtered.length > 0 ? (
         <ul role="list" className={`grid grid-cols-2 gap-3 sm:gap-5 md:gap-6 md:grid-cols-3 ${desktopColumns === 5 ? "xl:grid-cols-5" : "xl:grid-cols-4"} mt-6 sm:mt-10`}>
-          <AnimatePresence>
+          <AnimatePresence mode="popLayout">
             {filtered.map((product, index) => (
               <motion.li
                 key={product.slug}
-                layout={!shouldReduceMotion}
+                layout={shouldReduceMotion ? false : "position"}
                 initial={shouldReduceMotion ? false : { opacity: 0, y: 16, scale: 0.96 }}
                 whileInView={{ opacity: 1, y: 0, scale: 1 }}
                 viewport={VIEWPORT}
-                exit={shouldReduceMotion ? undefined : { opacity: 0, scale: 0.9 }}
+                exit={
+                  shouldReduceMotion
+                    ? undefined
+                    : { opacity: 0, scale: 0.9, transition: { duration: DURATION.fast, ease: EASE } }
+                }
                 transition={{
+                  layout: { type: "spring", stiffness: 350, damping: 35, mass: 0.8 },
                   duration: DURATION.base,
                   ease: EASE,
                   delay: shouldReduceMotion ? 0 : Math.min(index, 8) * 0.04,
                 }}
                 className="col-span-1 flex flex-col rounded-3xl overflow-hidden"
               >
-                <ProductCard product={product} showWishlistOnMobile={showWishlistOnMobile} />
+                <ProductCard product={product} showWishlistOnMobile={showWishlistOnMobile} showCartOnMobile={showCartOnMobile} />
               </motion.li>
             ))}
           </AnimatePresence>

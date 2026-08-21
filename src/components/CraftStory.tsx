@@ -36,7 +36,7 @@ export default function CraftStory() {
             alt="Mugsy's mug resting on a campsite table at dusk"
             width={700}
             height={700}
-            className="w-full h-64 sm:h-80 md:h-full object-cover rounded-3xl"
+            className="w-full h-64 sm:h-80 md:h-full object-contain rounded-3xl"
           />
         </motion.div>
 

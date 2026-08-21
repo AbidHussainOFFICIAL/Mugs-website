@@ -40,7 +40,8 @@ export default function PageHeaderBanner({
         </ol>
       </nav>
 
-      <div className="flex items-center gap-3 sm:gap-4 flex-wrap">
+      <div className="flex items-center justify-between gap-3 sm:gap-4 flex-wrap">
+        <h1 className="font-anton text-3xl sm:text-4xl lg:text-5xl text-[#F1BF0A]">{title}</h1>
         {count && (
           <AnimatePresence mode="wait">
             <motion.span
@@ -55,7 +56,6 @@ export default function PageHeaderBanner({
             </motion.span>
           </AnimatePresence>
         )}
-        <h1 className="font-anton text-3xl sm:text-4xl lg:text-5xl text-[#F1BF0A]">{title}</h1>
       </div>
     </header>
   );

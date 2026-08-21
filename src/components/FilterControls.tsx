@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import type { ProductCategory } from "@/data/products";
 import type { SortOption } from "@/lib/useProductFilters";
@@ -39,6 +40,18 @@ export default function FilterControls({
   setSort,
   clearAll,
 }: FilterControlsProps) {
+  const [localMaxPrice, setLocalMaxPrice] = useState(maxPrice);
+
+  useEffect(() => {
+    setLocalMaxPrice(maxPrice);
+  }, [maxPrice]);
+
+  useEffect(() => {
+    if (localMaxPrice === maxPrice) return;
+    const timeout = setTimeout(() => setMaxPrice(localMaxPrice), 200);
+    return () => clearTimeout(timeout);
+  }, [localMaxPrice, maxPrice, setMaxPrice]);
+
   return (
     <div className="flex flex-col gap-6">
       <div>
@@ -72,13 +85,13 @@ export default function FilterControls({
       <div>
         <h3 className="font-anton text-sm tracking-wide mb-2">PRICE</h3>
         <label className="flex flex-col gap-2 text-sm">
-          <span className="text-[#5b5f6b]">Up to ${maxPrice}</span>
+          <span className="text-[#5b5f6b]">Up to ${localMaxPrice}</span>
           <input
             type="range"
             min={priceFloor}
             max={priceCeiling}
-            value={maxPrice}
-            onChange={(e) => setMaxPrice(Number(e.target.value))}
+            value={localMaxPrice}
+            onChange={(e) => setLocalMaxPrice(Number(e.target.value))}
             className="w-full accent-[#183fad]"
             aria-label="Maximum price"
           />
