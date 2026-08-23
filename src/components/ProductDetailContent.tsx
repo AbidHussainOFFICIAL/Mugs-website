@@ -58,20 +58,28 @@ export default function ProductDetailContent({ product }: { product: Product }) 
     <div className="min-h-dvh w-full overflow-x-hidden text-base font-normal text-[#090909] px-4 sm:px-5 lg:px-6 xl:px-8 pt-3 sm:pt-4">
       <Navbar />
 
-      <main className="max-w-[1400px] w-full mx-auto mt-6 sm:mt-8 mb-20">
+      {/* Compact blue connector bar — Navbar's logo has a decorative notch
+          designed to blend into a blue section immediately below it (as it
+          does on Shop/Category via PageHeaderBanner). A plain white
+          breadcrumb here left that notch looking like a broken fragment.
+          This gives it something to blend into without the height/weight
+          of a full banner, which would compete with the product name below. */}
+      <div className="max-w-[1400px] w-full mx-auto bg-[#183fad] rounded-tl-4xl rounded-b-4xl px-3.5 sm:px-6 lg:px-8 py-3 sm:py-4">
         <Breadcrumb
-          variant="light"
+          variant="dark"
           items={[
             { label: "Home", href: "/" },
             { label: "Shop", href: "/shop" },
             { label: product.name },
           ]}
         />
+      </div>
 
-        <div className="mt-6 grid gap-8 lg:grid-cols-[55%_1fr]">
+      <main className="max-w-[1400px] w-full mx-auto mt-6 sm:mt-8 mb-20">
+        <div className="grid gap-8 lg:grid-cols-[55%_1fr]">
           <ProductGallery images={product.images} productName={product.name} />
 
-          <div className="flex flex-col gap-3">
+          <div className="flex flex-col gap-3 max-w-lg">
             <h1 className="font-anton text-3xl sm:text-4xl lg:text-5xl leading-tight">{product.name.toUpperCase()}</h1>
 
             {summary.count > 0 ? (
@@ -89,7 +97,7 @@ export default function ProductDetailContent({ product }: { product: Product }) 
 
             <PriceBadge price={product.price} originalPrice={product.originalPrice} size="large" className="w-fit mt-1" />
 
-            <p className="text-sm sm:text-base max-w-md mt-1">
+            <p className="text-sm sm:text-base mt-1">
               Engineered for everyday adventures. Durable, lightweight, and built to move with you wherever the
               journey leads.
             </p>
@@ -181,7 +189,7 @@ export default function ProductDetailContent({ product }: { product: Product }) 
           </div>
         </div>
 
-        <div className="mt-12 sm:mt-16 max-w-2xl">
+        <div className="mt-12 sm:mt-16 max-w-3xl">
           <Accordion items={CARE_ACCORDION_ITEMS} />
         </div>
 

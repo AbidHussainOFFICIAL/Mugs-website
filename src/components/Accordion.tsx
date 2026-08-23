@@ -13,7 +13,7 @@ export default function Accordion({ items }: { items: AccordionItem[] }) {
   const [openIndex, setOpenIndex] = useState<number | null>(null);
 
   return (
-    <div>
+    <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-8 sm:gap-x-12">
       {items.map((item, i) => {
         const isOpen = openIndex === i;
         return (

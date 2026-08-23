@@ -118,13 +118,15 @@ export default function ProductGallery({
               </svg>
             </button>
 
-            <Image
-              src={images[activeIndex]}
-              alt={productName}
-              width={900}
-              height={900}
-              className="max-h-[80vh] w-auto object-contain rounded-3xl"
-            />
+            <div className="relative w-[88vw] h-[60vh] sm:w-[75vw] sm:h-[75vh] max-w-4xl rounded-3xl overflow-hidden bg-white">
+              <Image
+                src={images[activeIndex]}
+                alt={productName}
+                fill
+                sizes="(max-width: 640px) 88vw, 75vw"
+                className="object-contain"
+              />
+            </div>
 
             {hasMultiple && (
               <div className="absolute bottom-6 left-0 right-0 flex items-center justify-center gap-2">
