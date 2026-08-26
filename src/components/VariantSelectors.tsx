@@ -1,3 +1,6 @@
+"use client";
+
+import { motion } from "framer-motion";
 import type { ProductColor } from "@/data/products";
 
 export default function VariantSelectors({
@@ -23,9 +26,10 @@ export default function VariantSelectors({
             {colors.map((color) => {
               const isSelected = color.name === selectedColor;
               return (
-                <button
+                <motion.button
                   key={color.name}
                   type="button"
+                  whileTap={{ scale: 0.94 }}
                   onClick={() => onSelectColor(color.name)}
                   aria-label={color.name}
                   aria-pressed={isSelected}
@@ -37,7 +41,7 @@ export default function VariantSelectors({
                     className="block size-full rounded-full border border-black/10"
                     style={{ backgroundColor: color.hex }}
                   />
-                </button>
+                </motion.button>
               );
             })}
           </div>
@@ -53,9 +57,10 @@ export default function VariantSelectors({
             {sizes.map((size) => {
               const isSelected = size === selectedSize;
               return (
-                <button
+                <motion.button
                   key={size}
                   type="button"
+                  whileTap={{ scale: 0.94 }}
                   onClick={() => onSelectSize(size)}
                   aria-pressed={isSelected}
                   className={`rounded-full px-4 py-1.5 text-sm font-medium border border-[#F1BF0A] transition-colors ${
@@ -63,7 +68,7 @@ export default function VariantSelectors({
                   }`}
                 >
                   {size}
-                </button>
+                </motion.button>
               );
             })}
           </div>

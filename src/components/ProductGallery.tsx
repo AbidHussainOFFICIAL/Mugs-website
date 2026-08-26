@@ -38,9 +38,10 @@ export default function ProductGallery({
         {hasMultiple && (
           <div className="hidden lg:flex flex-col gap-2 shrink-0">
             {images.map((img, i) => (
-              <button
+              <motion.button
                 key={img + i}
                 type="button"
+                whileTap={{ scale: 0.9 }}
                 onClick={() => setActiveIndex(i)}
                 aria-label={`View image ${i + 1} of ${productName}`}
                 aria-pressed={activeIndex === i}
@@ -49,7 +50,7 @@ export default function ProductGallery({
                 }`}
               >
                 <Image src={img} alt="" width={80} height={80} className="w-full h-full object-cover" />
-              </button>
+              </motion.button>
             ))}
           </div>
         )}
@@ -84,9 +85,10 @@ export default function ProductGallery({
       {hasMultiple && (
         <div className="flex lg:hidden items-center justify-center gap-1.5 mt-3">
           {images.map((_, i) => (
-            <button
+            <motion.button
               key={i}
               type="button"
+              whileTap={{ scale: 0.8 }}
               onClick={() => setActiveIndex(i)}
               aria-label={`View image ${i + 1}`}
               className={`size-1.5 rounded-full transition-colors ${activeIndex === i ? "bg-[#F1BF0A]" : "bg-[#e9ecf6]"}`}
@@ -107,8 +109,9 @@ export default function ProductGallery({
             aria-modal="true"
             aria-label={`${productName} image viewer`}
           >
-            <button
+            <motion.button
               type="button"
+              whileTap={{ scale: 0.9 }}
               onClick={() => setLightboxOpen(false)}
               aria-label="Close image viewer"
               className="absolute top-4 right-4 sm:top-6 sm:right-6 flex items-center justify-center bg-[#F1BF0A] rounded-full p-1.5 text-[#090909] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
@@ -116,7 +119,7 @@ export default function ProductGallery({
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="size-6" aria-hidden="true">
                 <path strokeLinecap="round" strokeLinejoin="round" d="M6 18 18 6M6 6l12 12" />
               </svg>
-            </button>
+            </motion.button>
 
             <div className="relative w-[88vw] h-[60vh] sm:w-[75vw] sm:h-[75vh] max-w-4xl rounded-3xl overflow-hidden bg-white">
               <Image
@@ -131,9 +134,10 @@ export default function ProductGallery({
             {hasMultiple && (
               <div className="absolute bottom-6 left-0 right-0 flex items-center justify-center gap-2">
                 {images.map((img, i) => (
-                  <button
+                  <motion.button
                     key={img + i}
                     type="button"
+                    whileTap={{ scale: 0.9 }}
                     onClick={() => setActiveIndex(i)}
                     aria-label={`View image ${i + 1}`}
                     className={`rounded-xl overflow-hidden size-12 border-2 ${
@@ -141,7 +145,7 @@ export default function ProductGallery({
                     }`}
                   >
                     <Image src={img} alt="" width={48} height={48} className="w-full h-full object-cover" />
-                  </button>
+                  </motion.button>
                 ))}
               </div>
             )}

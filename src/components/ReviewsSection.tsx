@@ -2,11 +2,11 @@
 
 import { useEffect, useState } from "react";
 import type { FormEvent } from "react";
-import { AnimatePresence, motion } from "framer-motion";
+import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import RatingStars from "@/components/RatingStars";
 import LoadMore from "@/components/LoadMore";
 import { useReviews } from "@/context/ReviewsContext";
-import { DURATION, EASE } from "@/lib/motion";
+import { DURATION, EASE, STAGGER, VIEWPORT } from "@/lib/motion";
 
 const PAGE_SIZE = 4;
 const STAR_PATH =
@@ -20,6 +20,7 @@ export default function ReviewsSection({ productSlug }: { productSlug: string })
   const [rating, setRating] = useState(5);
   const [text, setText] = useState("");
   const [submitted, setSubmitted] = useState(false);
+  const shouldReduceMotion = useReducedMotion();
 
   const allReviews = getReviewsForProduct(productSlug);
   const summary = getRatingSummary(productSlug);
@@ -112,8 +113,15 @@ export default function ReviewsSection({ productSlug }: { productSlug: string })
 
       {visibleReviews.length > 0 ? (
         <div className="flex flex-col gap-3">
-          {visibleReviews.map((review) => (
-            <div key={review.id} className="rounded-3xl bg-[#e9ecf6] p-4">
+          {visibleReviews.map((review, i) => (
+            <motion.div
+              key={review.id}
+              initial={shouldReduceMotion ? false : { opacity: 0, y: 16 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={VIEWPORT}
+              transition={{ duration: DURATION.base, ease: EASE, delay: shouldReduceMotion ? 0 : Math.min(i, 8) * STAGGER.tight }}
+              className="rounded-3xl bg-[#e9ecf6] p-4"
+            >
               <div className="flex items-center justify-between gap-3 mb-1.5">
                 <span className="font-semibold text-sm">{review.author}</span>
                 <span className="text-xs text-[#090909]/50">
@@ -122,7 +130,7 @@ export default function ReviewsSection({ productSlug }: { productSlug: string })
               </div>
               <RatingStars rating={review.rating} />
               <p className="mt-2 text-sm text-[#090909]/80">{review.text}</p>
-            </div>
+            </motion.div>
           ))}
         </div>
       ) : (

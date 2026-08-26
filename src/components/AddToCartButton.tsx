@@ -26,7 +26,7 @@ export default function AddToCartButton({
 
   if (!product.inStock) {
     return (
-      <div className="flex-1 flex items-center justify-center gap-2 bg-[#e9ecf6] rounded-full py-3 px-6 text-[#5b5f6b] font-semibold">
+      <div className="flex-1 flex items-center justify-center gap-2 bg-[#e9ecf6] rounded-full py-3 px-6 text-[#5b5f6b] font-semibold cursor-not-allowed">
         Out of Stock
       </div>
     );
@@ -78,9 +78,16 @@ export default function AddToCartButton({
           </svg>
         </motion.button>
 
-        <span className="min-w-4 text-center font-semibold text-sm text-[#090909]" aria-live="polite">
+        <motion.span
+          key={quantity}
+          initial={{ scale: 1 }}
+          animate={{ scale: [1, 1.08, 1] }}
+          transition={{ duration: 0.15 }}
+          className="min-w-4 text-center font-semibold text-sm text-[#090909]"
+          aria-live="polite"
+        >
           {quantity}
-        </span>
+        </motion.span>
 
         <motion.button
           type="button"
