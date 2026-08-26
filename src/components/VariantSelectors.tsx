@@ -18,10 +18,7 @@ export default function VariantSelectors({
   return (
     <div className="flex flex-col gap-4">
       {colors.length > 0 && (
-        <div>
-          <h3 className="text-sm font-medium mb-2">
-            Color: <span className="font-normal text-[#5b5f6b]">{selectedColor}</span>
-          </h3>
+        <div className="flex items-center gap-3 flex-wrap">
           <div className="flex gap-2">
             {colors.map((color) => {
               const isSelected = color.name === selectedColor;
@@ -44,13 +41,15 @@ export default function VariantSelectors({
               );
             })}
           </div>
+          <h3 className="text-sm font-medium">
+            Color: <span className="font-normal text-[#5b5f6b]">{selectedColor}</span>
+          </h3>
         </div>
       )}
 
       {sizes.length > 1 && (
-        <div>
-          <h3 className="text-sm font-medium mb-2">Size</h3>
-          <div className="flex flex-wrap gap-2">
+        <div className="flex items-center gap-3 flex-wrap">
+          <div className="flex gap-2">
             {sizes.map((size) => {
               const isSelected = size === selectedSize;
               return (
@@ -68,6 +67,7 @@ export default function VariantSelectors({
               );
             })}
           </div>
+          <h3 className="text-sm font-medium">Size</h3>
         </div>
       )}
     </div>

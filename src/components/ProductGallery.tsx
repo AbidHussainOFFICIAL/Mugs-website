@@ -74,7 +74,7 @@ export default function ProductGallery({
                 width={700}
                 height={700}
                 priority
-                className="w-full h-auto object-cover"
+                className="w-full h-auto lg:h-[580px] object-cover lg:object-contain"
               />
             </motion.div>
           </AnimatePresence>

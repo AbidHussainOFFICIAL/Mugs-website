@@ -8,7 +8,6 @@ import ProductGallery from "@/components/ProductGallery";
 import PriceBadge from "@/components/PriceBadge";
 import RatingStars from "@/components/RatingStars";
 import VariantSelectors from "@/components/VariantSelectors";
-import QuantityStepper from "@/components/QuantityStepper";
 import AddToCartButton from "@/components/AddToCartButton";
 import TrustChip from "@/components/TrustChip";
 import Accordion from "@/components/Accordion";
@@ -103,7 +102,8 @@ export default function ProductDetailContent({ product }: { product: Product }) 
             </p>
 
             {(product.colors.length > 0 || product.sizes.length > 1) && (
-              <div className="mt-2">
+              <>
+                <div className="border-t border-[#e9ecf6] mt-1" />
                 <VariantSelectors
                   colors={product.colors}
                   sizes={product.sizes}
@@ -112,18 +112,16 @@ export default function ProductDetailContent({ product }: { product: Product }) 
                   selectedSize={selectedSize}
                   onSelectSize={setSelectedSize}
                 />
-              </div>
+              </>
             )}
 
-            <div className="flex items-center gap-3 mt-2">
-              <span className="text-sm font-medium">Quantity</span>
-              <QuantityStepper quantity={quantity} onChange={setQuantity} />
-            </div>
+            <div className="border-t border-[#e9ecf6] mt-1" />
 
-            <div id="add-to-cart-anchor" className="flex gap-3 mt-2">
+            <div id="add-to-cart-anchor" className="flex flex-wrap items-center gap-3">
               <AddToCartButton
                 product={product}
                 quantity={quantity}
+                onQuantityChange={setQuantity}
                 selectedColor={selectedColor || undefined}
                 selectedSize={selectedSize || undefined}
               />
@@ -132,7 +130,7 @@ export default function ProductDetailContent({ product }: { product: Product }) 
                 onClick={() => toggleWishlist(product)}
                 aria-pressed={wishlisted}
                 aria-label={wishlisted ? `Remove ${product.name} from wishlist` : `Add ${product.name} to wishlist`}
-                className="flex items-center justify-center size-11 rounded-full border border-[#F1BF0A] shrink-0 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#183fad]"
+                className="flex items-center justify-center size-12 rounded-full border border-[#F1BF0A] shrink-0 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#183fad]"
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -152,7 +150,9 @@ export default function ProductDetailContent({ product }: { product: Product }) 
               </button>
             </div>
 
-            <div className="grid grid-cols-3 gap-2 sm:gap-3 mt-4">
+            <div className="border-t border-[#e9ecf6] mt-1" />
+
+            <div className="grid grid-cols-3 gap-2 sm:gap-3">
               <TrustChip
                 icon={
                   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="size-5" aria-hidden="true">
@@ -189,7 +189,7 @@ export default function ProductDetailContent({ product }: { product: Product }) 
           </div>
         </div>
 
-        <div className="mt-12 sm:mt-16 max-w-3xl">
+        <div className="mt-12 sm:mt-16">
           <Accordion items={CARE_ACCORDION_ITEMS} />
         </div>
 
