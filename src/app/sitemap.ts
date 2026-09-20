@@ -5,7 +5,7 @@ const siteUrl = "https://www.mugsysmugs.com";
 const CATEGORIES = ["travel", "camp", "gift"];
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  const staticRoutes = ["", "/about", "/company", "/stores", "/shop", "/cart", "/search"].map((path) => ({
+  const staticRoutes = ["", "/about", "/company", "/stores", "/shop", "/cart", "/search", "/checkout"].map((path) => ({
     url: `${siteUrl}${path}`,
     lastModified: new Date(),
   }));

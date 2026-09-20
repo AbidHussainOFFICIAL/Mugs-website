@@ -3,7 +3,7 @@
 import { createContext, useCallback, useContext, useMemo, useState } from "react";
 import type { Product } from "@/data/products";
 
-interface CartItem extends Product {
+export interface CartItem extends Product {
   quantity: number;
   selectedColor?: string;
   selectedSize?: string;
@@ -19,6 +19,8 @@ interface CartContextValue {
   itemCount: number;
   addItem: (product: Product, quantity?: number, variant?: CartVariant) => void;
   removeItem: (slug: string, selectedColor?: string, selectedSize?: string) => void;
+  updateQuantity: (slug: string, selectedColor: string | undefined, selectedSize: string | undefined, quantity: number) => void;
+  clearCart: () => void;
 }
 
 const CartContext = createContext<CartContextValue | undefined>(undefined);
@@ -44,9 +46,6 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     });
   }, []);
 
-  // Keyed by slug + variant, not slug alone — two lines of the same product
-  // in different colors/sizes are distinct cart entries and must be
-  // removable independently.
   const removeItem = useCallback((slug: string, selectedColor?: string, selectedSize?: string) => {
     setItems((prev) =>
       prev.filter(
@@ -55,11 +54,28 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     );
   }, []);
 
+  const updateQuantity = useCallback(
+    (slug: string, selectedColor: string | undefined, selectedSize: string | undefined, quantity: number) => {
+      setItems((prev) =>
+        prev.map((item) =>
+          item.slug === slug && item.selectedColor === selectedColor && item.selectedSize === selectedSize
+            ? { ...item, quantity: Math.max(1, quantity) }
+            : item
+        )
+      );
+    },
+    []
+  );
+
+  const clearCart = useCallback(() => {
+    setItems([]);
+  }, []);
+
   const itemCount = useMemo(() => items.reduce((sum, item) => sum + item.quantity, 0), [items]);
 
   const value = useMemo(
-    () => ({ items, itemCount, addItem, removeItem }),
-    [items, itemCount, addItem, removeItem]
+    () => ({ items, itemCount, addItem, removeItem, updateQuantity, clearCart }),
+    [items, itemCount, addItem, removeItem, updateQuantity, clearCart]
   );
 
   return <CartContext.Provider value={value}>{children}</CartContext.Provider>;

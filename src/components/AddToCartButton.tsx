@@ -4,6 +4,7 @@ import { useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import type { Product } from "@/data/products";
 import { useCart } from "@/context/CartContext";
+import { useCartDrawer } from "@/context/CartDrawerContext";
 import { DURATION } from "@/lib/motion";
 
 export default function AddToCartButton({
@@ -22,6 +23,7 @@ export default function AddToCartButton({
   maxQuantity?: number;
 }) {
   const { addItem } = useCart();
+  const { open: openCartDrawer } = useCartDrawer();
   const [added, setAdded] = useState(false);
 
   if (!product.inStock) {
@@ -35,6 +37,7 @@ export default function AddToCartButton({
   function handleClick() {
     addItem(product, quantity, { selectedColor, selectedSize });
     setAdded(true);
+    openCartDrawer();
     window.setTimeout(() => setAdded(false), 1500);
   }
 

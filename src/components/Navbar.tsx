@@ -5,6 +5,7 @@ import Link from "next/link";
 import { AnimatePresence, motion } from "framer-motion";
 import { useCart } from "@/context/CartContext";
 import { useWishlist } from "@/context/WishlistContext";
+import { useCartDrawer } from "@/context/CartDrawerContext";
 import { DURATION, EASE, STAGGER } from "@/lib/motion";
 
 const NAV_LINKS = [
@@ -34,6 +35,7 @@ export default function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false);
   const { itemCount } = useCart();
   const { count: wishlistCount } = useWishlist();
+  const { open: openCartDrawer } = useCartDrawer();
 
   return (
     <nav className="flex items-center justify-between max-w-[1400px] w-full mx-auto relative z-20">
@@ -106,9 +108,14 @@ export default function Navbar() {
             </AnimatePresence>
           </Link>
 
-          <Link
-            href="/cart"
-            aria-label={`View cart, ${itemCount} item${itemCount === 1 ? "" : "s"}`}
+          {/* Cart is no longer a Link — it opens the drawer instead of
+              navigating away. "View Full Cart" inside the drawer still
+              navigates to /cart with a real Link, so the URL itself stays
+              directly shareable/bookmarkable. */}
+          <button
+            type="button"
+            onClick={openCartDrawer}
+            aria-label={`Open cart, ${itemCount} item${itemCount === 1 ? "" : "s"}`}
             className="relative flex items-center justify-center rounded-full p-1.5 sm:p-2 hover:text-[#F1BF0A] transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#F1BF0A]"
           >
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="size-5 sm:size-6" aria-hidden="true">
@@ -132,7 +139,7 @@ export default function Navbar() {
                 </motion.span>
               )}
             </AnimatePresence>
-          </Link>
+          </button>
 
           <motion.button
             type="button"

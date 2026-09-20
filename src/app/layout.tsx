@@ -3,6 +3,8 @@ import { Anton, Inter } from "next/font/google";
 import { CartProvider } from "@/context/CartContext";
 import { WishlistProvider } from "@/context/WishlistContext";
 import { ReviewsProvider } from "@/context/ReviewsContext";
+import { CartDrawerProvider } from "@/context/CartDrawerContext";
+import CartDrawer from "@/components/CartDrawer";
 import "./styles.css";
 
 const inter = Inter({
@@ -66,7 +68,12 @@ export default function RootLayout({
       <body>
         <CartProvider>
           <WishlistProvider>
-            <ReviewsProvider>{children}</ReviewsProvider>
+            <ReviewsProvider>
+              <CartDrawerProvider>
+                {children}
+                <CartDrawer />
+              </CartDrawerProvider>
+            </ReviewsProvider>
           </WishlistProvider>
         </CartProvider>
       </body>

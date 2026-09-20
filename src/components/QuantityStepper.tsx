@@ -5,30 +5,44 @@ import { motion } from "framer-motion";
 export default function QuantityStepper({
   quantity,
   onChange,
+  size = "lg",
   max = 10,
 }: {
   quantity: number;
   onChange: (quantity: number) => void;
+  size?: "sm" | "lg";
   max?: number;
 }) {
+  const circleSize = size === "sm" ? "size-6" : "size-8";
+  const iconSize = size === "sm" ? "size-3" : "size-4";
+  const numberClass = size === "sm" ? "min-w-3 text-xs" : "min-w-4 text-sm";
+  const gapClass = size === "sm" ? "gap-1 px-0.5" : "gap-1.5 px-1";
+
   return (
-    <div className="inline-flex items-center rounded-full border border-[#183fad]/20">
+    <div className={`inline-flex items-center rounded-full border border-[#183fad]/20 ${gapClass}`}>
       <motion.button
         type="button"
         whileTap={{ scale: 0.9 }}
         onClick={() => onChange(Math.max(1, quantity - 1))}
         disabled={quantity <= 1}
         aria-label="Decrease quantity"
-        className="flex items-center justify-center size-9 m-1.5 rounded-full bg-[#F1BF0A] text-[#090909] disabled:opacity-40 disabled:cursor-not-allowed focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#183fad]"
+        className={`flex items-center justify-center ${circleSize} my-1 rounded-full bg-[#F1BF0A] text-[#090909] disabled:opacity-40 disabled:cursor-not-allowed focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#183fad]`}
       >
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="size-5" aria-hidden="true">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className={iconSize} aria-hidden="true">
           <path strokeLinecap="round" strokeLinejoin="round" d="M5 12h14" />
         </svg>
       </motion.button>
 
-      <span className="min-w-8 text-center font-semibold text-sm" aria-live="polite">
+      <motion.span
+        key={quantity}
+        initial={{ scale: 1 }}
+        animate={{ scale: [1, 1.08, 1] }}
+        transition={{ duration: 0.15 }}
+        className={`${numberClass} text-center font-semibold text-[#090909]`}
+        aria-live="polite"
+      >
         {quantity}
-      </span>
+      </motion.span>
 
       <motion.button
         type="button"
@@ -36,9 +50,9 @@ export default function QuantityStepper({
         onClick={() => onChange(Math.min(max, quantity + 1))}
         disabled={quantity >= max}
         aria-label="Increase quantity"
-        className="flex items-center justify-center size-9 m-1.5 rounded-full bg-[#F1BF0A] text-[#090909] disabled:opacity-40 disabled:cursor-not-allowed focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#183fad]"
+        className={`flex items-center justify-center ${circleSize} my-1 rounded-full bg-[#F1BF0A] text-[#090909] disabled:opacity-40 disabled:cursor-not-allowed focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#183fad]`}
       >
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="size-5" aria-hidden="true">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className={iconSize} aria-hidden="true">
           <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
         </svg>
       </motion.button>
