@@ -69,7 +69,7 @@ export default function CartPageContent() {
         ) : (
           <>
             <div id="order-summary-anchor" className="grid gap-8 lg:grid-cols-[1fr_400px]">
-              <div>
+              <div className="min-w-0">
                 <AnimatePresence initial={false}>
                   {items.map((item) => (
                     <CartLineItem

@@ -16,10 +16,10 @@ export default function SavedForLaterShelf() {
       whileInView={{ opacity: 1, y: 0 }}
       viewport={VIEWPORT}
       transition={{ duration: DURATION.base, ease: EASE }}
-      className="mt-8"
+      className="mt-8 min-w-0"
     >
       <h2 className="font-anton text-lg mb-4">SAVED FOR LATER</h2>
-      <ul role="list" className="flex gap-4 overflow-x-auto pb-2 -mx-1 px-1">
+      <ul role="list" className="flex gap-4 overflow-x-auto pb-2 -mx-1 px-1 min-w-0">
         {items.map((product) => (
           <li key={product.slug} className="w-40 sm:w-48 shrink-0">
             <ProductCard product={product} />

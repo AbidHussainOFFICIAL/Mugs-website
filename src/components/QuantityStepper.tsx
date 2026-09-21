@@ -13,20 +13,20 @@ export default function QuantityStepper({
   size?: "sm" | "lg";
   max?: number;
 }) {
-  const circleSize = size === "sm" ? "size-6" : "size-8";
-  const iconSize = size === "sm" ? "size-3" : "size-4";
+  const circleSize = size === "sm" ? "size-5" : "size-8";
+  const iconSize = size === "sm" ? "size-2.5" : "size-4";
   const numberClass = size === "sm" ? "min-w-3 text-xs" : "min-w-4 text-sm";
-  const gapClass = size === "sm" ? "gap-1 px-0.5" : "gap-1.5 px-1";
+  const containerClass = size === "sm" ? "gap-1 px-1 py-1" : "gap-1.5 px-1 py-1.5";
 
   return (
-    <div className={`inline-flex items-center rounded-full border border-[#183fad]/20 ${gapClass}`}>
+    <div className={`inline-flex items-center rounded-full border border-[#183fad]/20 ${containerClass}`}>
       <motion.button
         type="button"
         whileTap={{ scale: 0.9 }}
         onClick={() => onChange(Math.max(1, quantity - 1))}
         disabled={quantity <= 1}
         aria-label="Decrease quantity"
-        className={`flex items-center justify-center ${circleSize} my-1 rounded-full bg-[#F1BF0A] text-[#090909] disabled:opacity-40 disabled:cursor-not-allowed focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#183fad]`}
+        className={`flex items-center justify-center ${circleSize} rounded-full bg-[#F1BF0A] text-[#090909] disabled:opacity-40 disabled:cursor-not-allowed focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#183fad]`}
       >
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className={iconSize} aria-hidden="true">
           <path strokeLinecap="round" strokeLinejoin="round" d="M5 12h14" />
@@ -50,7 +50,7 @@ export default function QuantityStepper({
         onClick={() => onChange(Math.min(max, quantity + 1))}
         disabled={quantity >= max}
         aria-label="Increase quantity"
-        className={`flex items-center justify-center ${circleSize} my-1 rounded-full bg-[#F1BF0A] text-[#090909] disabled:opacity-40 disabled:cursor-not-allowed focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#183fad]`}
+        className={`flex items-center justify-center ${circleSize} rounded-full bg-[#F1BF0A] text-[#090909] disabled:opacity-40 disabled:cursor-not-allowed focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#183fad]`}
       >
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className={iconSize} aria-hidden="true">
           <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />

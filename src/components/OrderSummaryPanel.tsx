@@ -1,9 +1,6 @@
 import Link from "next/link";
 import TrustChip from "@/components/TrustChip";
 
-// Illustrative only — this project has no real shipping/tax service.
-// The $100 free-shipping threshold matches the trust-strip copy already
-// used on the PDP and landing page, rather than inventing a new number.
 const FREE_SHIPPING_THRESHOLD = 100;
 const SHIPPING_FLAT_RATE = 8;
 const TAX_RATE = 0.07;
@@ -55,12 +52,12 @@ export default function OrderSummaryPanel({
         href="/checkout"
         className="flex items-center justify-center gap-2 bg-[#F1BF0A] rounded-full py-1.5 pl-1.5 pr-4 text-[#090909] whitespace-nowrap relative after:content-[''] after:absolute after:top-1/2 after:-translate-y-1/2 after:left-1.5 after:rounded-full after:bg-white after:h-9 after:w-9 hover:after:w-full after:transition-[width] after:duration-[1600ms] after:ease-[linear(0,0.029_0.8%,0.13_1.8%,0.908_7.2%,1.051_9.1%,1.112_11.2%,1.116_12.2%,1.106_13.4%,1.007_19.5%,0.987_23.1%,1.001_35%,1)] overflow-hidden hover:after:h-full hover:after:left-0 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
       >
-        <div className="rounded-full p-1.5 relative z-10">
-          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="size-6" aria-hidden="true">
+        <span className="absolute left-1.5 top-1/2 -translate-y-1/2 size-9 flex items-center justify-center z-10">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="size-5" aria-hidden="true">
             <path strokeLinecap="round" strokeLinejoin="round" d="M17.25 8.25 21 12m0 0-3.75 3.75M21 12H3" />
           </svg>
-        </div>
-        <span className="relative z-10">Checkout</span>
+        </span>
+        <span className="relative z-10 pl-8">Checkout</span>
       </Link>
 
       <div className="grid grid-cols-3 gap-2">

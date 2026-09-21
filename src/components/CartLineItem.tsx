@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { motion } from "framer-motion";
@@ -15,16 +16,22 @@ export default function CartLineItem({
   onQuantityChange,
   onRemove,
   onSaveForLater,
+  onNavigate,
 }: {
   item: CartItem;
   size?: "compact" | "full";
   onQuantityChange: (quantity: number) => void;
   onRemove: () => void;
   onSaveForLater?: () => void;
+  /** Called when the thumbnail/name link is clicked — the drawer passes its
+   * own close() here so navigating to the product also closes the drawer.
+   * The full Cart page has no drawer to close, so it just omits this prop. */
+  onNavigate?: () => void;
 }) {
   const liveProduct = products.find((p) => p.slug === item.slug);
   const outOfStock = liveProduct ? !liveProduct.inStock : false;
   const isCompact = size === "compact";
+  const [imgLoaded, setImgLoaded] = useState(false);
 
   return (
     <motion.div
@@ -36,13 +43,16 @@ export default function CartLineItem({
     >
       <Link
         href={`/shop/${item.slug}`}
-        className={`shrink-0 rounded-2xl overflow-hidden ${isCompact ? "size-16" : "size-24 sm:size-28"} ${outOfStock ? "opacity-50" : ""}`}
+        onClick={onNavigate}
+        className={`relative shrink-0 rounded-2xl overflow-hidden ${isCompact ? "size-16" : "size-24 sm:size-28"} ${outOfStock ? "opacity-50" : ""}`}
       >
+        {!imgLoaded && <div className="absolute inset-0 bg-[#e9ecf6] animate-pulse" aria-hidden="true" />}
         <Image
           src={item.image}
           alt={item.name}
           width={isCompact ? 64 : 112}
           height={isCompact ? 64 : 112}
+          onLoad={() => setImgLoaded(true)}
           className="w-full h-full object-cover"
         />
       </Link>
@@ -52,6 +62,7 @@ export default function CartLineItem({
           <div className="min-w-0">
             <Link
               href={`/shop/${item.slug}`}
+              onClick={onNavigate}
               className={`block truncate font-semibold hover:underline ${isCompact ? "text-sm" : "text-base sm:text-lg"}`}
             >
               {item.name}
@@ -89,7 +100,7 @@ export default function CartLineItem({
             <span className="font-semibold">${item.price}</span>
           </div>
         ) : (
-          <PriceBadge price={item.price} originalPrice={item.originalPrice} className="w-fit" />
+          <PriceBadge price={item.price} originalPrice={item.originalPrice} size="large" className="w-fit" />
         )}
 
         <div className="flex items-center justify-between gap-3 mt-0.5">
@@ -98,20 +109,30 @@ export default function CartLineItem({
           {!isCompact && (
             <div className="flex items-center gap-3 ml-auto">
               {onSaveForLater && (
-                <button
-                  type="button"
-                  onClick={onSaveForLater}
-                  className="flex items-center gap-1.5 text-sm text-[#183fad] underline underline-offset-2 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#183fad] rounded"
-                >
-                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="size-4" aria-hidden="true">
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12Z"
-                    />
-                  </svg>
-                  Save for later
-                </button>
+                <>
+                  <button
+                    type="button"
+                    onClick={onSaveForLater}
+                    className="hidden sm:inline-flex items-center text-sm text-[#183fad] underline underline-offset-2 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#183fad] rounded"
+                  >
+                    Save for later
+                  </button>
+                  <motion.button
+                    type="button"
+                    whileTap={{ scale: 0.9 }}
+                    onClick={onSaveForLater}
+                    aria-label="Save for later"
+                    className="sm:hidden flex items-center justify-center size-8 rounded-full bg-[#e9ecf6] text-[#5b5f6b] hover:bg-[#dde2ef] transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#183fad]"
+                  >
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="size-4" aria-hidden="true">
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12Z"
+                      />
+                    </svg>
+                  </motion.button>
+                </>
               )}
               <motion.button
                 type="button"
