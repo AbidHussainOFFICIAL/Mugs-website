@@ -14,10 +14,14 @@ export default function ProductCard({
   product,
   showWishlistOnMobile = false,
   showCartOnMobile = true,
+  preload = false,
 }: {
   product: Product;
   showWishlistOnMobile?: boolean;
   showCartOnMobile?: boolean;
+  /** For the first few above-the-fold cards in a grid, so their image loads eagerly instead of lazily.
+   * Next.js 16 deprecated `priority` in favor of `preload` — this sets loading="eager" plus fetchPriority="high" directly, which is what the docs now recommend over `preload` itself. */
+  preload?: boolean;
 }) {
   const { addItem } = useCart();
   const { isWishlisted, toggleWishlist } = useWishlist();
@@ -25,6 +29,9 @@ export default function ProductCard({
   const [justAdded, setJustAdded] = useState(false);
 
   function handleAddToCart() {
+    // No variant given: addItem falls back to the product's first color and
+    // size, so this always lands on the same cart line the PDP would create
+    // for the default variant, instead of a second, variant-less line.
     addItem(product);
     setJustAdded(true);
     window.setTimeout(() => setJustAdded(false), 1500);
@@ -112,6 +119,8 @@ export default function ProductCard({
             alt={product.name}
             width={400}
             height={400}
+            loading={preload ? "eager" : "lazy"}
+            fetchPriority={preload ? "high" : undefined}
             className="select-none pointer-events-none w-full h-auto shrink-0 object-cover"
           />
         </motion.div>

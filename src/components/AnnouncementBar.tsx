@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
+import { usePersistentState } from "@/lib/usePersistentState";
 import { DURATION, EASE } from "@/lib/motion";
 
 const MESSAGES = [
@@ -12,17 +13,18 @@ const MESSAGES = [
 
 const STORAGE_KEY = "mugsys-announcement-dismissed";
 
+function isBoolean(value: unknown): value is boolean {
+  return typeof value === "boolean";
+}
+
 export default function AnnouncementBar() {
-  const [visible, setVisible] = useState(true);
+  // isHydrated stays false for one tick on the client (matching the server
+  // render), then flips true once the real stored value is known — so a
+  // visitor who already dismissed this never sees it flash on screen first.
+  const [dismissed, setDismissed, isHydrated] = usePersistentState(STORAGE_KEY, false, isBoolean);
   const [index, setIndex] = useState(0);
   const shouldReduceMotion = useReducedMotion();
-
-  useEffect(() => {
-    if (typeof window === "undefined") return;
-    if (window.localStorage.getItem(STORAGE_KEY) === "true") {
-      setVisible(false);
-    }
-  }, []);
+  const visible = isHydrated && !dismissed;
 
   useEffect(() => {
     if (!visible || shouldReduceMotion) return;
@@ -31,11 +33,6 @@ export default function AnnouncementBar() {
     }, 4000);
     return () => clearInterval(rotate);
   }, [visible, shouldReduceMotion]);
-
-  function handleDismiss() {
-    setVisible(false);
-    window.localStorage.setItem(STORAGE_KEY, "true");
-  }
 
   return (
     <AnimatePresence>
@@ -64,7 +61,7 @@ export default function AnnouncementBar() {
               </AnimatePresence>
               <button
                 type="button"
-                onClick={handleDismiss}
+                onClick={() => setDismissed(true)}
                 aria-label="Dismiss announcement"
                 className="absolute right-4 flex items-center justify-center rounded-full p-1 hover:text-[#F1BF0A] transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
               >

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { motion, useReducedMotion } from "framer-motion";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
@@ -17,10 +17,16 @@ import StickyMobileCartBar from "@/components/StickyMobileCartBar";
 import ProductGrid from "@/components/ProductGrid";
 import { useWishlist } from "@/context/WishlistContext";
 import { useReviews } from "@/context/ReviewsContext";
+import { useCartDrawer } from "@/context/CartDrawerContext";
 import { products, type Product } from "@/data/products";
 import { DURATION, EASE } from "@/lib/motion";
 
-const CARE_ACCORDION_ITEMS = [
+// Capacity in ml for each size the catalog uses. Only the capacity line
+// varies by size — weight and insulation aren't tracked per-size in the
+// product data, so those stay as documented rather than being guessed.
+const CAPACITY_ML: Record<string, number> = { "12oz": 355, "16oz": 473 };
+
+const STATIC_CARE_ITEMS = [
   {
     title: "Description",
     content:
@@ -36,15 +42,18 @@ const CARE_ACCORDION_ITEMS = [
     content:
       "Orders ship within 3–5 business days. Free shipping on orders over $100. Unused items can be returned within 30 days of delivery for a full refund.",
   },
-  {
-    title: "Specifications",
-    content: "Capacity: 12 oz (355 ml). Insulation: Hot 12 hrs · Cold 24 hrs. Weight: 310 g. Dishwasher safe: yes, top rack.",
-  },
 ];
+
+function getSpecificationsContent(selectedSize: string) {
+  const ml = CAPACITY_ML[selectedSize];
+  const capacity = ml ? `${selectedSize} (${ml} ml)` : selectedSize || "12oz (355 ml)";
+  return `Capacity: ${capacity}. Insulation: Hot 12 hrs · Cold 24 hrs. Weight: 310 g. Dishwasher safe: yes, top rack.`;
+}
 
 export default function ProductDetailContent({ product }: { product: Product }) {
   const { isWishlisted, toggleWishlist } = useWishlist();
   const { getRatingSummary } = useReviews();
+  const { open: openCartDrawer } = useCartDrawer();
   const wishlisted = isWishlisted(product.slug);
   const summary = getRatingSummary(product.slug);
   const shouldReduceMotion = useReducedMotion();
@@ -53,8 +62,26 @@ export default function ProductDetailContent({ product }: { product: Product }) 
   const [selectedSize, setSelectedSize] = useState(product.sizes[0] ?? "");
   const [quantity, setQuantity] = useState(1);
 
+  // Shared between AddToCartButton and StickyMobileCartBar so the drawer
+  // opens automatically on the first add from either one, but not on
+  // repeat adds — a ref rather than state, since this shouldn't itself
+  // trigger a re-render, and it's recreated fresh whenever this component
+  // mounts (a new product page, or a refresh of this one), which is what
+  // "resets per page view" means here.
+  const hasAutoOpenedDrawer = useRef(false);
+  function handleItemAdded() {
+    if (hasAutoOpenedDrawer.current) return;
+    hasAutoOpenedDrawer.current = true;
+    openCartDrawer();
+  }
+
   const sameCategory = products.filter((p) => p.slug !== product.slug && p.category === product.category);
   const related = (sameCategory.length > 0 ? sameCategory : products.filter((p) => p.slug !== product.slug)).slice(0, 4);
+
+  const careAccordionItems = [
+    ...STATIC_CARE_ITEMS,
+    { title: "Specifications", content: getSpecificationsContent(selectedSize) },
+  ];
 
   // One-time load sequence for the above-the-fold info column — same idea
   // as Hero's staggered entrance, but only 3 beats (name, then rating+price
@@ -86,7 +113,7 @@ export default function ProductDetailContent({ product }: { product: Product }) 
       };
 
   return (
-    <div className="min-h-dvh w-full overflow-x-hidden text-base font-normal text-[#090909] px-4 sm:px-5 lg:px-6 xl:px-8 pt-3 sm:pt-4">
+    <div className="min-h-dvh w-full overflow-x-hidden text-base font-normal text-[#090909] px-4 sm:px-5 lg:px-6 xl:px-8 pt-3 sm:pt-4 flex flex-col">
       <Navbar />
 
       {/* Compact blue connector bar — Navbar's logo has a decorative notch
@@ -106,7 +133,7 @@ export default function ProductDetailContent({ product }: { product: Product }) 
         />
       </div>
 
-      <main className="max-w-[1400px] w-full mx-auto mt-6 sm:mt-8 mb-20">
+      <main className="max-w-[1400px] w-full mx-auto mt-6 sm:mt-8 mb-20 flex-1">
         <div className="grid gap-8 lg:grid-cols-[55%_1fr]">
           <ProductGallery images={product.images} productName={product.name} />
 
@@ -163,6 +190,7 @@ export default function ProductDetailContent({ product }: { product: Product }) 
                   onQuantityChange={setQuantity}
                   selectedColor={selectedColor || undefined}
                   selectedSize={selectedSize || undefined}
+                  onAdded={handleItemAdded}
                 />
                 <motion.button
                   type="button"
@@ -237,7 +265,7 @@ export default function ProductDetailContent({ product }: { product: Product }) 
         </div>
 
         <div className="mt-12 sm:mt-16">
-          <Accordion items={CARE_ACCORDION_ITEMS} />
+          <Accordion items={careAccordionItems} />
         </div>
 
         <div className="mt-12 sm:mt-16">
@@ -250,7 +278,14 @@ export default function ProductDetailContent({ product }: { product: Product }) 
         </div>
       </main>
 
-      <StickyMobileCartBar product={product} anchorId="add-to-cart-anchor" />
+      <StickyMobileCartBar
+        product={product}
+        anchorId="add-to-cart-anchor"
+        quantity={quantity}
+        selectedColor={selectedColor || undefined}
+        selectedSize={selectedSize || undefined}
+        onAdded={handleItemAdded}
+      />
 
       <Footer />
     </div>

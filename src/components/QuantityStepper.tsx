@@ -1,17 +1,16 @@
 "use client";
 
 import { motion } from "framer-motion";
+import { MAX_ITEM_QUANTITY } from "@/lib/pricing";
 
 export default function QuantityStepper({
   quantity,
   onChange,
   size = "lg",
-  max = 10,
 }: {
   quantity: number;
   onChange: (quantity: number) => void;
   size?: "sm" | "lg";
-  max?: number;
 }) {
   const circleSize = size === "sm" ? "size-5" : "size-8";
   const iconSize = size === "sm" ? "size-2.5" : "size-4";
@@ -47,8 +46,8 @@ export default function QuantityStepper({
       <motion.button
         type="button"
         whileTap={{ scale: 0.9 }}
-        onClick={() => onChange(Math.min(max, quantity + 1))}
-        disabled={quantity >= max}
+        onClick={() => onChange(Math.min(MAX_ITEM_QUANTITY, quantity + 1))}
+        disabled={quantity >= MAX_ITEM_QUANTITY}
         aria-label="Increase quantity"
         className={`flex items-center justify-center ${circleSize} rounded-full bg-[#F1BF0A] text-[#090909] disabled:opacity-40 disabled:cursor-not-allowed focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#183fad]`}
       >

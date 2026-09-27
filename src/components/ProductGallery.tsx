@@ -1,8 +1,9 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import Image from "next/image";
 import { AnimatePresence, motion } from "framer-motion";
+import { useOverlay } from "@/lib/useOverlay";
 import { DURATION, EASE } from "@/lib/motion";
 
 export default function ProductGallery({
@@ -16,21 +17,7 @@ export default function ProductGallery({
   const [lightboxOpen, setLightboxOpen] = useState(false);
   const hasMultiple = images.length > 1;
 
-  useEffect(() => {
-    document.body.style.overflow = lightboxOpen ? "hidden" : "";
-    return () => {
-      document.body.style.overflow = "";
-    };
-  }, [lightboxOpen]);
-
-  useEffect(() => {
-    if (!lightboxOpen) return;
-    function handleKey(e: KeyboardEvent) {
-      if (e.key === "Escape") setLightboxOpen(false);
-    }
-    window.addEventListener("keydown", handleKey);
-    return () => window.removeEventListener("keydown", handleKey);
-  }, [lightboxOpen]);
+  const lightboxRef = useOverlay<HTMLDivElement>(lightboxOpen, () => setLightboxOpen(false));
 
   return (
     <div>
@@ -74,7 +61,8 @@ export default function ProductGallery({
                 alt={productName}
                 width={700}
                 height={700}
-                priority
+                loading="eager"
+                fetchPriority="high"
                 className="w-full h-auto lg:h-[580px] object-cover lg:object-contain"
               />
             </motion.div>
@@ -100,6 +88,7 @@ export default function ProductGallery({
       <AnimatePresence>
         {lightboxOpen && (
           <motion.div
+            ref={lightboxRef}
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}

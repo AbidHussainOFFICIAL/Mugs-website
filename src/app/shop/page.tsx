@@ -10,12 +10,9 @@ export const metadata: Metadata = {
 
 export default function ShopPage() {
   return (
-    <div className="min-h-dvh w-full overflow-x-hidden text-base font-normal text-[#090909] px-4 sm:px-5 lg:px-6 xl:px-8 pt-3 sm:pt-4">
+    <div className="min-h-dvh w-full overflow-x-hidden text-base font-normal text-[#090909] px-4 sm:px-5 lg:px-6 xl:px-8 pt-3 sm:pt-4 flex flex-col">
       <Navbar />
-      <ShopPageContent
-        title="SHOP ALL"
-        breadcrumb={[{ label: "Home", href: "/" }, { label: "Shop" }]}
-      />
+      <ShopPageContent />
       <Footer />
     </div>
   );

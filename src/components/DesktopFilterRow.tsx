@@ -4,20 +4,8 @@ import { forwardRef, useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import type { ProductCategory } from "@/data/products";
 import type { SortOption } from "@/lib/useProductFilters";
+import { CATEGORY_OPTIONS, SORT_OPTIONS } from "@/lib/categories";
 import { DURATION } from "@/lib/motion";
-
-const CATEGORIES: { label: string; value: ProductCategory | "all" }[] = [
-  { label: "All", value: "all" },
-  { label: "Travel", value: "travel" },
-  { label: "Camp", value: "camp" },
-  { label: "Gift", value: "gift" },
-];
-
-const SORT_OPTIONS: { value: SortOption; label: string }[] = [
-  { value: "featured", label: "Featured" },
-  { value: "price-asc", label: "Price: Low to High" },
-  { value: "price-desc", label: "Price: High to Low" },
-];
 
 type DropdownKey = "category" | "price" | "stock" | "sort";
 
@@ -109,8 +97,15 @@ export default function DesktopFilterRow({
     function handleClick(e: MouseEvent) {
       if (rowRef.current && !rowRef.current.contains(e.target as Node)) setOpen(null);
     }
+    function handleKey(e: KeyboardEvent) {
+      if (e.key === "Escape") setOpen(null);
+    }
     document.addEventListener("mousedown", handleClick);
-    return () => document.removeEventListener("mousedown", handleClick);
+    window.addEventListener("keydown", handleKey);
+    return () => {
+      document.removeEventListener("mousedown", handleClick);
+      window.removeEventListener("keydown", handleKey);
+    };
   }, [open]);
 
   function toggle(key: DropdownKey) {
@@ -132,7 +127,7 @@ export default function DesktopFilterRow({
     setOpen(null);
   }
 
-  const categoryLabel = CATEGORIES.find((c) => c.value === category)?.label ?? "Category";
+  const categoryLabel = CATEGORY_OPTIONS.find((c) => c.value === category)?.label ?? "Category";
   const sortLabel = SORT_OPTIONS.find((o) => o.value === sort)?.label ?? "Sort";
 
   return (
@@ -187,7 +182,7 @@ export default function DesktopFilterRow({
           >
             {open === "category" && (
               <div className="flex flex-col gap-1">
-                {CATEGORIES.map((c) => (
+                {CATEGORY_OPTIONS.map((c) => (
                   <button
                     key={c.value}
                     type="button"
@@ -244,7 +239,7 @@ export default function DesktopFilterRow({
             )}
 
             {open === "sort" && (
-              <div className="flex flex-col gap-1">
+              <div role="listbox" aria-label="Sort by" className="flex flex-col gap-1">
                 {SORT_OPTIONS.map((option) => (
                   <button
                     key={option.value}

@@ -2,7 +2,14 @@
 
 import Link from "next/link";
 import { motion } from "framer-motion";
+import { PillLink } from "@/components/PillButton";
 import { fadeRise, VIEWPORT } from "@/lib/motion";
+
+const EXPLORE_ICON = (
+  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="size-6" aria-hidden="true">
+    <path strokeLinecap="round" strokeLinejoin="round" d="M17.25 8.25 21 12m0 0-3.75 3.75M21 12H3" />
+  </svg>
+);
 
 export default function CollectionHeader() {
   return (
@@ -18,17 +25,22 @@ export default function CollectionHeader() {
         EXPLORE THE COLLECTION
       </h1>
 
-      <Link
-        href="/shop"
-        className="hidden sm:inline-flex items-center gap-2 bg-[#F1BF0A] rounded-full py-1.25 pl-1.25 pr-3.5 text-[#090909] whitespace-nowrap shrink-0 relative after:content-[''] after:absolute after:top-1/2 after:-translate-y-1/2 after:left-1.5 after:rounded-full after:bg-white after:h-9 after:w-9 hover:after:w-full after:transition-[width,color] after:duration-[1600ms] after:ease-[linear(0,0.029_0.8%,0.13_1.8%,0.908_7.2%,1.051_9.1%,1.112_11.2%,1.116_12.2%,1.106_13.4%,1.007_19.5%,0.987_23.1%,1.001_35%,1)] overflow-hidden hover:after:h-full hover:after:left-0 border border-[#F1BF0A] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#183fad]"
-      >
-        <div className="rounded-full p-1.5 relative z-10">
-          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="size-6" aria-hidden="true">
-            <path strokeLinecap="round" strokeLinejoin="round" d="M17.25 8.25 21 12m0 0-3.75 3.75M21 12H3" />
-          </svg>
-        </div>
-        <span className="relative z-10">Explore Collection</span>
-      </Link>
+      {/* Wrapped rather than passed as a class on the pill itself: the pill's
+          own base class already includes `flex`, and stacking `hidden` +
+          `flex`/`inline-flex` on the same element depends on unpredictable
+          Tailwind rule ordering. A wrapper with `hidden` / `block` sidesteps that. */}
+      <div className="hidden sm:block shrink-0">
+        <PillLink
+          href="/shop"
+          icon={EXPLORE_ICON}
+          layout="hug"
+          size="compact"
+          focusRing="dark"
+          className="border border-[#F1BF0A]"
+        >
+          Explore Collection
+        </PillLink>
+      </div>
 
       <Link
         href="/shop"

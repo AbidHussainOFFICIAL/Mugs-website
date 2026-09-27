@@ -5,7 +5,6 @@ import type { ReactNode } from "react";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { products as allProducts, type Product, type ProductCategory } from "@/data/products";
 import ProductCard from "@/components/ProductCard";
-import { SkeletonGrid } from "@/components/SkeletonCard";
 import { DURATION, EASE, VIEWPORT } from "@/lib/motion";
 
 const FILTERS: { label: string; value: ProductCategory | "all" }[] = [
@@ -15,14 +14,18 @@ const FILTERS: { label: string; value: ProductCategory | "all" }[] = [
   { label: "Gift", value: "gift" },
 ];
 
+// How many cards at the top of the grid load eagerly, so the LCP image
+// doesn't wait on a lazy-load trigger. Matches the smallest column count
+// (2, on mobile) times two rows, which covers the first screenful on every
+// breakpoint without preloading the whole grid.
+const PRELOAD_COUNT = 4;
+
 interface ProductGridProps {
   /** Pre-filtered list to render. Omit to use the full catalog with the built-in category pills (default — landing page behavior, unchanged). */
   products?: Product[];
   /** Rich empty-state to render instead of the plain text fallback. */
   emptyState?: ReactNode;
   emptyMessage?: string;
-  /** Renders a skeleton grid instead of products. */
-  loading?: boolean;
   /** Shows the wishlist heart on mobile too (used by the Wishlist page, where removing IS the primary action). */
   showWishlistOnMobile?: boolean;
   /** Hides the add-to-cart button on mobile — used by the Wishlist page so only the heart (remove) icon shows, avoiding two icons crowding/clipping on small screens. */
@@ -35,7 +38,6 @@ export default function ProductGrid({
   products,
   emptyState,
   emptyMessage = "No products in this category yet.",
-  loading = false,
   showWishlistOnMobile = false,
   showCartOnMobile = true,
   desktopColumns = 4,
@@ -47,10 +49,6 @@ export default function ProductGrid({
     if (products) return products;
     return active === "all" ? allProducts : allProducts.filter((p) => p.category === active);
   }, [products, active]);
-
-  if (loading) {
-    return <SkeletonGrid />;
-  }
 
   return (
     <div>
@@ -99,7 +97,12 @@ export default function ProductGrid({
                 }}
                 className="col-span-1 flex flex-col rounded-3xl overflow-hidden"
               >
-                <ProductCard product={product} showWishlistOnMobile={showWishlistOnMobile} showCartOnMobile={showCartOnMobile} />
+                <ProductCard
+                  product={product}
+                  showWishlistOnMobile={showWishlistOnMobile}
+                  showCartOnMobile={showCartOnMobile}
+                  preload={index < PRELOAD_COUNT}
+                />
               </motion.li>
             ))}
           </AnimatePresence>

@@ -3,15 +3,7 @@
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import type { ProductCategory } from "@/data/products";
-import type { SortOption } from "@/lib/useProductFilters";
-import SortDropdown from "@/components/SortDropdown";
-
-const CATEGORIES: { label: string; value: ProductCategory | "all" }[] = [
-  { label: "All", value: "all" },
-  { label: "Travel", value: "travel" },
-  { label: "Camp", value: "camp" },
-  { label: "Gift", value: "gift" },
-];
+import { CATEGORY_OPTIONS } from "@/lib/categories";
 
 export interface FilterControlsProps {
   category: ProductCategory | "all";
@@ -22,8 +14,6 @@ export interface FilterControlsProps {
   priceFloor: number;
   inStockOnly: boolean;
   setInStockOnly: (value: boolean) => void;
-  sort: SortOption;
-  setSort: (value: SortOption) => void;
   clearAll: () => void;
 }
 
@@ -36,8 +26,6 @@ export default function FilterControls({
   priceFloor,
   inStockOnly,
   setInStockOnly,
-  sort,
-  setSort,
   clearAll,
 }: FilterControlsProps) {
   const [localMaxPrice, setLocalMaxPrice] = useState(maxPrice);
@@ -55,14 +43,9 @@ export default function FilterControls({
   return (
     <div className="flex flex-col gap-6">
       <div>
-        <h3 className="font-anton text-sm tracking-wide mb-2">SORT</h3>
-        <SortDropdown value={sort} onChange={setSort} />
-      </div>
-
-      <div>
         <h3 className="font-anton text-sm tracking-wide mb-2">CATEGORY</h3>
         <div className="flex flex-wrap gap-2">
-          {CATEGORIES.map((c) => {
+          {CATEGORY_OPTIONS.map((c) => {
             const isActive = category === c.value;
             return (
               <motion.button

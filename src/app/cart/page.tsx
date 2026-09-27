@@ -4,6 +4,7 @@ import CartPageContent from "@/components/CartPageContent";
 export const metadata: Metadata = {
   title: "Cart",
   description: "Review the items in your Mugsy's Mugs cart.",
+  robots: { index: false, follow: false },
 };
 
 export default function CartPage() {

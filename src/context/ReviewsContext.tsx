@@ -1,7 +1,8 @@
 "use client";
 
-import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from "react";
+import { createContext, useCallback, useContext, useMemo } from "react";
 import { reviews as seedReviews, type Review } from "@/data/reviews";
+import { usePersistentState } from "@/lib/usePersistentState";
 
 interface NewReviewInput {
   productSlug: string;
@@ -24,27 +25,27 @@ interface ReviewsContextValue {
 
 const ReviewsContext = createContext<ReviewsContextValue | undefined>(undefined);
 const STORAGE_KEY = "mugsys-user-reviews";
+const EMPTY_REVIEWS: Review[] = [];
+
+function isReview(value: unknown): value is Review {
+  if (typeof value !== "object" || value === null) return false;
+  const review = value as Record<string, unknown>;
+  return (
+    typeof review.id === "string" &&
+    typeof review.productSlug === "string" &&
+    typeof review.author === "string" &&
+    typeof review.rating === "number" &&
+    typeof review.date === "string" &&
+    typeof review.text === "string"
+  );
+}
+
+function isReviewList(value: unknown): value is Review[] {
+  return Array.isArray(value) && value.every(isReview);
+}
 
 export function ReviewsProvider({ children }: { children: React.ReactNode }) {
-  const [userReviews, setUserReviews] = useState<Review[]>([]);
-  const hydrated = useRef(false);
-
-  useEffect(() => {
-    if (typeof window === "undefined") return;
-    try {
-      const stored = window.localStorage.getItem(STORAGE_KEY);
-      if (stored) setUserReviews(JSON.parse(stored));
-    } catch {
-      // Malformed storage — ignore and start fresh.
-    } finally {
-      hydrated.current = true;
-    }
-  }, []);
-
-  useEffect(() => {
-    if (!hydrated.current) return;
-    window.localStorage.setItem(STORAGE_KEY, JSON.stringify(userReviews));
-  }, [userReviews]);
+  const [userReviews, setUserReviews] = usePersistentState(STORAGE_KEY, EMPTY_REVIEWS, isReviewList);
 
   const allReviews = useMemo(() => [...userReviews, ...seedReviews], [userReviews]);
 
@@ -69,17 +70,20 @@ export function ReviewsProvider({ children }: { children: React.ReactNode }) {
     [getReviewsForProduct]
   );
 
-  const addReview = useCallback((input: NewReviewInput) => {
-    const newReview: Review = {
-      id: `user-${Date.now()}`,
-      productSlug: input.productSlug,
-      author: input.author || "Anonymous",
-      rating: input.rating,
-      date: new Date().toISOString().slice(0, 10),
-      text: input.text,
-    };
-    setUserReviews((prev) => [newReview, ...prev]);
-  }, []);
+  const addReview = useCallback(
+    (input: NewReviewInput) => {
+      const newReview: Review = {
+        id: `user-${Date.now()}`,
+        productSlug: input.productSlug,
+        author: input.author || "Anonymous",
+        rating: input.rating,
+        date: new Date().toISOString().slice(0, 10),
+        text: input.text,
+      };
+      setUserReviews((prev) => [newReview, ...prev]);
+    },
+    [setUserReviews]
+  );
 
   const value = useMemo(
     () => ({ getReviewsForProduct, getRatingSummary, addReview }),

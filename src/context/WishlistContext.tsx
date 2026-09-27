@@ -1,57 +1,63 @@
 "use client";
 
-import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from "react";
-import type { Product } from "@/data/products";
+import { createContext, useCallback, useContext, useMemo } from "react";
+import { products, type Product } from "@/data/products";
+import { usePersistentState } from "@/lib/usePersistentState";
 
 interface WishlistContextValue {
   items: Product[];
   count: number;
   isWishlisted: (slug: string) => boolean;
+  /** Saves a product; does nothing if it is already saved (unlike toggleWishlist, it never removes). */
+  addToWishlist: (product: Product) => void;
   toggleWishlist: (product: Product) => void;
 }
 
 const WishlistContext = createContext<WishlistContextValue | undefined>(undefined);
 const STORAGE_KEY = "mugsys-wishlist";
+const EMPTY_WISHLIST: string[] = [];
+
+function isSlugList(value: unknown): value is string[] {
+  return Array.isArray(value) && value.every((entry) => typeof entry === "string");
+}
 
 export function WishlistProvider({ children }: { children: React.ReactNode }) {
-  const [items, setItems] = useState<Product[]>([]);
-  const hydrated = useRef(false);
+  // Only slugs are saved; the products themselves are looked up from the
+  // catalog, so a saved wishlist can never show stale prices or stock.
+  const [slugs, setSlugs] = usePersistentState(STORAGE_KEY, EMPTY_WISHLIST, isSlugList);
 
-  // Load any previously saved wishlist once, on mount.
-  useEffect(() => {
-    if (typeof window === "undefined") return;
-    try {
-      const stored = window.localStorage.getItem(STORAGE_KEY);
-      if (stored) setItems(JSON.parse(stored));
-    } catch {
-      // Malformed storage — ignore and start fresh.
-    } finally {
-      hydrated.current = true;
-    }
-  }, []);
+  const items = useMemo(
+    () =>
+      slugs.flatMap((slug) => {
+        const product = products.find((p) => p.slug === slug);
+        return product ? [product] : [];
+      }),
+    [slugs]
+  );
 
-  // Persist on every change, but only after the initial load above has run —
-  // otherwise this would immediately overwrite saved data with an empty array.
-  useEffect(() => {
-    if (!hydrated.current) return;
-    window.localStorage.setItem(STORAGE_KEY, JSON.stringify(items));
-  }, [items]);
+  const isWishlisted = useCallback((slug: string) => slugs.includes(slug), [slugs]);
 
-  const isWishlisted = useCallback((slug: string) => items.some((item) => item.slug === slug), [items]);
+  const addToWishlist = useCallback(
+    (product: Product) => {
+      setSlugs((prev) => (prev.includes(product.slug) ? prev : [...prev, product.slug]));
+    },
+    [setSlugs]
+  );
 
-  const toggleWishlist = useCallback((product: Product) => {
-    setItems((prev) =>
-      prev.some((item) => item.slug === product.slug)
-        ? prev.filter((item) => item.slug !== product.slug)
-        : [...prev, product]
-    );
-  }, []);
+  const toggleWishlist = useCallback(
+    (product: Product) => {
+      setSlugs((prev) =>
+        prev.includes(product.slug) ? prev.filter((slug) => slug !== product.slug) : [...prev, product.slug]
+      );
+    },
+    [setSlugs]
+  );
 
   const count = items.length;
 
   const value = useMemo(
-    () => ({ items, count, isWishlisted, toggleWishlist }),
-    [items, count, isWishlisted, toggleWishlist]
+    () => ({ items, count, isWishlisted, addToWishlist, toggleWishlist }),
+    [items, count, isWishlisted, addToWishlist, toggleWishlist]
   );
 
   return <WishlistContext.Provider value={value}>{children}</WishlistContext.Provider>;

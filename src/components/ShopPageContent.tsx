@@ -5,27 +5,17 @@ import { motion } from "framer-motion";
 import PageHeaderBanner from "@/components/PageHeaderBanner";
 import DesktopFilterRow from "@/components/DesktopFilterRow";
 import MobileFilterSheet from "@/components/MobileFilterSheet";
+import MobileSortSheet from "@/components/MobileSortSheet";
 import ActiveFilterChips from "@/components/ActiveFilterChips";
 import ProductGrid from "@/components/ProductGrid";
 import EmptyState from "@/components/EmptyState";
 import { useProductFilters, PRICE_CEILING, PRICE_FLOOR } from "@/lib/useProductFilters";
+import { getCategoryTitle } from "@/lib/categories";
 import type { ProductCategory } from "@/data/products";
 
-interface Crumb {
-  label: string;
-  href?: string;
-}
-
-export default function ShopPageContent({
-  initialCategory,
-  title,
-  breadcrumb,
-}: {
-  initialCategory?: ProductCategory;
-  title: string;
-  breadcrumb: Crumb[];
-}) {
-  const [sheetOpen, setSheetOpen] = useState(false);
+export default function ShopPageContent({ initialCategory }: { initialCategory?: ProductCategory }) {
+  const [filterSheetOpen, setFilterSheetOpen] = useState(false);
+  const [sortSheetOpen, setSortSheetOpen] = useState(false);
   const {
     filtered,
     category,
@@ -40,6 +30,7 @@ export default function ShopPageContent({
     clearAll,
   } = useProductFilters({ initialCategory: initialCategory ?? "all" });
 
+  // Passed to DesktopFilterRow, which needs sort alongside the rest.
   const filterProps = {
     category,
     setCategory,
@@ -53,6 +44,29 @@ export default function ShopPageContent({
     setSort,
   };
 
+  // Passed to MobileFilterSheet, which is filter-only now — sort has its
+  // own sheet (MobileSortSheet) so the two mobile trigger buttons open
+  // distinct panels instead of both landing on the same combined sheet.
+  const mobileFilterProps = {
+    category,
+    setCategory,
+    maxPrice,
+    setMaxPrice,
+    priceCeiling: PRICE_CEILING,
+    priceFloor: PRICE_FLOOR,
+    inStockOnly,
+    setInStockOnly,
+  };
+
+  // The title and breadcrumb always describe the category currently
+  // selected in the filter — not just the one the URL loaded with — so
+  // switching categories from the pill row updates the heading too.
+  const title = getCategoryTitle(category);
+  const breadcrumb =
+    category === "all"
+      ? [{ label: "Home", href: "/" }, { label: "Shop" }]
+      : [{ label: "Home", href: "/" }, { label: "Shop", href: "/shop" }, { label: title }];
+
   return (
     <>
       <PageHeaderBanner
@@ -61,12 +75,12 @@ export default function ShopPageContent({
         count={`${filtered.length} ${filtered.length === 1 ? "Mug" : "Mugs"}`}
       />
 
-      <main className="max-w-[1400px] w-full mx-auto mt-6 sm:mt-8 mb-20">
+      <main className="max-w-[1400px] w-full mx-auto mt-6 sm:mt-8 mb-20 flex-1">
         <div className="lg:hidden flex gap-2">
           <motion.button
             type="button"
             whileTap={{ scale: 0.96 }}
-            onClick={() => setSheetOpen(true)}
+            onClick={() => setFilterSheetOpen(true)}
             className="flex-1 flex items-center justify-center gap-2 rounded-full border border-[#F1BF0A] py-2 text-sm font-medium focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#183fad]"
           >
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="size-4" aria-hidden="true">
@@ -77,7 +91,7 @@ export default function ShopPageContent({
           <motion.button
             type="button"
             whileTap={{ scale: 0.96 }}
-            onClick={() => setSheetOpen(true)}
+            onClick={() => setSortSheetOpen(true)}
             className="flex-1 flex items-center justify-center gap-2 rounded-full border border-[#F1BF0A] py-2 text-sm font-medium focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#183fad]"
           >
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="size-4" aria-hidden="true">
@@ -87,7 +101,14 @@ export default function ShopPageContent({
           </motion.button>
         </div>
 
-        <MobileFilterSheet open={sheetOpen} onClose={() => setSheetOpen(false)} resultCount={filtered.length} {...filterProps} clearAll={clearAll} />
+        <MobileFilterSheet
+          open={filterSheetOpen}
+          onClose={() => setFilterSheetOpen(false)}
+          resultCount={filtered.length}
+          {...mobileFilterProps}
+          clearAll={clearAll}
+        />
+        <MobileSortSheet open={sortSheetOpen} onClose={() => setSortSheetOpen(false)} value={sort} onChange={setSort} />
 
         <DesktopFilterRow {...filterProps} />
 

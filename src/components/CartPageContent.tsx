@@ -1,6 +1,5 @@
 "use client";
 
-import { useState } from "react";
 import { AnimatePresence } from "framer-motion";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
@@ -13,15 +12,12 @@ import StickyMobileOrderBar from "@/components/StickyMobileOrderBar";
 import SavedForLaterShelf from "@/components/SavedForLaterShelf";
 import ProductGrid from "@/components/ProductGrid";
 import { useCart, type CartItem } from "@/context/CartContext";
-import { useWishlist } from "@/context/WishlistContext";
 import { products } from "@/data/products";
 
-export default function CartPageContent() {
-  const { items, itemCount, updateQuantity, removeItem } = useCart();
-  const { toggleWishlist } = useWishlist();
-  const [discountPercent, setDiscountPercent] = useState(0);
+const CROSS_SELL_ANCHOR_ID = "you-might-also-need";
 
-  const subtotal = items.reduce((sum, item) => sum + item.price * item.quantity, 0);
+export default function CartPageContent() {
+  const { items, itemCount, isReady, updateQuantity, removeItem } = useCart();
 
   function handleQuantityChange(item: CartItem, quantity: number) {
     updateQuantity(item.slug, item.selectedColor, item.selectedSize, quantity);
@@ -31,26 +27,39 @@ export default function CartPageContent() {
     removeItem(item.slug, item.selectedColor, item.selectedSize);
   }
 
-  function handleSaveForLater(item: CartItem) {
-    toggleWishlist(item);
-    removeItem(item.slug, item.selectedColor, item.selectedSize);
-  }
-
   const cartSlugs = new Set(items.map((item) => item.slug));
   const crossSell = products.filter((p) => !cartSlugs.has(p.slug)).slice(0, 4);
+  const hasItems = items.length > 0;
 
+  // flex-1 on <main> is only applied for the empty-cart branch below, not
+  // unconditionally: it makes <main> grow to fill the viewport when its
+  // content is short, so the Footer sits right after it instead of
+  // leaving blank space below the Footer — but that same growth would show
+  // up as unwanted blank space right after "You Might Also Need" (still
+  // inside <main>, right before Footer) on a cart whose real content
+  // happens to be shorter than the viewport. An empty cart's one-line
+  // EmptyState is the case that actually needs the stretch; a cart with
+  // real content should just take whatever height its content needs.
+  // overflow-x-clip (not -hidden) on the outer wrapper is unrelated: that
+  // fix keeps this wrapper from becoming a scroll container, which would
+  // break the desktop Order Summary's `sticky` positioning below.
   return (
-    <div className="min-h-dvh w-full overflow-x-hidden text-base font-normal text-[#090909] px-4 sm:px-5 lg:px-6 xl:px-8 pt-3 sm:pt-4">
+    <div className="min-h-dvh w-full overflow-x-clip text-base font-normal text-[#090909] px-4 sm:px-5 lg:px-6 xl:px-8 pt-3 sm:pt-4 flex flex-col">
       <Navbar />
 
       <PageHeaderBanner
         title="YOUR CART"
         breadcrumb={[{ label: "Home", href: "/" }, { label: "Cart" }]}
-        count={`${itemCount} ${itemCount === 1 ? "Item" : "Items"}`}
+        count={isReady ? `${itemCount} ${itemCount === 1 ? "Item" : "Items"}` : undefined}
       />
 
-      <main className="max-w-[1400px] w-full mx-auto mt-8 sm:mt-10 mb-20">
-        {items.length === 0 ? (
+      {/* The mobile order bar covers the bottom of the viewport while it's
+          showing (through the product list and Saved For Later), so this
+          padding keeps content from being hidden behind it. It's scoped to
+          <main> specifically — not the outer page wrapper — so it never
+          bleeds past the Footer, which sits outside <main> as a sibling. */}
+      <main className={`max-w-[1400px] w-full mx-auto mt-8 sm:mt-10 mb-20 ${hasItems ? "pb-20 lg:pb-0" : "flex-1"}`}>
+        {!isReady ? null : !hasItems ? (
           <EmptyState
             icon={
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#090909" strokeWidth="1.5" className="size-7" aria-hidden="true">
@@ -68,8 +77,12 @@ export default function CartPageContent() {
           />
         ) : (
           <>
-            <div id="order-summary-anchor" className="grid gap-8 lg:grid-cols-[1fr_400px]">
+            <div className="grid gap-8 lg:grid-cols-[1fr_400px]">
               <div className="min-w-0">
+                <div className="mb-6">
+                  <PromoCodeInput />
+                </div>
+
                 <AnimatePresence initial={false}>
                   {items.map((item) => (
                     <CartLineItem
@@ -78,27 +91,22 @@ export default function CartPageContent() {
                       size="full"
                       onQuantityChange={(q) => handleQuantityChange(item, q)}
                       onRemove={() => handleRemove(item)}
-                      onSaveForLater={() => handleSaveForLater(item)}
                     />
                   ))}
                 </AnimatePresence>
-
-                <SavedForLaterShelf />
-
-                <div className="mt-8">
-                  <PromoCodeInput onApply={setDiscountPercent} />
-                </div>
               </div>
 
               <div className="hidden lg:block">
                 <div className="sticky top-4">
-                  <OrderSummaryPanel subtotal={subtotal} discountPercent={discountPercent} />
+                  <OrderSummaryPanel />
                 </div>
               </div>
             </div>
 
+            <SavedForLaterShelf />
+
             {crossSell.length > 0 && (
-              <div className="mt-12 sm:mt-16">
+              <div id={CROSS_SELL_ANCHOR_ID} className="mt-12 sm:mt-16">
                 <h2 className="font-anton text-2xl sm:text-3xl mb-6">YOU MIGHT ALSO NEED</h2>
                 <ProductGrid products={crossSell} />
               </div>
@@ -107,9 +115,7 @@ export default function CartPageContent() {
         )}
       </main>
 
-      {items.length > 0 && (
-        <StickyMobileOrderBar subtotal={subtotal} discountPercent={discountPercent} anchorId="order-summary-anchor" />
-      )}
+      {hasItems && <StickyMobileOrderBar anchorId={CROSS_SELL_ANCHOR_ID} />}
 
       <Footer />
     </div>

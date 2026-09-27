@@ -5,21 +5,7 @@ import Footer from "@/components/Footer";
 import ShopPageContent from "@/components/ShopPageContent";
 import ProductDetailContent from "@/components/ProductDetailContent";
 import { products, type ProductCategory } from "@/data/products";
-
-const CATEGORY_META: Record<ProductCategory, { title: string; description: string }> = {
-  travel: {
-    title: "TRAVEL MUGS",
-    description: "Insulated, spill-ready mugs built for the daily commute and beyond.",
-  },
-  camp: {
-    title: "CAMP MUGS",
-    description: "Rugged mugs made for campsites, trailheads, and mornings outdoors.",
-  },
-  gift: {
-    title: "GIFT MUGS",
-    description: "Thoughtful picks for the mug lover in your life.",
-  },
-};
+import { CATEGORY_META } from "@/lib/categories";
 
 const VALID_CATEGORIES = Object.keys(CATEGORY_META) as ProductCategory[];
 
@@ -58,13 +44,9 @@ export default async function ShopSlugPage({ params }: { params: Promise<{ slug:
 
   if (categoryMeta) {
     return (
-      <div className="min-h-dvh w-full overflow-x-hidden text-base font-normal text-[#090909] px-4 sm:px-5 lg:px-6 xl:px-8 pt-3 sm:pt-4">
+      <div className="min-h-dvh w-full overflow-x-hidden text-base font-normal text-[#090909] px-4 sm:px-5 lg:px-6 xl:px-8 pt-3 sm:pt-4 flex flex-col">
         <Navbar />
-        <ShopPageContent
-          initialCategory={category}
-          title={categoryMeta.title}
-          breadcrumb={[{ label: "Home", href: "/" }, { label: "Shop", href: "/shop" }, { label: categoryMeta.title }]}
-        />
+        <ShopPageContent initialCategory={category} />
         <Footer />
       </div>
     );

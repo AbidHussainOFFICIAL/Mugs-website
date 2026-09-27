@@ -1,27 +1,38 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { motion, useReducedMotion } from "framer-motion";
 import ProductCard from "@/components/ProductCard";
 import { useWishlist } from "@/context/WishlistContext";
 import { DURATION, EASE, VIEWPORT } from "@/lib/motion";
 
+// Its own full-width section on the Cart page now, a peer of "You Might
+// Also Need" rather than something nested inside the product-list column —
+// so it uses the same top margin as that section for a consistent rhythm.
 export default function SavedForLaterShelf() {
   const { items } = useWishlist();
+  const shouldReduceMotion = useReducedMotion();
+  const entranceProps = shouldReduceMotion ? {} : { initial: { opacity: 0, y: 16 }, whileInView: { opacity: 1, y: 0 }, viewport: VIEWPORT };
 
   if (items.length === 0) return null;
 
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 16 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={VIEWPORT}
-      transition={{ duration: DURATION.base, ease: EASE }}
-      className="mt-8 min-w-0"
-    >
-      <h2 className="font-anton text-lg mb-4">SAVED FOR LATER</h2>
+    // min-w-0 kept on both the wrapper and the ul even though this section
+    // is no longer inside the two-column cart grid it was originally fixed
+    // for: it's what stops this horizontally-scrolling shelf from ever
+    // being able to drag a flex/grid ancestor wider than intended (see the
+    // project's documented history of exactly that bug), and it costs
+    // nothing to keep in a plain block container.
+    <motion.div {...entranceProps} transition={{ duration: DURATION.base, ease: EASE }} className="mt-12 sm:mt-16 min-w-0">
+      <h2 className="font-anton text-2xl sm:text-3xl mb-6">SAVED FOR LATER</h2>
       <ul role="list" className="flex gap-4 overflow-x-auto pb-2 -mx-1 px-1 min-w-0">
         {items.map((product) => (
-          <li key={product.slug} className="w-40 sm:w-48 shrink-0">
+          // rounded-3xl overflow-hidden here for the same reason ProductGrid's
+          // <li> has it everywhere else: ProductCard's own top-left corner is
+          // square by design (see PriceBadge's default variant, built to
+          // blend into an adjacent button cluster) — every other place this
+          // card appears clips it round at the wrapper level. This shelf's
+          // wrapper had been missing that, leaving the corner visibly cut off.
+          <li key={product.slug} className="w-40 sm:w-48 shrink-0 rounded-3xl overflow-hidden">
             <ProductCard product={product} />
           </li>
         ))}

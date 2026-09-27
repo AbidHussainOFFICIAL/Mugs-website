@@ -3,34 +3,50 @@
 import { useState } from "react";
 import type { FormEvent } from "react";
 import { AnimatePresence, motion } from "framer-motion";
+import { useCart } from "@/context/CartContext";
 import { DURATION } from "@/lib/motion";
 
-// Demo-only: this project is static data + localStorage, with no real
-// backend to validate promo codes against. One hardcoded code, clearly
-// scoped here and nowhere else, rather than building a fake validation
-// service.
-const DEMO_CODE = "MUGSY10";
-const DEMO_DISCOUNT_PERCENT = 10;
-
-export default function PromoCodeInput({ onApply }: { onApply: (discountPercent: number) => void }) {
+export default function PromoCodeInput() {
+  const { promoCode, discountPercent, applyPromo, removePromo } = useCart();
   const [code, setCode] = useState("");
-  const [status, setStatus] = useState<"idle" | "applied" | "invalid">("idle");
+  const [invalid, setInvalid] = useState(false);
 
   function handleSubmit(e: FormEvent) {
     e.preventDefault();
     if (!code.trim()) return;
-    if (code.trim().toUpperCase() === DEMO_CODE) {
-      setStatus("applied");
-      onApply(DEMO_DISCOUNT_PERCENT);
+    if (applyPromo(code)) {
+      setCode("");
+      setInvalid(false);
     } else {
-      setStatus("invalid");
-      onApply(0);
+      setInvalid(true);
     }
   }
 
   function handleChange(value: string) {
     setCode(value);
-    if (status !== "idle") setStatus("idle");
+    if (invalid) setInvalid(false);
+  }
+
+  if (promoCode) {
+    return (
+      <div className="flex flex-wrap items-center gap-3">
+        <motion.p
+          initial={{ opacity: 0, y: -4 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: DURATION.fast }}
+          className="inline-flex w-fit items-center gap-1.5 rounded-full bg-green-50 px-3 py-1.5 text-sm text-green-700"
+        >
+          {promoCode} applied — {discountPercent}% off
+        </motion.p>
+        <button
+          type="button"
+          onClick={removePromo}
+          className="text-sm text-[#183fad] underline underline-offset-2 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#183fad] rounded"
+        >
+          Remove
+        </button>
+      </div>
+    );
   }
 
   return (
@@ -38,7 +54,7 @@ export default function PromoCodeInput({ onApply }: { onApply: (discountPercent:
       <form onSubmit={handleSubmit} className="flex items-center gap-2">
         <div
           className={`flex-1 flex items-center gap-2 rounded-full border bg-white px-2 py-2 transition-colors ${
-            status === "invalid" ? "border-red-300" : "border-[#183fad]/20 focus-within:border-[#F1BF0A]"
+            invalid ? "border-red-300" : "border-[#183fad]/20 focus-within:border-[#F1BF0A]"
           }`}
         >
           <span className="flex items-center justify-center rounded-full bg-[#e9ecf6] p-1.5 shrink-0">
@@ -68,20 +84,8 @@ export default function PromoCodeInput({ onApply }: { onApply: (discountPercent:
         </button>
       </form>
 
-      <AnimatePresence mode="wait">
-        {status === "applied" && (
-          <motion.p
-            key="applied"
-            initial={{ opacity: 0, y: -4 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: DURATION.fast }}
-            className="mt-2 inline-flex w-fit items-center gap-1.5 rounded-full bg-green-50 px-3 py-1.5 text-sm text-green-700"
-          >
-            Code applied — {DEMO_DISCOUNT_PERCENT}% off
-          </motion.p>
-        )}
-        {status === "invalid" && (
+      <AnimatePresence>
+        {invalid && (
           <motion.p
             key="invalid"
             initial={{ opacity: 0, y: -4 }}

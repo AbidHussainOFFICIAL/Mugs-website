@@ -1,29 +1,60 @@
 "use client";
 
-import { useEffect } from "react";
 import Link from "next/link";
-import { AnimatePresence, motion } from "framer-motion";
+import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import CartLineItem from "@/components/CartLineItem";
 import EmptyState from "@/components/EmptyState";
+import { PillLink } from "@/components/PillButton";
 import { useCart, type CartItem } from "@/context/CartContext";
 import { useCartDrawer } from "@/context/CartDrawerContext";
+import { calculateTotals, type OrderTotals } from "@/lib/pricing";
+import { useOverlay } from "@/lib/useOverlay";
 import { DURATION, EASE } from "@/lib/motion";
 
-const FREE_SHIPPING_THRESHOLD = 100;
+const CHECKOUT_ICON = (
+  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="size-5" aria-hidden="true">
+    <path strokeLinecap="round" strokeLinejoin="round" d="M17.25 8.25 21 12m0 0-3.75 3.75M21 12H3" />
+  </svg>
+);
+
+function FreeShippingMessage({ remaining, shouldReduceMotion }: { remaining: number; shouldReduceMotion: boolean | null }) {
+  const unlocked = remaining === 0;
+  return (
+    <AnimatePresence mode="wait">
+      <motion.p
+        key={unlocked ? "unlocked" : "remaining"}
+        initial={shouldReduceMotion ? false : { opacity: 0, y: -4 }}
+        animate={{ opacity: 1, y: 0 }}
+        exit={shouldReduceMotion ? undefined : { opacity: 0, y: 4 }}
+        transition={{ duration: DURATION.fast }}
+        className="flex items-center gap-1.5 text-xs text-[#183fad]"
+      >
+        {unlocked && (
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="size-3.5 shrink-0" aria-hidden="true">
+            <path strokeLinecap="round" strokeLinejoin="round" d="m4.5 12.75 6 6 9-13.5" />
+          </svg>
+        )}
+        {unlocked ? "You've unlocked free shipping" : `Add $${remaining.toFixed(2)} more for free shipping`}
+      </motion.p>
+    </AnimatePresence>
+  );
+}
 
 function DrawerContent({
   items,
   itemCount,
-  subtotal,
-  freeShippingLeft,
+  totals,
+  discountPercent,
+  shouldReduceMotion,
   onQuantityChange,
   onRemove,
   onClose,
 }: {
   items: CartItem[];
   itemCount: number;
-  subtotal: number;
-  freeShippingLeft: number;
+  totals: OrderTotals;
+  discountPercent: number;
+  shouldReduceMotion: boolean | null;
   onQuantityChange: (item: CartItem, quantity: number) => void;
   onRemove: (item: CartItem) => void;
   onClose: () => void;
@@ -79,28 +110,39 @@ function DrawerContent({
 
       {items.length > 0 && (
         <div className="p-4 border-t border-[#e9ecf6] shrink-0 flex flex-col gap-3">
-          <div className="flex items-center justify-between">
-            <span className="text-sm text-[#090909]/80">Subtotal</span>
-            <span className="font-semibold text-lg">${subtotal.toFixed(2)}</span>
+          <div className="flex flex-col gap-1">
+            <div className="flex items-center justify-between">
+              <span className="text-sm text-[#090909]/80">Subtotal</span>
+              <motion.span
+                key={totals.subtotal}
+                initial={{ scale: 1 }}
+                animate={{ scale: shouldReduceMotion ? 1 : [1, 1.06, 1] }}
+                transition={{ duration: DURATION.fast }}
+                className="font-semibold text-lg"
+              >
+                ${totals.subtotal.toFixed(2)}
+              </motion.span>
+            </div>
+            <AnimatePresence>
+              {totals.discount > 0 && (
+                <motion.div
+                  initial={shouldReduceMotion ? false : { opacity: 0, height: 0 }}
+                  animate={{ opacity: 1, height: "auto" }}
+                  exit={shouldReduceMotion ? undefined : { opacity: 0, height: 0 }}
+                  transition={{ duration: DURATION.fast }}
+                  className="flex items-center justify-between text-sm text-[#183fad] overflow-hidden"
+                >
+                  <span>Discount ({discountPercent}%)</span>
+                  <span>-${totals.discount.toFixed(2)}</span>
+                </motion.div>
+              )}
+            </AnimatePresence>
           </div>
-          {freeShippingLeft > 0 ? (
-            <p className="text-xs text-[#183fad]">Add ${freeShippingLeft.toFixed(2)} more for free shipping</p>
-          ) : (
-            <p className="text-xs text-[#183fad]">You&apos;ve unlocked free shipping</p>
-          )}
+          <FreeShippingMessage remaining={totals.freeShippingRemaining} shouldReduceMotion={shouldReduceMotion} />
 
-          <Link
-            href="/checkout"
-            onClick={onClose}
-            className="flex items-center justify-center gap-2 bg-[#F1BF0A] rounded-full py-1.5 pl-1.5 pr-4 text-[#090909] whitespace-nowrap relative after:content-[''] after:absolute after:top-1/2 after:-translate-y-1/2 after:left-1.5 after:rounded-full after:bg-white after:h-9 after:w-9 hover:after:w-full after:transition-[width] after:duration-[1600ms] after:ease-[linear(0,0.029_0.8%,0.13_1.8%,0.908_7.2%,1.051_9.1%,1.112_11.2%,1.116_12.2%,1.106_13.4%,1.007_19.5%,0.987_23.1%,1.001_35%,1)] overflow-hidden hover:after:h-full hover:after:left-0 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#183fad]"
-          >
-            <span className="absolute left-1.5 top-1/2 -translate-y-1/2 size-9 flex items-center justify-center z-10">
-              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="size-5" aria-hidden="true">
-                <path strokeLinecap="round" strokeLinejoin="round" d="M17.25 8.25 21 12m0 0-3.75 3.75M21 12H3" />
-              </svg>
-            </span>
-            <span className="relative z-10 pl-8">Checkout</span>
-          </Link>
+          <PillLink href="/checkout" onClick={onClose} icon={CHECKOUT_ICON} layout="full" focusRing="dark">
+            Checkout
+          </PillLink>
           <Link
             href="/cart"
             onClick={onClose}
@@ -115,27 +157,23 @@ function DrawerContent({
 }
 
 export default function CartDrawer() {
-  const { items, itemCount, updateQuantity, removeItem } = useCart();
+  const { items, itemCount, subtotal, discountPercent, updateQuantity, removeItem } = useCart();
   const { isOpen, close } = useCartDrawer();
+  const shouldReduceMotion = useReducedMotion();
 
-  useEffect(() => {
-    document.body.style.overflow = isOpen ? "hidden" : "";
-    return () => {
-      document.body.style.overflow = "";
-    };
-  }, [isOpen]);
+  // Both the desktop (side) and mobile (bottom-sheet) variants below are
+  // mounted at once and switched purely with CSS breakpoints — so the focus
+  // trap needs one ref that covers both. `display: contents` makes this
+  // wrapper invisible to layout (the fixed-positioned children inside are
+  // unaffected), while still giving useOverlay a single container to query.
+  const overlayRef = useOverlay<HTMLDivElement>(isOpen, close);
 
-  useEffect(() => {
-    if (!isOpen) return;
-    function handleKey(e: KeyboardEvent) {
-      if (e.key === "Escape") close();
-    }
-    window.addEventListener("keydown", handleKey);
-    return () => window.removeEventListener("keydown", handleKey);
-  }, [isOpen, close]);
-
-  const subtotal = items.reduce((sum, item) => sum + item.price * item.quantity, 0);
-  const freeShippingLeft = Math.max(0, FREE_SHIPPING_THRESHOLD - subtotal);
+  const desktopPanelProps = shouldReduceMotion
+    ? { initial: { opacity: 0 }, animate: { opacity: 1 }, exit: { opacity: 0 } }
+    : { initial: { x: "100%" }, animate: { x: 0 }, exit: { x: "100%" } };
+  const mobilePanelProps = shouldReduceMotion
+    ? { initial: { opacity: 0 }, animate: { opacity: 1 }, exit: { opacity: 0 } }
+    : { initial: { y: "100%" }, animate: { y: 0 }, exit: { y: "100%" } };
 
   function handleQuantityChange(item: CartItem, quantity: number) {
     updateQuantity(item.slug, item.selectedColor, item.selectedSize, quantity);
@@ -148,8 +186,9 @@ export default function CartDrawer() {
   const contentProps = {
     items,
     itemCount,
-    subtotal,
-    freeShippingLeft,
+    totals: calculateTotals(subtotal, discountPercent),
+    discountPercent,
+    shouldReduceMotion,
     onQuantityChange: handleQuantityChange,
     onRemove: handleRemove,
     onClose: close,
@@ -169,31 +208,29 @@ export default function CartDrawer() {
             aria-hidden="true"
           />
 
-          <motion.div
-            role="dialog"
-            aria-modal="true"
-            aria-label="Shopping cart"
-            initial={{ x: "100%" }}
-            animate={{ x: 0 }}
-            exit={{ x: "100%" }}
-            transition={{ duration: DURATION.base, ease: EASE }}
-            className="hidden sm:flex fixed top-0 right-0 bottom-0 z-[71] w-full max-w-[420px] bg-white flex-col"
-          >
-            <DrawerContent {...contentProps} />
-          </motion.div>
+          <div ref={overlayRef} style={{ display: "contents" }}>
+            <motion.div
+              role="dialog"
+              aria-modal="true"
+              aria-label="Shopping cart"
+              {...desktopPanelProps}
+              transition={{ duration: DURATION.base, ease: EASE }}
+              className="hidden sm:flex fixed top-0 right-0 bottom-0 z-[71] w-full max-w-[420px] bg-white flex-col"
+            >
+              <DrawerContent {...contentProps} />
+            </motion.div>
 
-          <motion.div
-            role="dialog"
-            aria-modal="true"
-            aria-label="Shopping cart"
-            initial={{ y: "100%" }}
-            animate={{ y: 0 }}
-            exit={{ y: "100%" }}
-            transition={{ duration: DURATION.base, ease: EASE }}
-            className="sm:hidden fixed left-0 right-0 bottom-0 z-[71] max-h-[85vh] bg-white rounded-t-4xl flex flex-col"
-          >
-            <DrawerContent {...contentProps} />
-          </motion.div>
+            <motion.div
+              role="dialog"
+              aria-modal="true"
+              aria-label="Shopping cart"
+              {...mobilePanelProps}
+              transition={{ duration: DURATION.base, ease: EASE }}
+              className="sm:hidden fixed left-0 right-0 bottom-0 z-[71] max-h-[85vh] bg-white rounded-t-4xl flex flex-col"
+            >
+              <DrawerContent {...contentProps} />
+            </motion.div>
+          </div>
         </>
       )}
     </AnimatePresence>

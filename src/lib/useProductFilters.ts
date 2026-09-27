@@ -2,8 +2,12 @@
 
 import { useMemo, useState } from "react";
 import { products as allProducts, type Product, type ProductCategory } from "@/data/products";
+import type { SortOption } from "@/lib/categories";
 
-export type SortOption = "featured" | "price-asc" | "price-desc";
+// Re-exported so existing imports of `SortOption` from this module keep
+// working — the type itself now lives in lib/categories.ts, next to the
+// SORT_OPTIONS list that uses it, so there's one definition instead of two.
+export type { SortOption };
 
 export const PRICE_CEILING = Math.max(...allProducts.map((p) => p.price));
 export const PRICE_FLOOR = Math.min(...allProducts.map((p) => p.price));

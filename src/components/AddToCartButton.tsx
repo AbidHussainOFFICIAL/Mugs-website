@@ -4,8 +4,8 @@ import { useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import type { Product } from "@/data/products";
 import { useCart } from "@/context/CartContext";
-import { useCartDrawer } from "@/context/CartDrawerContext";
 import { DURATION } from "@/lib/motion";
+import { MAX_ITEM_QUANTITY } from "@/lib/pricing";
 
 export default function AddToCartButton({
   product,
@@ -13,17 +13,20 @@ export default function AddToCartButton({
   onQuantityChange,
   selectedColor,
   selectedSize,
-  maxQuantity = 10,
+  onAdded,
 }: {
   product: Product;
   quantity: number;
   onQuantityChange: (quantity: number) => void;
   selectedColor?: string;
   selectedSize?: string;
-  maxQuantity?: number;
+  /** Called after the item is added. The page decides what happens next
+   * (e.g. whether to open the cart drawer) — this button doesn't open it
+   * itself, since the drawer's auto-open-once-per-page-view gate is shared
+   * with StickyMobileCartBar and has to live at the page level to work. */
+  onAdded?: () => void;
 }) {
   const { addItem } = useCart();
-  const { open: openCartDrawer } = useCartDrawer();
   const [added, setAdded] = useState(false);
 
   if (!product.inStock) {
@@ -37,7 +40,7 @@ export default function AddToCartButton({
   function handleClick() {
     addItem(product, quantity, { selectedColor, selectedSize });
     setAdded(true);
-    openCartDrawer();
+    onAdded?.();
     window.setTimeout(() => setAdded(false), 1500);
   }
 
@@ -95,8 +98,8 @@ export default function AddToCartButton({
         <motion.button
           type="button"
           whileTap={{ scale: 0.9 }}
-          onClick={() => onQuantityChange(Math.min(maxQuantity, quantity + 1))}
-          disabled={quantity >= maxQuantity}
+          onClick={() => onQuantityChange(Math.min(MAX_ITEM_QUANTITY, quantity + 1))}
+          disabled={quantity >= MAX_ITEM_QUANTITY}
           aria-label="Increase quantity"
           className="flex items-center justify-center size-8 rounded-full bg-[#F1BF0A] text-[#090909] disabled:opacity-40 disabled:cursor-not-allowed focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#183fad]"
         >

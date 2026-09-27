@@ -3,13 +3,8 @@
 import { useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import type { SortOption } from "@/lib/useProductFilters";
+import { SORT_OPTIONS } from "@/lib/categories";
 import { DURATION } from "@/lib/motion";
-
-const OPTIONS: { value: SortOption; label: string }[] = [
-  { value: "featured", label: "Featured" },
-  { value: "price-asc", label: "Price: Low to High" },
-  { value: "price-desc", label: "Price: High to Low" },
-];
 
 export default function SortDropdown({
   value,
@@ -22,14 +17,22 @@ export default function SortDropdown({
   const ref = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
+    if (!open) return;
     function handleClick(e: MouseEvent) {
       if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false);
     }
+    function handleKey(e: KeyboardEvent) {
+      if (e.key === "Escape") setOpen(false);
+    }
     document.addEventListener("mousedown", handleClick);
-    return () => document.removeEventListener("mousedown", handleClick);
-  }, []);
+    window.addEventListener("keydown", handleKey);
+    return () => {
+      document.removeEventListener("mousedown", handleClick);
+      window.removeEventListener("keydown", handleKey);
+    };
+  }, [open]);
 
-  const activeLabel = OPTIONS.find((o) => o.value === value)?.label ?? "Sort";
+  const activeLabel = SORT_OPTIONS.find((o) => o.value === value)?.label ?? "Sort";
 
   return (
     <div ref={ref} className="relative">
@@ -59,6 +62,7 @@ export default function SortDropdown({
         {open && (
           <motion.div
             role="listbox"
+            aria-label="Sort by"
             initial={{ opacity: 0, y: -4, scale: 0.98 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: -4, scale: 0.98 }}
@@ -66,7 +70,7 @@ export default function SortDropdown({
             style={{ transformOrigin: "top left" }}
             className="absolute left-0 z-30 mt-2 w-56 rounded-2xl bg-white shadow-lg border border-[#183fad]/10 overflow-hidden"
           >
-            {OPTIONS.map((option) => (
+            {SORT_OPTIONS.map((option) => (
               <button
                 key={option.value}
                 type="button"

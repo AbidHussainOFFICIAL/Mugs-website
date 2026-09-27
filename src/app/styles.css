@@ -16,6 +16,50 @@ input[type="search"]::-webkit-search-decoration {
   appearance: none;
 }
 
+/* Custom scrollbar — matches the app's locked palette (primary blue thumb,
+   off-white track, yellow on hover) instead of the browser default, for
+   every scrollable region: the page itself and every horizontally- or
+   vertically-scrolling container (the Saved For Later shelf, the cart
+   drawer's item list, the mobile filter/sort sheets, the review form
+   modal, and so on). Two separate spec paths are needed since no single
+   property works everywhere: `scrollbar-width`/`scrollbar-color` is the
+   standard (Firefox, and increasingly others); `::-webkit-scrollbar` is
+   the older but still widely-supported path (Chrome, Edge, desktop
+   Safari, Android Chrome). `::-webkit-scrollbar`'s `width` sizes the
+   vertical thumb and `height` sizes the horizontal one, so one rule
+   covers both axes at once — there's no separate "horizontal scrollbar"
+   property to set. One real limitation: iOS Safari uses overlay
+   scrollbars that ignore this styling entirely — that's a platform
+   restriction, not something any CSS can override. */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #183fad #e9ecf6;
+}
+
+*::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+*::-webkit-scrollbar-track {
+  background: #e9ecf6;
+  border-radius: 999px;
+}
+
+*::-webkit-scrollbar-thumb {
+  background-color: #183fad;
+  border-radius: 999px;
+  border: 2px solid #e9ecf6;
+}
+
+*::-webkit-scrollbar-thumb:hover {
+  background-color: #F1BF0A;
+}
+
+*::-webkit-scrollbar-corner {
+  background: #e9ecf6;
+}
+
 /* Respect reduced-motion preferences */
 @media (prefers-reduced-motion: reduce) {
   *,

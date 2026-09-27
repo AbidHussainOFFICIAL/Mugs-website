@@ -1,17 +1,22 @@
 "use client";
 
 import { AnimatePresence, motion } from "framer-motion";
-import FilterControls, { type FilterControlsProps } from "@/components/FilterControls";
+import type { SortOption } from "@/lib/useProductFilters";
+import { SORT_OPTIONS } from "@/lib/categories";
 import { useOverlay } from "@/lib/useOverlay";
 import { DURATION, EASE } from "@/lib/motion";
 
-interface MobileFilterSheetProps extends FilterControlsProps {
+export default function MobileSortSheet({
+  open,
+  onClose,
+  value,
+  onChange,
+}: {
   open: boolean;
   onClose: () => void;
-  resultCount: number;
-}
-
-export default function MobileFilterSheet({ open, onClose, resultCount, ...filterProps }: MobileFilterSheetProps) {
+  value: SortOption;
+  onChange: (value: SortOption) => void;
+}) {
   const sheetRef = useOverlay<HTMLDivElement>(open, onClose);
 
   return (
@@ -31,7 +36,7 @@ export default function MobileFilterSheet({ open, onClose, resultCount, ...filte
             ref={sheetRef}
             role="dialog"
             aria-modal="true"
-            aria-label="Filters"
+            aria-label="Sort"
             initial={{ y: "100%" }}
             animate={{ y: 0 }}
             exit={{ y: "100%" }}
@@ -41,11 +46,11 @@ export default function MobileFilterSheet({ open, onClose, resultCount, ...filte
             <div className="sticky top-0 bg-white pt-3 pb-2 px-5 border-b border-[#183fad]/10">
               <div className="mx-auto h-1.5 w-12 rounded-full bg-[#e9ecf6] mb-3" />
               <div className="flex items-center justify-between">
-                <h2 className="font-anton text-lg">FILTERS</h2>
+                <h2 className="font-anton text-lg">SORT BY</h2>
                 <button
                   type="button"
                   onClick={onClose}
-                  aria-label="Close filters"
+                  aria-label="Close sort options"
                   className="flex items-center justify-center rounded-full p-1.5 hover:bg-[#e9ecf6] transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#183fad]"
                 >
                   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="size-5" aria-hidden="true">
@@ -55,18 +60,24 @@ export default function MobileFilterSheet({ open, onClose, resultCount, ...filte
               </div>
             </div>
 
-            <div className="p-5">
-              <FilterControls {...filterProps} />
-            </div>
-
-            <div className="sticky bottom-0 bg-white border-t border-[#183fad]/10 p-4">
-              <button
-                type="button"
-                onClick={onClose}
-                className="w-full flex items-center justify-center bg-[#F1BF0A] rounded-full py-3 text-[#090909] font-semibold focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#183fad]"
-              >
-                Show {resultCount} {resultCount === 1 ? "result" : "results"}
-              </button>
+            <div role="listbox" aria-label="Sort by" className="p-5 flex flex-col gap-1">
+              {SORT_OPTIONS.map((option) => (
+                <button
+                  key={option.value}
+                  type="button"
+                  role="option"
+                  aria-selected={value === option.value}
+                  onClick={() => {
+                    onChange(option.value);
+                    onClose();
+                  }}
+                  className={`text-left rounded-xl px-4 py-3 text-sm transition-colors ${
+                    value === option.value ? "bg-[#F1BF0A]/20 font-medium" : "hover:bg-[#e9ecf6]"
+                  }`}
+                >
+                  {option.label}
+                </button>
+              ))}
             </div>
           </motion.div>
         </>

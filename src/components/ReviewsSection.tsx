@@ -1,16 +1,24 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import type { FormEvent } from "react";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import RatingStars from "@/components/RatingStars";
 import LoadMore from "@/components/LoadMore";
+import { PillButtonElement } from "@/components/PillButton";
 import { useReviews } from "@/context/ReviewsContext";
+import { useOverlay } from "@/lib/useOverlay";
 import { DURATION, EASE, STAGGER, VIEWPORT } from "@/lib/motion";
 
 const PAGE_SIZE = 4;
 const STAR_PATH =
   "m11.48 3.499 2.398 4.86 5.365.78-3.883 3.786.917 5.35L11.48 15.75l-4.796 2.522.917-5.35L3.72 9.139l5.365-.78 2.396-4.86Z";
+
+const PLUS_ICON = (
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="size-4 sm:size-6" aria-hidden="true">
+    <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+  </svg>
+);
 
 export default function ReviewsSection({ productSlug }: { productSlug: string }) {
   const { getReviewsForProduct, getRatingSummary, addReview } = useReviews();
@@ -26,21 +34,7 @@ export default function ReviewsSection({ productSlug }: { productSlug: string })
   const summary = getRatingSummary(productSlug);
   const visibleReviews = allReviews.slice(0, visibleCount);
 
-  useEffect(() => {
-    document.body.style.overflow = formOpen ? "hidden" : "";
-    return () => {
-      document.body.style.overflow = "";
-    };
-  }, [formOpen]);
-
-  useEffect(() => {
-    if (!formOpen) return;
-    function handleKey(e: KeyboardEvent) {
-      if (e.key === "Escape") setFormOpen(false);
-    }
-    window.addEventListener("keydown", handleKey);
-    return () => window.removeEventListener("keydown", handleKey);
-  }, [formOpen]);
+  const formRef = useOverlay<HTMLFormElement>(formOpen, () => setFormOpen(false));
 
   function handleSubmit(e: FormEvent) {
     e.preventDefault();
@@ -58,18 +52,11 @@ export default function ReviewsSection({ productSlug }: { productSlug: string })
     <section id="reviews" className="scroll-mt-6">
       <div className="flex items-center justify-between gap-4 mb-6">
         <h2 className="font-anton text-2xl sm:text-3xl">REVIEWS</h2>
-        <button
-          type="button"
-          onClick={() => setFormOpen(true)}
-          className="inline-flex items-center gap-1.5 sm:gap-2 bg-[#F1BF0A] rounded-full py-1 pl-1 pr-3 sm:py-1.5 sm:pl-1.5 sm:pr-4 text-[#090909] text-xs sm:text-sm whitespace-nowrap shrink-0 relative after:content-[''] after:absolute after:top-1/2 after:-translate-y-1/2 after:left-1 sm:after:left-1.5 after:rounded-full after:bg-white after:h-7 after:w-7 sm:after:h-9 sm:after:w-9 hover:after:w-full after:transition-[width] after:duration-[1600ms] after:ease-[linear(0,0.029_0.8%,0.13_1.8%,0.908_7.2%,1.051_9.1%,1.112_11.2%,1.116_12.2%,1.106_13.4%,1.007_19.5%,0.987_23.1%,1.001_35%,1)] overflow-hidden hover:after:h-full hover:after:left-0 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#183fad]"
-        >
-          <div className="rounded-full p-1 sm:p-1.5 relative z-10">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="size-4 sm:size-6" aria-hidden="true">
-              <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
-            </svg>
-          </div>
-          <span className="relative z-10">Write a Review</span>
-        </button>
+        <div className="shrink-0">
+          <PillButtonElement onClick={() => setFormOpen(true)} icon={PLUS_ICON} layout="hug" size="sm" focusRing="dark">
+            Write a Review
+          </PillButtonElement>
+        </div>
       </div>
 
       {summary.count > 0 && (
@@ -153,6 +140,7 @@ export default function ReviewsSection({ productSlug }: { productSlug: string })
             aria-label="Write a review"
           >
             <motion.form
+              ref={formRef}
               onSubmit={handleSubmit}
               onClick={(e) => e.stopPropagation()}
               initial={{ opacity: 0, scale: 0.95, y: 12 }}

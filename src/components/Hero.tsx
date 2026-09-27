@@ -1,9 +1,15 @@
 "use client";
 
 import Image from "next/image";
-import Link from "next/link";
 import { motion, useReducedMotion } from "framer-motion";
+import { PillLink } from "@/components/PillButton";
 import { DURATION, EASE } from "@/lib/motion";
+
+const SHOP_ICON = (
+  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="size-6" aria-hidden="true">
+    <path strokeLinecap="round" strokeLinejoin="round" d="M17.25 8.25 21 12m0 0-3.75 3.75M21 12H3" />
+  </svg>
+);
 
 function scrollToCollection() {
   document.getElementById("collection")?.scrollIntoView({ behavior: "smooth" });
@@ -85,17 +91,15 @@ export default function Hero() {
 
         <div className="flex items-stretch justify-between relative z-5 after:content-[''] after:absolute after:-top-1/2 after:left-0 after:h-20 after:w-24 after:bg-[#183fad] after:-z-5 before:content-[''] before:absolute before:-top-1/2 before:right-0 before:h-20 before:w-24 before:bg-[#183fad] before:-z-5 after:hidden sm:after:block before:hidden sm:before:block">
           <div className="w-full min-[480px]:w-auto flex-1 min-[480px]:flex-none sm:bg-[#183fad] pb-3 pl-3 pr-3 min-[480px]:pr-0 sm:p-6 rounded-tr-4xl rounded-bl-4xl relative after:content-[''] after:absolute after:bottom-0 after:-right-1/2 after:h-1/2 after:w-full after:bg-[#183fad] after:-z-5 after:hidden sm:after:block">
-            <Link
+            <PillLink
               href="/shop"
-              className="flex items-center justify-center min-[480px]:justify-start gap-2 bg-[#F1BF0A] rounded-full py-1.5 pl-1.5 pr-4 text-[#090909] whitespace-nowrap relative after:content-[''] after:absolute after:top-1/2 after:-translate-y-1/2 after:left-1.5 after:rounded-full after:bg-white after:h-9 after:w-9 hover:after:w-full after:transition-[width] after:duration-[1600ms] after:ease-[linear(0,0.029_0.8%,0.13_1.8%,0.908_7.2%,1.051_9.1%,1.112_11.2%,1.116_12.2%,1.106_13.4%,1.007_19.5%,0.987_23.1%,1.001_35%,1)] overflow-hidden hover:after:h-full hover:after:left-0 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
+              icon={SHOP_ICON}
+              layout="hug"
+              focusRing="light"
+              className="justify-center min-[480px]:justify-start"
             >
-              <div className="rounded-full p-1.5 relative z-10">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="size-6" aria-hidden="true">
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M17.25 8.25 21 12m0 0-3.75 3.75M21 12H3" />
-                </svg>
-              </div>
-              <span className="relative z-10">Shop Now</span>
-            </Link>
+              Shop Now
+            </PillLink>
           </div>
 
           <div className="hidden sm:block bg-[#4565bc] flex-1 rounded-b-4xl relative z-10"></div>
@@ -138,7 +142,8 @@ export default function Hero() {
           role="presentation"
           width={780}
           height={780}
-          priority
+          loading="eager"
+          fetchPriority="high"
           className="object-contain h-[62vh] sm:h-[66vh] md:h-[70vh] lg:h-[71vh] max-h-[720px] lg:max-h-[780px] select-none pointer-events-none w-auto"
           draggable={false}
           style={{ filter: "drop-shadow(5px 5px 10px rgba(0, 0, 0, 0.5))" }}
