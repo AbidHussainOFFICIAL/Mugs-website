@@ -1,6 +1,10 @@
+"use client";
+
+import { motion, useReducedMotion } from "framer-motion";
 import OrderTotals from "@/components/OrderTotals";
 import TrustChip from "@/components/TrustChip";
 import { PillLink } from "@/components/PillButton";
+import { fadeRise, VIEWPORT } from "@/lib/motion";
 
 const CHECKOUT_ICON = (
   <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="size-5" aria-hidden="true">
@@ -9,13 +13,28 @@ const CHECKOUT_ICON = (
 );
 
 export default function OrderSummaryPanel() {
+  const shouldReduceMotion = useReducedMotion();
+
+  // The same fadeRise + whileInView treatment TrustStrip, CraftStory and
+  // CollectionHeader already use — no new variant, no new duration, just
+  // this panel finally getting the entrance every other comparably-weighted
+  // section on the site already has. On the desktop sticky sidebar this
+  // triggers once, on scroll, like those other sections. Inside the mobile
+  // order sheet (StickyMobileOrderBar), the sheet itself remounts this
+  // component fresh each time it opens, so the entrance replays each time —
+  // a brief compound reveal (sheet slides up, then this fades/rises in
+  // immediately after) rather than a redundant repeat of the same motion.
+  const entranceProps = shouldReduceMotion
+    ? {}
+    : { initial: "hidden", whileInView: "visible", viewport: VIEWPORT, variants: fadeRise };
+
   return (
-    <div className="bg-[#4565bc] rounded-4xl p-6 text-white flex flex-col gap-4">
+    <motion.div {...entranceProps} className="bg-[#4565bc] rounded-4xl p-6 text-white flex flex-col gap-4">
       <h2 className="font-anton text-xl">ORDER SUMMARY</h2>
 
       <OrderTotals />
 
-      <PillLink href="/checkout" icon={CHECKOUT_ICON} layout="full" focusRing="light">
+      <PillLink href="/checkout" icon={CHECKOUT_ICON} layout="full" focusRing="light" tapFeedback>
         Checkout
       </PillLink>
 
@@ -53,6 +72,6 @@ export default function OrderSummaryPanel() {
           label="30-day returns"
         />
       </div>
-    </div>
+    </motion.div>
   );
 }

@@ -39,11 +39,11 @@ export default function EmptyState({
       <h2 className="font-anton text-2xl sm:text-3xl">{title}</h2>
       <p className="mt-2 text-[#5b5f6b] max-w-sm">{description}</p>
       {onCtaClick ? (
-        <PillButtonElement onClick={onCtaClick} icon={ARROW_ICON} layout="hug" focusRing="dark" className="mt-6">
+        <PillButtonElement onClick={onCtaClick} icon={ARROW_ICON} layout="hug" focusRing="dark" className="mt-6" tapFeedback>
           {ctaLabel}
         </PillButtonElement>
       ) : ctaHref ? (
-        <PillLink href={ctaHref} icon={ARROW_ICON} layout="hug" focusRing="dark" className="mt-6">
+        <PillLink href={ctaHref} icon={ARROW_ICON} layout="hug" focusRing="dark" className="mt-6" tapFeedback>
           {ctaLabel}
         </PillLink>
       ) : null}

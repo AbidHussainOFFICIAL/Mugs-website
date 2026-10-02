@@ -16,7 +16,7 @@ export default function WishlistPageContent() {
         count={`${count} ${count === 1 ? "Item" : "Items"}`}
       />
 
-      <main className="max-w-[1400px] w-full mx-auto mt-8 sm:mt-10 mb-20 flex-1">
+      <main className="max-w-[1400px] w-full mx-auto mt-8 sm:mt-10 flex-1">
         <ProductGrid
           products={items}
           showWishlistOnMobile

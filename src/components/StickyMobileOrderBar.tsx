@@ -24,8 +24,6 @@ export default function StickyMobileOrderBar({ anchorId }: { anchorId?: string }
 
   useEffect(() => {
     if (!anchorId) return;
-    const target = document.getElementById(anchorId);
-    if (!target) return;
 
     // A plain scroll-position check rather than IntersectionObserver:
     // "has the person scrolled past this point" is a continuous position
@@ -39,8 +37,17 @@ export default function StickyMobileOrderBar({ anchorId }: { anchorId?: string }
     // gets stuck in whatever state it was last in. A scroll listener reads
     // the anchor's actual current position on every scroll event
     // regardless of how the scroll happened, so it can't get stuck.
+    //
+    // The anchor is looked up on every check, not once when this effect
+    // runs: the Cart page crossfades between its loading/empty/full states,
+    // so the "You Might Also Need" element can mount slightly AFTER this
+    // bar does. Resolving it once up front would find nothing, attach no
+    // listener behavior, and leave the bar stuck visible forever. If the
+    // anchor genuinely isn't there (no cross-sell products), the bar just
+    // stays visible.
     function checkPosition() {
-      setPastAnchor(target!.getBoundingClientRect().top <= 0);
+      const target = document.getElementById(anchorId!);
+      setPastAnchor(target ? target.getBoundingClientRect().top <= 0 : false);
     }
 
     checkPosition();
@@ -58,6 +65,7 @@ export default function StickyMobileOrderBar({ anchorId }: { anchorId?: string }
   const sheetProps = shouldReduceMotion
     ? { initial: { opacity: 0 }, animate: { opacity: 1 }, exit: { opacity: 0 } }
     : { initial: { y: "100%" }, animate: { y: 0 }, exit: { y: "100%" } };
+  const pulse = shouldReduceMotion ? {} : { animate: { scale: [1, 1.06, 1] } };
 
   const { total } = calculateTotals(subtotal, discountPercent);
   // The sheet, once opened, stays open regardless of scroll position — only
@@ -76,7 +84,19 @@ export default function StickyMobileOrderBar({ anchorId }: { anchorId?: string }
             className="lg:hidden fixed bottom-0 left-0 right-0 z-40 bg-white rounded-t-4xl shadow-[0_-4px_16px_rgba(0,0,0,0.08)] px-4 py-3 flex items-center justify-between gap-3"
           >
             <span className="text-sm font-medium">
-              Total: <span className="font-semibold">${total.toFixed(2)}</span>
+              Total:{" "}
+              {/* Same pulse the Total gets in OrderTotals and the drawer's
+                  subtotal gets — this is the same figure, so it should react
+                  the same way when it changes. */}
+              <motion.span
+                key={total}
+                initial={{ scale: 1 }}
+                {...pulse}
+                transition={{ duration: DURATION.fast }}
+                className="inline-block font-semibold"
+              >
+                ${total.toFixed(2)}
+              </motion.span>
             </span>
             <span className="flex items-center gap-2 bg-[#F1BF0A] rounded-full px-4 py-3 text-sm font-semibold text-[#090909]">
               Checkout

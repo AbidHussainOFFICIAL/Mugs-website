@@ -1,14 +1,23 @@
+"use client";
+
 import type { ReactNode } from "react";
 import Link from "next/link";
 import { motion } from "framer-motion";
+
+// Created once at module level — motion.create() inside a component body would
+// build a brand-new component type on every render and break the animation.
+// next/link forwards its ref to the underlying <a> and passes style through,
+// which is what motion.create() needs from a wrapped component.
+const MotionLink = motion.create(Link);
 
 // The exact recipe for every yellow pill CTA in the app: a white circle
 // that expands to fill the pill on hover, on a custom ease curve. Two
 // shapes, matching the two ways this button is actually used:
 //
 // - "hug" — a content-sized button (Shop Now, Explore Collection, Write a
-//   Review, Load More). The icon sits in normal flex flow; centering it
-//   with justify-center works fine because the button never stretches.
+//   Review, Load More, Continue Shopping). The icon sits in normal flex
+//   flow; centering it with justify-center works fine because the button
+//   never stretches.
 //
 // - "full" — a full-width button (Checkout, Place Order). Per the locked
 //   lesson in this project: in a WIDE button, the icon must be absolutely
@@ -47,12 +56,6 @@ const SIZES = {
     pad: "py-1 pl-1 pr-3 sm:py-1.5 sm:pl-1.5 sm:pr-4 gap-1.5 sm:gap-2",
     text: "text-xs sm:text-sm",
   },
-  // Checkout's "Continue Shopping" — noticeably narrower horizontally than
-  // "md" (not the ~2px difference "compact" gives; that size exists only
-  // to preserve CollectionHeader's own pre-existing measurement, and reusing
-  // it here read as no different at all). Same circle and vertical padding
-  // as "md" — only the horizontal breathing room shrinks.
-  narrow: { circle: "after:left-1.5 after:h-9 after:w-9", pad: "py-1.5 pl-1.5 pr-2.5 gap-1.5", text: "" },
 } as const;
 
 type PillSize = keyof typeof SIZES;
@@ -65,6 +68,23 @@ type PillButtonBaseProps = {
   /** The pill sits on a dark (blue) background by default, so the focus ring is white; pass "dark" when the pill sits on a light background instead. */
   focusRing?: "light" | "dark";
   className?: string;
+  /**
+   * "hug" is `display: flex` by default — a block-level box. That's what
+   * every existing hug button actually needs: each one sits as an item of
+   * a flex row or column (Navbar, CollectionHeader, EmptyState, LoadMore,
+   * ReviewsSection), where the ANCESTOR's own flex layout — not this
+   * button's own display type — is what makes it hug its content; the
+   * button's own block-level box goes along with whatever size that flex
+   * item is given. Checkout's "Continue Shopping" is the one hug button
+   * that instead sits in a plain, wide, non-flex block wrapper — nothing
+   * there constrains a block-level child's width, so it stretched to fill
+   * that whole wrapper. Pass `inline` there so the button becomes an
+   * inline-level box (`inline-flex`) instead, which never stretches to
+   * fill its container regardless of what kind of container it's in.
+   * No effect on "full" layout, which is always meant to span its
+   * container's width.
+   */
+  inline?: boolean;
 };
 
 function iconWrapperSize(size: PillSize) {
@@ -103,9 +123,21 @@ function PillContent({ icon, children, layout, size = "md" }: Pick<PillButtonBas
 // same element — layout is chosen first, so there's nothing to conflict.
 const FULL_LAYOUT_PADDING = "py-3 pl-1.5 pr-4";
 
-function pillClassName({ layout, size = "md", focusRing, className }: Pick<PillButtonBaseProps, "layout" | "size" | "focusRing" | "className">) {
+function pillClassName({
+  layout,
+  size = "md",
+  focusRing,
+  className,
+  inline,
+}: Pick<PillButtonBaseProps, "layout" | "size" | "focusRing" | "className" | "inline">) {
   const { circle, pad, text } = SIZES[size];
-  const justify = layout === "full" ? "flex items-center justify-center" : "flex items-center";
+  // Both branches below include the complete literal class names
+  // ("flex", "inline-flex") Tailwind's content scanner needs to see, even
+  // though only one is ever used on a given element — building this from
+  // pieces (e.g. `${inline ? "inline-" : ""}flex`) would hide the full
+  // token from the scanner and silently produce no CSS for it.
+  const display = layout === "full" ? "flex" : inline ? "inline-flex" : "flex";
+  const justify = layout === "full" ? `${display} items-center justify-center` : `${display} items-center`;
   const padding = layout === "full" ? FULL_LAYOUT_PADDING : pad;
   const ring = focusRing === "dark" ? "focus-visible:outline-[#183fad]" : "focus-visible:outline-white";
   return [BASE, justify, padding, circle, text, ring, className].filter(Boolean).join(" ");
@@ -119,15 +151,24 @@ export function PillLink({
   size = "md",
   focusRing = "dark",
   className = "",
+  inline = false,
   onClick,
   "aria-label": ariaLabel,
-}: PillButtonBaseProps & { href: string; onClick?: () => void; "aria-label"?: string }) {
+  tapFeedback = false,
+}: PillButtonBaseProps & { href: string; onClick?: () => void; "aria-label"?: string; tapFeedback?: boolean }) {
+  const tapProps = tapFeedback ? { whileTap: { scale: 0.97 } } : {};
   return (
-    <Link href={href} onClick={onClick} aria-label={ariaLabel} className={pillClassName({ layout, size, focusRing, className })}>
+    <MotionLink
+      href={href}
+      onClick={onClick}
+      aria-label={ariaLabel}
+      {...tapProps}
+      className={pillClassName({ layout, size, focusRing, className, inline })}
+    >
       <PillContent icon={icon} layout={layout} size={size}>
         {children}
       </PillContent>
-    </Link>
+    </MotionLink>
   );
 }
 
@@ -138,13 +179,14 @@ export function PillButtonElement({
   size = "md",
   focusRing = "dark",
   className = "",
+  inline = false,
   onClick,
   disabled,
   type = "button",
   tapFeedback = false,
 }: PillButtonBaseProps & { onClick?: () => void; disabled?: boolean; type?: "button" | "submit"; tapFeedback?: boolean }) {
   const tapProps = tapFeedback ? { whileTap: { scale: 0.97 } } : {};
-  const fullClassName = [pillClassName({ layout, size, focusRing, className }), disabled ? "disabled:opacity-50" : ""]
+  const fullClassName = [pillClassName({ layout, size, focusRing, className, inline }), disabled ? "disabled:opacity-50" : ""]
     .filter(Boolean)
     .join(" ");
   return (

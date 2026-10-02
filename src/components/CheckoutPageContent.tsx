@@ -4,8 +4,7 @@ import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
-import Navbar from "@/components/Navbar";
-import Footer from "@/components/Footer";
+import PageShell from "@/components/PageShell";
 import PageHeaderBanner from "@/components/PageHeaderBanner";
 import OrderTotals from "@/components/OrderTotals";
 import { PillLink, PillButtonElement } from "@/components/PillButton";
@@ -26,6 +25,31 @@ const CHECKOUT_ICON = (
 );
 
 type CheckoutState = "review" | "empty" | "placed";
+
+// Shown only for the brief window before the saved cart has loaded from
+// localStorage — the same gap Cart's own CartSkeleton covers, shaped for
+// this page's actual layout (a plain order-review list, no quantity
+// stepper, plus the same summary panel shape) instead of reusing Cart's
+// skeleton verbatim.
+function CheckoutSkeleton() {
+  return (
+    <div className="grid gap-8 lg:grid-cols-[1fr_400px] animate-pulse" aria-hidden="true">
+      <div>
+        <div className="h-6 w-48 bg-[#e9ecf6] rounded mb-4" />
+        {[0, 1, 2].map((i) => (
+          <div key={i} className="flex items-center gap-4 py-4 border-b border-[#e9ecf6]">
+            <div className="size-16 rounded-2xl bg-[#e9ecf6] shrink-0" />
+            <div className="flex-1 flex flex-col gap-2">
+              <div className="h-4 w-2/3 max-w-40 bg-[#e9ecf6] rounded" />
+              <div className="h-3 w-1/4 max-w-16 bg-[#e9ecf6] rounded" />
+            </div>
+          </div>
+        ))}
+      </div>
+      <div className="h-72 bg-[#e9ecf6] rounded-4xl" />
+    </div>
+  );
+}
 
 export default function CheckoutPageContent() {
   const { items, itemCount, subtotal, discountPercent, isReady, clearCart } = useCart();
@@ -48,17 +72,26 @@ export default function CheckoutPageContent() {
     : { initial: { opacity: 0, y: 12 }, animate: { opacity: 1, y: 0 }, exit: { opacity: 0, y: -12 } };
 
   return (
-    <div className="min-h-dvh w-full overflow-x-hidden text-base font-normal text-[#090909] px-4 sm:px-5 lg:px-6 xl:px-8 pt-3 sm:pt-4 flex flex-col">
-      <Navbar />
-
+    <PageShell>
       <PageHeaderBanner
         title="CHECKOUT"
         breadcrumb={[{ label: "Home", href: "/" }, { label: "Cart", href: "/cart" }, { label: "Checkout" }]}
       />
 
-      <main className="max-w-[1400px] w-full mx-auto mt-8 sm:mt-10 mb-20 flex-1">
-        <AnimatePresence mode="wait">
-          {state === "loading" ? null : state === "placed" ? (
+      {/* No bottom margin on <main> — PageShell's Footer supplies the
+          space above itself on its own; see the same note in
+          CartPageContent for why stacking a second margin here reads as
+          an oversized gap. */}
+      <main className="max-w-[1400px] w-full mx-auto mt-8 sm:mt-10 flex-1">
+        {/* initial={false}: the skeleton is part of the server-rendered
+            HTML, so it must not itself start at opacity 0 on first paint —
+            see the identical note in CartPageContent. */}
+        <AnimatePresence mode="wait" initial={false}>
+          {state === "loading" ? (
+            <motion.div key="loading" {...swapProps} transition={{ duration: DURATION.base, ease: EASE }}>
+              <CheckoutSkeleton />
+            </motion.div>
+          ) : state === "placed" ? (
             <motion.div key="placed" {...swapProps} transition={{ duration: DURATION.base, ease: EASE }} className="max-w-xl mx-auto text-center py-16">
               <motion.div
                 initial={shouldReduceMotion ? false : { scale: 0.6, opacity: 0 }}
@@ -75,7 +108,7 @@ export default function CheckoutPageContent() {
                 Thanks for your order — {orderCount} {orderCount === 1 ? "item" : "items"}, ${orderTotal.toFixed(2)} total.
               </p>
               <p className="text-xs text-[#5b5f6b] mt-1 mb-6">This is a demo store — no real payment was processed.</p>
-              <PillLink href="/shop" icon={SHOP_ICON} layout="hug" size="narrow" focusRing="dark">
+              <PillLink href="/shop" icon={SHOP_ICON} layout="hug" inline focusRing="dark" tapFeedback>
                 Continue Shopping
               </PillLink>
             </motion.div>
@@ -131,8 +164,6 @@ export default function CheckoutPageContent() {
           )}
         </AnimatePresence>
       </main>
-
-      <Footer />
-    </div>
+    </PageShell>
   );
 }

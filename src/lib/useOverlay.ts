@@ -88,7 +88,8 @@ export function useOverlay<T extends HTMLElement>(isOpen: boolean, onClose: () =
       previouslyFocused?.focus();
     };
     // Deliberately excludes onClose — see the comment above onCloseRef.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // (Reading it through a ref rather than closing over it directly is
+    // also why this doesn't need an exhaustive-deps suppression here.)
   }, [isOpen]);
 
   return containerRef;

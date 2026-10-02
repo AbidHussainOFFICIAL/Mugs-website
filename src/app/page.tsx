@@ -1,20 +1,18 @@
 import AnnouncementBar from "@/components/AnnouncementBar";
-import Navbar from "@/components/Navbar";
+import PageShell from "@/components/PageShell";
 import Hero from "@/components/Hero";
 import TrustStrip from "@/components/TrustStrip";
 import CollectionHeader from "@/components/CollectionHeader";
 import ProductGrid from "@/components/ProductGrid";
 import CraftStory from "@/components/CraftStory";
 import SpecsComparison from "@/components/SpecsComparison";
-import Footer from "@/components/Footer";
 
 export default function Home() {
   return (
     <>
       <AnnouncementBar />
 
-      <div className="min-h-dvh w-full overflow-x-hidden text-base font-normal text-[#090909] px-4 sm:px-5 lg:px-6 xl:px-8 pt-3 sm:pt-4 flex flex-col">
-        <Navbar />
+      <PageShell>
         <Hero />
         <TrustStrip />
 
@@ -25,9 +23,7 @@ export default function Home() {
 
         <CraftStory />
         <SpecsComparison />
-
-        <Footer />
-      </div>
+      </PageShell>
     </>
   );
 }

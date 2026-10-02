@@ -19,7 +19,9 @@ export default function OrderTotals() {
       <div className="flex flex-col gap-2 text-sm">
         <div className="flex items-center justify-between">
           <span className="text-white/80">Subtotal</span>
-          <span>${subtotal.toFixed(2)}</span>
+          <motion.span key={subtotal} initial={{ scale: 1 }} {...pulse} transition={{ duration: DURATION.fast }}>
+            ${subtotal.toFixed(2)}
+          </motion.span>
         </div>
         <AnimatePresence>
           {discount > 0 && (
@@ -37,11 +39,22 @@ export default function OrderTotals() {
         </AnimatePresence>
         <div className="flex items-center justify-between">
           <span className="text-white/80">Shipping</span>
-          <span>{shipping === 0 ? "Free" : `$${shipping.toFixed(2)}`}</span>
+          {/* Keyed on the shipping value itself, not just re-rendering in
+              place — this is the one row that flips between two genuinely
+              different displays ("Free" vs a dollar amount), and $0 vs a
+              nonzero number both give it a fresh key, so crossing the free-
+              shipping threshold gets the same pulse a plain number change
+              gets everywhere else, arguably the single most rewarding
+              moment in the whole cart to leave unanimated. */}
+          <motion.span key={shipping} initial={{ scale: 1 }} {...pulse} transition={{ duration: DURATION.fast }}>
+            {shipping === 0 ? "Free" : `$${shipping.toFixed(2)}`}
+          </motion.span>
         </div>
         <div className="flex items-center justify-between">
           <span className="text-white/80">Estimated tax</span>
-          <span>${tax.toFixed(2)}</span>
+          <motion.span key={tax} initial={{ scale: 1 }} {...pulse} transition={{ duration: DURATION.fast }}>
+            ${tax.toFixed(2)}
+          </motion.span>
         </div>
       </div>
 

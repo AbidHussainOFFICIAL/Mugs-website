@@ -113,7 +113,11 @@ export default function CartLineItem({
           <PriceBadge price={item.price} originalPrice={item.originalPrice} size="large" className="w-fit" />
         )}
 
-        <div className="flex items-center justify-between gap-3 mt-0.5">
+        {/* items-start, not items-center: QuantityStepper can grow a line
+            taller with its "max reached" caption, and start-alignment keeps
+            Remove pinned to the stepper's own controls rather than
+            recentering against the whole (now taller) block. */}
+        <div className="flex items-start justify-between gap-3 mt-0.5">
           {!outOfStock && <QuantityStepper quantity={item.quantity} onChange={onQuantityChange} size={isCompact ? "sm" : "lg"} />}
 
           {!isCompact && (

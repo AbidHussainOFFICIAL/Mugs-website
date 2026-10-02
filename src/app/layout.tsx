@@ -5,6 +5,7 @@ import { WishlistProvider } from "@/context/WishlistContext";
 import { ReviewsProvider } from "@/context/ReviewsContext";
 import { CartDrawerProvider } from "@/context/CartDrawerContext";
 import CartDrawer from "@/components/CartDrawer";
+import UndoToast from "@/components/UndoToast";
 import { SITE_URL } from "@/lib/site";
 import "./styles.css";
 
@@ -69,6 +70,7 @@ export default function RootLayout({
               <CartDrawerProvider>
                 {children}
                 <CartDrawer />
+                <UndoToast />
               </CartDrawerProvider>
             </ReviewsProvider>
           </WishlistProvider>

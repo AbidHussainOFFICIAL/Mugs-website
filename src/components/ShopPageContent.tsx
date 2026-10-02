@@ -75,7 +75,7 @@ export default function ShopPageContent({ initialCategory }: { initialCategory?:
         count={`${filtered.length} ${filtered.length === 1 ? "Mug" : "Mugs"}`}
       />
 
-      <main className="max-w-[1400px] w-full mx-auto mt-6 sm:mt-8 mb-20 flex-1">
+      <main className="max-w-[1400px] w-full mx-auto mt-6 sm:mt-8 flex-1">
         <div className="lg:hidden flex gap-2">
           <motion.button
             type="button"

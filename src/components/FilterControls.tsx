@@ -29,10 +29,21 @@ export default function FilterControls({
   clearAll,
 }: FilterControlsProps) {
   const [localMaxPrice, setLocalMaxPrice] = useState(maxPrice);
-
-  useEffect(() => {
+  // Tracks the maxPrice this component last saw, purely to detect an
+  // EXTERNAL change to it (e.g. "Clear all" resetting the filter) — not to
+  // be read for any other purpose. React's documented pattern for
+  // "adjust state when a prop changes": setting state directly in the
+  // render body, guarded by a comparison, rather than in an effect. Calling
+  // setState during an effect body runs one render behind (the slider
+  // would flash its old position for a frame before snapping); this runs
+  // synchronously as part of the same render React is already doing, so
+  // there's no such flash, and it satisfies the react-hooks/set-state-in-effect
+  // rule, which specifically targets the effect-based version of this.
+  const [prevMaxPrice, setPrevMaxPrice] = useState(maxPrice);
+  if (maxPrice !== prevMaxPrice) {
+    setPrevMaxPrice(maxPrice);
     setLocalMaxPrice(maxPrice);
-  }, [maxPrice]);
+  }
 
   useEffect(() => {
     if (localMaxPrice === maxPrice) return;

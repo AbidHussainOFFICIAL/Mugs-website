@@ -2,8 +2,7 @@
 
 import { useRef, useState } from "react";
 import { motion, useReducedMotion } from "framer-motion";
-import Navbar from "@/components/Navbar";
-import Footer from "@/components/Footer";
+import PageShell from "@/components/PageShell";
 import Breadcrumb from "@/components/Breadcrumb";
 import ProductGallery from "@/components/ProductGallery";
 import PriceBadge from "@/components/PriceBadge";
@@ -113,9 +112,7 @@ export default function ProductDetailContent({ product }: { product: Product }) 
       };
 
   return (
-    <div className="min-h-dvh w-full overflow-x-hidden text-base font-normal text-[#090909] px-4 sm:px-5 lg:px-6 xl:px-8 pt-3 sm:pt-4 flex flex-col">
-      <Navbar />
-
+    <PageShell>
       {/* Compact blue connector bar — Navbar's logo has a decorative notch
           designed to blend into a blue section immediately below it (as it
           does on Shop/Category via PageHeaderBanner). A plain white
@@ -133,7 +130,10 @@ export default function ProductDetailContent({ product }: { product: Product }) 
         />
       </div>
 
-      <main className="max-w-[1400px] w-full mx-auto mt-6 sm:mt-8 mb-20 flex-1">
+      {/* No bottom margin here — PageShell's Footer supplies the space
+          above itself on its own; see CartPageContent for the full note
+          on why a second margin here stacked into an oversized gap. */}
+      <main className="max-w-[1400px] w-full mx-auto mt-6 sm:mt-8 flex-1">
         <div className="grid gap-8 lg:grid-cols-[55%_1fr]">
           <ProductGallery images={product.images} productName={product.name} />
 
@@ -286,8 +286,6 @@ export default function ProductDetailContent({ product }: { product: Product }) 
         selectedSize={selectedSize || undefined}
         onAdded={handleItemAdded}
       />
-
-      <Footer />
-    </div>
+    </PageShell>
   );
 }

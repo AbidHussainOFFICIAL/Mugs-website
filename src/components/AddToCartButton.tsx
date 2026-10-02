@@ -77,7 +77,7 @@ export default function AddToCartButton({
           onClick={() => onQuantityChange(Math.max(1, quantity - 1))}
           disabled={quantity <= 1}
           aria-label="Decrease quantity"
-          className="flex items-center justify-center size-8 rounded-full bg-[#F1BF0A] text-[#090909] disabled:opacity-40 disabled:cursor-not-allowed focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#183fad]"
+          className="flex items-center justify-center size-8 rounded-full bg-[#F1BF0A] text-[#090909] transition-opacity disabled:opacity-40 disabled:cursor-not-allowed focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#183fad]"
         >
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="size-4" aria-hidden="true">
             <path strokeLinecap="round" strokeLinejoin="round" d="M5 12h14" />
@@ -101,7 +101,7 @@ export default function AddToCartButton({
           onClick={() => onQuantityChange(Math.min(MAX_ITEM_QUANTITY, quantity + 1))}
           disabled={quantity >= MAX_ITEM_QUANTITY}
           aria-label="Increase quantity"
-          className="flex items-center justify-center size-8 rounded-full bg-[#F1BF0A] text-[#090909] disabled:opacity-40 disabled:cursor-not-allowed focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#183fad]"
+          className="flex items-center justify-center size-8 rounded-full bg-[#F1BF0A] text-[#090909] transition-opacity disabled:opacity-40 disabled:cursor-not-allowed focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#183fad]"
         >
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="size-4" aria-hidden="true">
             <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />

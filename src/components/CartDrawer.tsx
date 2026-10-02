@@ -63,8 +63,9 @@ function DrawerContent({
     <>
       <div className="flex items-center justify-between p-4 border-b border-[#e9ecf6] shrink-0">
         <h2 className="font-anton text-xl sm:text-2xl">Your Cart ({itemCount})</h2>
-        <button
+        <motion.button
           type="button"
+          whileTap={{ scale: 0.9 }}
           onClick={onClose}
           aria-label="Close cart"
           className="flex items-center justify-center bg-[#F1BF0A] rounded-full p-1.5 text-[#090909] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#183fad]"
@@ -72,7 +73,7 @@ function DrawerContent({
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="size-5" aria-hidden="true">
             <path strokeLinecap="round" strokeLinejoin="round" d="M6 18 18 6M6 6l12 12" />
           </svg>
-        </button>
+        </motion.button>
       </div>
 
       <div className="flex-1 overflow-y-auto px-4">
@@ -140,7 +141,7 @@ function DrawerContent({
           </div>
           <FreeShippingMessage remaining={totals.freeShippingRemaining} shouldReduceMotion={shouldReduceMotion} />
 
-          <PillLink href="/checkout" onClick={onClose} icon={CHECKOUT_ICON} layout="full" focusRing="dark">
+          <PillLink href="/checkout" onClick={onClose} icon={CHECKOUT_ICON} layout="full" focusRing="dark" tapFeedback>
             Checkout
           </PillLink>
           <Link

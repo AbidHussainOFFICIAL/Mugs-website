@@ -47,8 +47,9 @@ export default function MobileSortSheet({
               <div className="mx-auto h-1.5 w-12 rounded-full bg-[#e9ecf6] mb-3" />
               <div className="flex items-center justify-between">
                 <h2 className="font-anton text-lg">SORT BY</h2>
-                <button
+                <motion.button
                   type="button"
+                  whileTap={{ scale: 0.9 }}
                   onClick={onClose}
                   aria-label="Close sort options"
                   className="flex items-center justify-center rounded-full p-1.5 hover:bg-[#e9ecf6] transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#183fad]"
@@ -56,7 +57,7 @@ export default function MobileSortSheet({
                   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="size-5" aria-hidden="true">
                     <path d="M6.28 5.22a.75.75 0 0 0-1.06 1.06L10.94 12l-5.72 5.72a.75.75 0 1 0 1.06 1.06L12 13.06l5.72 5.72a.75.75 0 1 0 1.06-1.06L13.06 12l5.72-5.72a.75.75 0 0 0-1.06-1.06L12 10.94 6.28 5.22Z" />
                   </svg>
-                </button>
+                </motion.button>
               </div>
             </div>
 

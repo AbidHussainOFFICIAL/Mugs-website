@@ -7,6 +7,7 @@ import PageHeaderBanner from "@/components/PageHeaderBanner";
 import SearchInput from "@/components/SearchInput";
 import DesktopFilterRow from "@/components/DesktopFilterRow";
 import MobileFilterSheet from "@/components/MobileFilterSheet";
+import MobileSortSheet from "@/components/MobileSortSheet";
 import ActiveFilterChips from "@/components/ActiveFilterChips";
 import ProductGrid from "@/components/ProductGrid";
 import EmptyState from "@/components/EmptyState";
@@ -26,7 +27,8 @@ function matchesQuery(query: string) {
 
 export default function SearchPageContent() {
   const [query, setQuery] = useState("");
-  const [sheetOpen, setSheetOpen] = useState(false);
+  const [filterSheetOpen, setFilterSheetOpen] = useState(false);
+  const [sortSheetOpen, setSortSheetOpen] = useState(false);
 
   const searchResults = useMemo(() => matchesQuery(query), [query]);
 
@@ -57,6 +59,17 @@ export default function SearchPageContent() {
     setSort,
   };
 
+  const mobileFilterProps = {
+    category,
+    setCategory,
+    maxPrice,
+    setMaxPrice,
+    priceCeiling: PRICE_CEILING,
+    priceFloor: PRICE_FLOOR,
+    inStockOnly,
+    setInStockOnly,
+  };
+
   const hasQuery = query.trim().length > 0;
 
   return (
@@ -67,7 +80,7 @@ export default function SearchPageContent() {
         count={hasQuery ? `${filtered.length} ${filtered.length === 1 ? "Result" : "Results"}` : undefined}
       />
 
-      <main className="max-w-[1400px] w-full mx-auto mt-6 sm:mt-8 mb-20">
+      <main className="max-w-[1400px] w-full mx-auto mt-6 sm:mt-8 flex-1">
         <SearchInput value={query} onChange={setQuery} autoFocus placeholder="Search mugs by name or category..." />
 
         {hasQuery && (
@@ -76,7 +89,7 @@ export default function SearchPageContent() {
               <motion.button
                 type="button"
                 whileTap={{ scale: 0.96 }}
-                onClick={() => setSheetOpen(true)}
+                onClick={() => setFilterSheetOpen(true)}
                 className="flex-1 flex items-center justify-center gap-2 rounded-full border border-[#F1BF0A] py-2 text-sm font-medium focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#183fad]"
               >
                 Filter
@@ -84,14 +97,21 @@ export default function SearchPageContent() {
               <motion.button
                 type="button"
                 whileTap={{ scale: 0.96 }}
-                onClick={() => setSheetOpen(true)}
+                onClick={() => setSortSheetOpen(true)}
                 className="flex-1 flex items-center justify-center gap-2 rounded-full border border-[#F1BF0A] py-2 text-sm font-medium focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#183fad]"
               >
                 Sort
               </motion.button>
             </div>
 
-            <MobileFilterSheet open={sheetOpen} onClose={() => setSheetOpen(false)} resultCount={filtered.length} {...filterProps} clearAll={clearAll} />
+            <MobileFilterSheet
+              open={filterSheetOpen}
+              onClose={() => setFilterSheetOpen(false)}
+              resultCount={filtered.length}
+              {...mobileFilterProps}
+              clearAll={clearAll}
+            />
+            <MobileSortSheet open={sortSheetOpen} onClose={() => setSortSheetOpen(false)} value={sort} onChange={setSort} />
 
             <div className="mt-6">
               <DesktopFilterRow {...filterProps} />

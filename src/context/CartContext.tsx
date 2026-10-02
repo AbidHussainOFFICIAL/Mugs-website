@@ -1,6 +1,6 @@
 "use client";
 
-import { createContext, useCallback, useContext, useMemo } from "react";
+import { createContext, useCallback, useContext, useMemo, useState } from "react";
 import { products, type Product } from "@/data/products";
 import { getPromoDiscountPercent, MAX_ITEM_QUANTITY } from "@/lib/pricing";
 import { usePersistentState } from "@/lib/usePersistentState";
@@ -31,6 +31,23 @@ interface CartState {
   promoCode: string | null;
 }
 
+/**
+ * The most recently removed line, kept just long enough for the person to
+ * undo it. Only ever holds one entry — removing a second item while the
+ * first's toast is still showing replaces it, rather than queuing both.
+ * That matches how a single toast can only show one action at a time, and
+ * keeps this simple rather than building a multi-item undo stack for a
+ * feature whose whole point is "recover from a misclick".
+ */
+interface PendingUndo extends CartVariant {
+  product: Product;
+  quantity: number;
+  /** Distinguishes one removal from the next so a fresh toast always
+   * re-triggers its own entrance animation and auto-dismiss timer, even if
+   * the same product/variant is removed twice in a row. */
+  id: number;
+}
+
 interface CartContextValue {
   items: CartItem[];
   itemCount: number;
@@ -48,6 +65,14 @@ interface CartContextValue {
   /** Returns true if the code was valid and is now applied. */
   applyPromo: (code: string) => boolean;
   removePromo: () => void;
+  /** The most recent removal, if it can still be undone — read by the
+   * globally-mounted UndoToast, not something callers of removeItem need
+   * to handle themselves. */
+  pendingUndo: PendingUndo | null;
+  /** Re-adds the pending removal at its original quantity and variant, then clears it. */
+  undoRemove: () => void;
+  /** Clears the pending removal without restoring it (auto-dismiss, or the toast's own close). */
+  dismissUndo: () => void;
 }
 
 const CartContext = createContext<CartContextValue | undefined>(undefined);
@@ -79,6 +104,7 @@ function isSameLine(line: CartLine, slug: string, selectedColor?: string, select
 
 export function CartProvider({ children }: { children: React.ReactNode }) {
   const [cart, setCart, isReady] = usePersistentState(STORAGE_KEY, EMPTY_CART, isCartState);
+  const [pendingUndo, setPendingUndo] = useState<PendingUndo | null>(null);
 
   const items = useMemo<CartItem[]>(
     () =>
@@ -118,12 +144,31 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
 
   const removeItem = useCallback(
     (slug: string, selectedColor?: string, selectedSize?: string) => {
+      // Read the line being removed BEFORE the state update — not inside
+      // setCart's updater function, which React may invoke more than once
+      // (StrictMode, concurrent features) and must stay a pure function of
+      // its previous-state argument. cart.lines here is always the current
+      // value: this callback is recreated whenever it changes.
+      const removedLine = cart.lines.find((line) => isSameLine(line, slug, selectedColor, selectedSize));
+      if (removedLine) {
+        const product = products.find((p) => p.slug === slug);
+        if (product) {
+          setPendingUndo({
+            product,
+            quantity: removedLine.quantity,
+            selectedColor: removedLine.selectedColor,
+            selectedSize: removedLine.selectedSize,
+            id: Date.now(),
+          });
+        }
+      }
+
       setCart((prev) => ({
         ...prev,
         lines: prev.lines.filter((line) => !isSameLine(line, slug, selectedColor, selectedSize)),
       }));
     },
-    [setCart]
+    [cart.lines, setCart]
   );
 
   const updateQuantity = useCallback(
@@ -157,6 +202,23 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     setCart((prev) => ({ ...prev, promoCode: null }));
   }, [setCart]);
 
+  const undoRemove = useCallback(() => {
+    // addItem is a side effect, so it happens here — not inside a setState
+    // updater function, which React may invoke more than once and must
+    // stay pure. pendingUndo is read directly from the closure (this
+    // callback is recreated whenever it changes), not via an updater.
+    if (!pendingUndo) return;
+    addItem(pendingUndo.product, pendingUndo.quantity, {
+      selectedColor: pendingUndo.selectedColor,
+      selectedSize: pendingUndo.selectedSize,
+    });
+    setPendingUndo(null);
+  }, [pendingUndo, addItem]);
+
+  const dismissUndo = useCallback(() => {
+    setPendingUndo(null);
+  }, []);
+
   const value = useMemo(
     () => ({
       items,
@@ -171,8 +233,27 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
       clearCart,
       applyPromo,
       removePromo,
+      pendingUndo,
+      undoRemove,
+      dismissUndo,
     }),
-    [items, itemCount, subtotal, promoCode, discountPercent, isReady, addItem, removeItem, updateQuantity, clearCart, applyPromo, removePromo]
+    [
+      items,
+      itemCount,
+      subtotal,
+      promoCode,
+      discountPercent,
+      isReady,
+      addItem,
+      removeItem,
+      updateQuantity,
+      clearCart,
+      applyPromo,
+      removePromo,
+      pendingUndo,
+      undoRemove,
+      dismissUndo,
+    ]
   );
 
   return <CartContext.Provider value={value}>{children}</CartContext.Provider>;
