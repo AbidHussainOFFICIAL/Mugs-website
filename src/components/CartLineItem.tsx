@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import type { MouseEvent } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { motion, useReducedMotion } from "framer-motion";
@@ -31,6 +32,20 @@ export default function CartLineItem({
   const isCompact = size === "compact";
   const [imgLoaded, setImgLoaded] = useState(false);
   const shouldReduceMotion = useReducedMotion();
+
+  // Removing this line unmounts its own remove button once the exit
+  // animation finishes, which would otherwise drop focus to <body> for
+  // anyone who triggered it via keyboard. Moving focus to the nearest
+  // `[data-cart-list]` ancestor (the item list's own container, marked by
+  // both CartPageContent and CartDrawer) keeps it on a stable, always-
+  // present landmark instead. Found via the click event's own target
+  // rather than a prop, since this component has no reference of its own
+  // to which page/drawer context it's rendered in.
+  function handleRemoveClick(e: MouseEvent<HTMLButtonElement>) {
+    const list = e.currentTarget.closest<HTMLElement>("[data-cart-list]");
+    onRemove();
+    list?.focus();
+  }
 
   // No `initial={false}` here: that would permanently disable entrance
   // animation, including for a genuinely new line added to the cart. The
@@ -89,7 +104,7 @@ export default function CartLineItem({
           {isCompact && (
             <button
               type="button"
-              onClick={onRemove}
+              onClick={handleRemoveClick}
               aria-label={`Remove ${item.name} from cart`}
               className="shrink-0 p-1 text-[#090909]/40 hover:text-[#090909]/70 transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#183fad] rounded"
             >
@@ -124,7 +139,7 @@ export default function CartLineItem({
             <motion.button
               type="button"
               whileTap={{ scale: 0.9 }}
-              onClick={onRemove}
+              onClick={handleRemoveClick}
               aria-label={`Remove ${item.name} from cart`}
               className="flex items-center justify-center size-8 rounded-full bg-[#e9ecf6] text-[#5b5f6b] hover:bg-[#dde2ef] transition-colors ml-auto focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#183fad]"
             >

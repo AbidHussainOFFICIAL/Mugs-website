@@ -1,16 +1,17 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
+import confetti from "canvas-confetti";
 import PageShell from "@/components/PageShell";
 import PageHeaderBanner from "@/components/PageHeaderBanner";
 import OrderTotals from "@/components/OrderTotals";
 import { PillLink, PillButtonElement } from "@/components/PillButton";
 import { useCart } from "@/context/CartContext";
 import { calculateTotals } from "@/lib/pricing";
-import { DURATION, EASE } from "@/lib/motion";
+import { DURATION, EASE, STAGGER, staggerContainer } from "@/lib/motion";
 
 const SHOP_ICON = (
   <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="size-6" aria-hidden="true">
@@ -23,6 +24,11 @@ const CHECKOUT_ICON = (
     <path strokeLinecap="round" strokeLinejoin="round" d="M17.25 8.25 21 12m0 0-3.75 3.75M21 12H3" />
   </svg>
 );
+
+const ITEM_VARIANTS = {
+  hidden: { opacity: 0, y: 12 },
+  visible: { opacity: 1, y: 0, transition: { duration: DURATION.base, ease: EASE } },
+};
 
 type CheckoutState = "review" | "empty" | "placed";
 
@@ -64,6 +70,22 @@ export default function CheckoutPageContent() {
     clearCart();
     setPlaced(true);
   }
+
+  // Fires exactly once per order: this effect only re-runs when `placed`
+  // (or the reduced-motion preference) actually changes, and `placed` only
+  // flips false -> true once per visit to this page — handlePlaceOrder is
+  // the only thing that sets it, and nothing sets it back to false again
+  // short of navigating here fresh. Skipped entirely under reduced motion,
+  // same as every other motion effect in the app.
+  useEffect(() => {
+    if (!placed || shouldReduceMotion) return;
+    confetti({
+      particleCount: 120,
+      spread: 70,
+      origin: { y: 0.6 },
+      colors: ["#F1BF0A", "#183fad", "#ffffff"],
+    });
+  }, [placed, shouldReduceMotion]);
 
   const state: CheckoutState | "loading" = !isReady ? "loading" : placed ? "placed" : items.length === 0 ? "empty" : "review";
 
@@ -123,10 +145,24 @@ export default function CheckoutPageContent() {
             <motion.div key="review" {...swapProps} transition={{ duration: DURATION.base, ease: EASE }} className="grid gap-8 lg:grid-cols-[1fr_400px]">
               <div>
                 <h2 className="font-anton text-xl mb-4">REVIEW YOUR ORDER</h2>
-                <div className="flex flex-col">
+                {/* Stagger lives on this inner wrapper, separate from the
+                    outer "review" block's own opacity+y entrance above —
+                    the two run concurrently: the block fades/rises in as a
+                    whole while, within it, each line item reveals in turn.
+                    Skipped under reduced motion (plain, un-animated list)
+                    rather than given an instant variant, matching how the
+                    rest of the app treats reduced motion as "no motion",
+                    not "the same motion at zero duration". */}
+                <motion.div
+                  initial={shouldReduceMotion ? false : "hidden"}
+                  animate="visible"
+                  variants={shouldReduceMotion ? undefined : staggerContainer(STAGGER.tight)}
+                  className="flex flex-col"
+                >
                   {items.map((item) => (
-                    <div
+                    <motion.div
                       key={`${item.slug}-${item.selectedColor ?? ""}-${item.selectedSize ?? ""}`}
+                      variants={shouldReduceMotion ? undefined : ITEM_VARIANTS}
                       className="flex items-center gap-4 py-4 border-b border-[#e9ecf6]"
                     >
                       <Image src={item.image} alt={item.name} width={64} height={64} className="size-16 rounded-2xl object-cover shrink-0" />
@@ -142,9 +178,9 @@ export default function CheckoutPageContent() {
                         <p className="text-sm text-[#5b5f6b]">Qty {item.quantity}</p>
                       </div>
                       <span className="font-semibold text-sm shrink-0">${(item.price * item.quantity).toFixed(2)}</span>
-                    </div>
+                    </motion.div>
                   ))}
-                </div>
+                </motion.div>
                 <p className="text-xs text-[#5b5f6b] mt-4">
                   This is a demo checkout — no real payment is processed. Placing an order clears your cart and
                   simulates a completed purchase.

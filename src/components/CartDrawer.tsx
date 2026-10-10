@@ -76,7 +76,13 @@ function DrawerContent({
         </motion.button>
       </div>
 
-      <div className="flex-1 overflow-y-auto px-4">
+      {/* data-cart-list + tabIndex=-1: a stable focus landing spot for
+          CartLineItem's remove button to send focus to, once the removed
+          line's own button is gone — see the comment in CartLineItem for
+          why. This div already persists across removes regardless of which
+          item was removed, so it doubles as that landmark with no extra
+          wrapper needed. */}
+      <div data-cart-list tabIndex={-1} aria-label="Cart items" className="flex-1 overflow-y-auto px-4 focus:outline-none">
         {items.length === 0 ? (
           <EmptyState
             icon={

@@ -8,6 +8,14 @@ import { calculateTotals } from "@/lib/pricing";
 import { useOverlay } from "@/lib/useOverlay";
 import { DURATION, EASE } from "@/lib/motion";
 
+// Both the collapsed bar and the expanded sheet below share this layoutId,
+// so Framer Motion morphs one surface into the other (a FLIP animation —
+// its position/size tracked and animated automatically) instead of running
+// two disconnected slide animations that happen to occur at the same time.
+// Undefined under reduced motion, which falls back to each one's own plain
+// opacity fade with no layout tracking at all.
+const SURFACE_LAYOUT_ID = "order-bar-surface";
+
 // On mobile the Order Summary panel isn't part of the page (it's a desktop
 // sidebar), so this bar is the way to reach Checkout — it stays visible
 // while scrolling through the cart items and Saved For Later, and hides
@@ -59,6 +67,12 @@ export default function StickyMobileOrderBar({ anchorId }: { anchorId?: string }
     };
   }, [anchorId]);
 
+  // Fallbacks for whichever side has no partner to morph into/from — the
+  // very first time the bar appears (nothing to morph from), or a close
+  // that happens once pastAnchor is already true (nothing to morph into,
+  // since no bar is meant to reappear there). layoutId handles the morph
+  // automatically whenever both elements genuinely coincide; these just
+  // cover the case where only one of them exists.
   const barProps = shouldReduceMotion
     ? { initial: { opacity: 0 }, animate: { opacity: 1 }, exit: { opacity: 0 } }
     : { initial: { y: "100%" }, animate: { y: 0 }, exit: { y: "100%" } };
@@ -66,6 +80,8 @@ export default function StickyMobileOrderBar({ anchorId }: { anchorId?: string }
     ? { initial: { opacity: 0 }, animate: { opacity: 1 }, exit: { opacity: 0 } }
     : { initial: { y: "100%" }, animate: { y: 0 }, exit: { y: "100%" } };
   const pulse = shouldReduceMotion ? {} : { animate: { scale: [1, 1.06, 1] } };
+  const layoutId = shouldReduceMotion ? undefined : SURFACE_LAYOUT_ID;
+  const layoutTransition = { duration: DURATION.base, ease: EASE };
 
   const { total } = calculateTotals(subtotal, discountPercent);
   // The sheet, once opened, stays open regardless of scroll position — only
@@ -77,13 +93,19 @@ export default function StickyMobileOrderBar({ anchorId }: { anchorId?: string }
       <AnimatePresence>
         {showCollapsedBar && (
           <motion.button
+            layoutId={layoutId}
             type="button"
             onClick={() => setSheetOpen(true)}
             {...barProps}
-            transition={{ duration: DURATION.base, ease: EASE }}
+            transition={layoutTransition}
             className="lg:hidden fixed bottom-0 left-0 right-0 z-40 bg-white rounded-t-4xl shadow-[0_-4px_16px_rgba(0,0,0,0.08)] px-4 py-3 flex items-center justify-between gap-3"
           >
-            <span className="text-sm font-medium">
+            {/* This content gets its own quick exit, faster than the
+                surface's own morph — without it, the bar's text would stay
+                pinned in place for the whole ~400ms the box takes to grow
+                into the sheet, overlapping the sheet's content fading in
+                underneath it. */}
+            <motion.span exit={{ opacity: 0 }} transition={{ duration: DURATION.fast }} className="text-sm font-medium">
               Total:{" "}
               {/* Same pulse the Total gets in OrderTotals and the drawer's
                   subtotal gets — this is the same figure, so it should react
@@ -97,10 +119,14 @@ export default function StickyMobileOrderBar({ anchorId }: { anchorId?: string }
               >
                 ${total.toFixed(2)}
               </motion.span>
-            </span>
-            <span className="flex items-center gap-2 bg-[#F1BF0A] rounded-full px-4 py-3 text-sm font-semibold text-[#090909]">
+            </motion.span>
+            <motion.span
+              exit={{ opacity: 0 }}
+              transition={{ duration: DURATION.fast }}
+              className="flex items-center gap-2 bg-[#F1BF0A] rounded-full px-4 py-3 text-sm font-semibold text-[#090909]"
+            >
               Checkout
-            </span>
+            </motion.span>
           </motion.button>
         )}
       </AnimatePresence>
@@ -118,16 +144,27 @@ export default function StickyMobileOrderBar({ anchorId }: { anchorId?: string }
               aria-hidden="true"
             />
             <motion.div
+              layoutId={layoutId}
               ref={sheetRef}
               {...sheetProps}
-              transition={{ duration: DURATION.base, ease: EASE }}
+              transition={layoutTransition}
               className="lg:hidden fixed bottom-0 left-0 right-0 z-50 max-h-[85vh] overflow-y-auto bg-white rounded-t-4xl p-4"
               role="dialog"
               aria-modal="true"
               aria-label="Order summary"
             >
-              <div className="mx-auto h-1.5 w-12 rounded-full bg-[#e9ecf6] mb-3" />
-              <OrderSummaryPanel />
+              {/* Delayed relative to the surface's own morph, so this
+                  fades in partway through the box growing tall rather than
+                  appearing instantly and looking cramped inside a
+                  still-small surface. */}
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ duration: DURATION.fast, delay: shouldReduceMotion ? 0 : DURATION.fast }}
+              >
+                <div className="mx-auto h-1.5 w-12 rounded-full bg-[#e9ecf6] mb-3" />
+                <OrderSummaryPanel />
+              </motion.div>
             </motion.div>
           </>
         )}

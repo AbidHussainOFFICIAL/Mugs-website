@@ -6,6 +6,7 @@ import { ReviewsProvider } from "@/context/ReviewsContext";
 import { CartDrawerProvider } from "@/context/CartDrawerContext";
 import CartDrawer from "@/components/CartDrawer";
 import UndoToast from "@/components/UndoToast";
+import CartAnnouncer from "@/components/CartAnnouncer";
 import { SITE_URL } from "@/lib/site";
 import "./styles.css";
 
@@ -36,23 +37,19 @@ export const metadata: Metadata = {
   icons: {
     icon: "/favicon.ico",
   },
-  // No openGraph/twitter image block for now — there's no /public/og-image.jpg
-  // in the project, and pointing a share-preview tag at a file that 404s is
-  // worse than omitting it (some platforms cache the broken result). Title
-  // and description still populate a plain-text link preview everywhere.
-  // Add `images: [{ url: "/og-image.jpg", width: 1200, height: 630, alt: "..." }]`
-  // back to both blocks below once that asset exists.
   openGraph: {
     title,
     description,
     url: SITE_URL,
     siteName: "Mugsy's Mugs",
     type: "website",
+    images: [{ url: "/og-image.jpg", width: 1200, height: 630, alt: "Mugsy's Mugs — limited edition travel mugs" }],
   },
   twitter: {
-    card: "summary",
+    card: "summary_large_image",
     title,
     description,
+    images: ["/og-image.jpg"],
   },
 };
 
@@ -71,6 +68,7 @@ export default function RootLayout({
                 {children}
                 <CartDrawer />
                 <UndoToast />
+                <CartAnnouncer />
               </CartDrawerProvider>
             </ReviewsProvider>
           </WishlistProvider>

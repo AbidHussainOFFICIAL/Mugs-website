@@ -48,6 +48,21 @@ interface PendingUndo extends CartVariant {
   id: number;
 }
 
+/**
+ * A screen-reader-only announcement of a cart change, read by the globally
+ * mounted CartAnnouncer. Covers additions and quantity changes only —
+ * removal is deliberately NOT announced here, because UndoToast's own
+ * `role="status" aria-live="polite"` already announces "{name} removed";
+ * announcing it a second time here would just double it up.
+ */
+interface Announcement {
+  message: string;
+  /** Changes on every announcement, including two identical ones in a row,
+   * so CartAnnouncer can key its text node on this rather than relying on
+   * every screen reader to re-announce unchanged live-region text. */
+  id: number;
+}
+
 interface CartContextValue {
   items: CartItem[];
   itemCount: number;
@@ -73,6 +88,9 @@ interface CartContextValue {
   undoRemove: () => void;
   /** Clears the pending removal without restoring it (auto-dismiss, or the toast's own close). */
   dismissUndo: () => void;
+  /** The latest add/quantity-change announcement — read by the globally
+   * mounted CartAnnouncer, not something callers need to handle themselves. */
+  announcement: Announcement | null;
 }
 
 const CartContext = createContext<CartContextValue | undefined>(undefined);
@@ -105,6 +123,11 @@ function isSameLine(line: CartLine, slug: string, selectedColor?: string, select
 export function CartProvider({ children }: { children: React.ReactNode }) {
   const [cart, setCart, isReady] = usePersistentState(STORAGE_KEY, EMPTY_CART, isCartState);
   const [pendingUndo, setPendingUndo] = useState<PendingUndo | null>(null);
+  const [announcement, setAnnouncement] = useState<Announcement | null>(null);
+
+  const announce = useCallback((message: string) => {
+    setAnnouncement({ message, id: Date.now() });
+  }, []);
 
   const items = useMemo<CartItem[]>(
     () =>
@@ -138,8 +161,9 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
             ];
         return { ...prev, lines };
       });
+      announce(`${product.name} added to cart.`);
     },
-    [setCart]
+    [setCart, announce]
   );
 
   const removeItem = useCallback(
@@ -173,16 +197,15 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
 
   const updateQuantity = useCallback(
     (slug: string, selectedColor: string | undefined, selectedSize: string | undefined, quantity: number) => {
+      const clamped = Math.min(MAX_ITEM_QUANTITY, Math.max(1, quantity));
       setCart((prev) => ({
         ...prev,
-        lines: prev.lines.map((line) =>
-          isSameLine(line, slug, selectedColor, selectedSize)
-            ? { ...line, quantity: Math.min(MAX_ITEM_QUANTITY, Math.max(1, quantity)) }
-            : line
-        ),
+        lines: prev.lines.map((line) => (isSameLine(line, slug, selectedColor, selectedSize) ? { ...line, quantity: clamped } : line)),
       }));
+      const product = products.find((p) => p.slug === slug);
+      if (product) announce(`Quantity updated to ${clamped} for ${product.name}.`);
     },
-    [setCart]
+    [setCart, announce]
   );
 
   const clearCart = useCallback(() => {
@@ -236,6 +259,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
       pendingUndo,
       undoRemove,
       dismissUndo,
+      announcement,
     }),
     [
       items,
@@ -253,6 +277,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
       pendingUndo,
       undoRemove,
       dismissUndo,
+      announcement,
     ]
   );
 

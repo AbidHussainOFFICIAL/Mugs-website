@@ -119,6 +119,22 @@ export default function CartPageContent() {
                 ctaLabel="Explore Collection"
                 ctaHref="/shop"
               />
+
+              {/* An empty cart still surfaces anything saved for later, and
+                  still offers recommendations — the same two sections the
+                  has-items branch shows below its grid, reused as-is,
+                  rather than leaving someone with saved items looking at a
+                  single empty message with no path forward. No mobile
+                  sticky bar here (it only renders when hasItems), so no
+                  bottom clearance padding is needed around either section. */}
+              <SavedForLaterShelf />
+
+              {crossSell.length > 0 && (
+                <div className="mt-12 sm:mt-16">
+                  <h2 className="font-anton text-2xl sm:text-3xl mb-6">YOU MIGHT ALSO NEED</h2>
+                  <ProductGrid products={crossSell} />
+                </div>
+              )}
             </motion.div>
           ) : (
             <motion.div key="full" {...crossfade}>
@@ -135,17 +151,23 @@ export default function CartPageContent() {
                       <PromoCodeInput />
                     </div>
 
-                    <AnimatePresence initial={false}>
-                      {items.map((item) => (
-                        <CartLineItem
-                          key={`${item.slug}-${item.selectedColor ?? ""}-${item.selectedSize ?? ""}`}
-                          item={item}
-                          size="full"
-                          onQuantityChange={(q) => handleQuantityChange(item, q)}
-                          onRemove={() => handleRemove(item)}
-                        />
-                      ))}
-                    </AnimatePresence>
+                    {/* data-cart-list + tabIndex=-1: a stable focus landing
+                        spot for CartLineItem's remove button to send focus
+                        to, once the removed line's own button is gone — see
+                        the comment in CartLineItem for why. */}
+                    <div data-cart-list tabIndex={-1} aria-label="Cart items" className="focus:outline-none">
+                      <AnimatePresence initial={false}>
+                        {items.map((item) => (
+                          <CartLineItem
+                            key={`${item.slug}-${item.selectedColor ?? ""}-${item.selectedSize ?? ""}`}
+                            item={item}
+                            size="full"
+                            onQuantityChange={(q) => handleQuantityChange(item, q)}
+                            onRemove={() => handleRemove(item)}
+                          />
+                        ))}
+                      </AnimatePresence>
+                    </div>
                   </div>
 
                   <div className="hidden lg:block">
