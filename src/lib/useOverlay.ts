@@ -14,6 +14,11 @@ import { useEffect, useRef } from "react";
 // `style={{ display: "contents" }}` and put the ref there — the hidden
 // variant's controls aren't focusable anyway, so trapping across both is safe.
 //
+// Anything rendered outside the overlay that must stay reachable by keyboard
+// while it is open (the Undo toast, which sits above the cart drawer) is
+// marked with `data-overlay-companion`; its focusable controls join the end
+// of the Tab cycle.
+//
 // `onClose` is read through a ref rather than the effect's own dependency
 // array. Callers pass it as an inline arrow function, so a new reference is
 // created on every render of the owning component — including every
@@ -30,10 +35,17 @@ import { useEffect, useRef } from "react";
 const FOCUSABLE_SELECTOR =
   'a[href], button:not([disabled]), textarea:not([disabled]), input:not([disabled]), select:not([disabled]), [tabindex]:not([tabindex="-1"])';
 
-function getFocusable(container: HTMLElement): HTMLElement[] {
-  return Array.from(container.querySelectorAll<HTMLElement>(FOCUSABLE_SELECTOR)).filter(
+const COMPANION_SELECTOR = "[data-overlay-companion]";
+
+function queryFocusable(root: HTMLElement): HTMLElement[] {
+  return Array.from(root.querySelectorAll<HTMLElement>(FOCUSABLE_SELECTOR)).filter(
     (el) => el.offsetParent !== null
   );
+}
+
+function getFocusable(container: HTMLElement): HTMLElement[] {
+  const companions = Array.from(document.querySelectorAll<HTMLElement>(COMPANION_SELECTOR)).flatMap(queryFocusable);
+  return [...queryFocusable(container), ...companions];
 }
 
 export function useOverlay<T extends HTMLElement>(isOpen: boolean, onClose: () => void) {
@@ -58,8 +70,8 @@ export function useOverlay<T extends HTMLElement>(isOpen: boolean, onClose: () =
 
     const previouslyFocused = document.activeElement as HTMLElement | null;
     const container = containerRef.current;
-    const focusable = container ? getFocusable(container) : [];
-    (focusable[0] ?? container)?.focus();
+    const initialFocusable = container ? queryFocusable(container) : [];
+    (initialFocusable[0] ?? container)?.focus();
 
     function handleKeyDown(e: KeyboardEvent) {
       if (e.key === "Escape") {
@@ -72,11 +84,22 @@ export function useOverlay<T extends HTMLElement>(isOpen: boolean, onClose: () =
       if (focusableNow.length === 0) return;
       const first = focusableNow[0];
       const last = focusableNow[focusableNow.length - 1];
+      const active = document.activeElement as HTMLElement | null;
 
-      if (e.shiftKey && document.activeElement === first) {
+      // Focus has fallen out of the overlay (for example onto <body>, after
+      // the control that had it was removed): pull it back in rather than
+      // letting Tab continue into the page behind.
+      const insideOverlay = active !== null && (container.contains(active) || focusableNow.includes(active));
+      if (!insideOverlay) {
+        e.preventDefault();
+        (e.shiftKey ? last : first).focus();
+        return;
+      }
+
+      if (e.shiftKey && active === first) {
         e.preventDefault();
         last.focus();
-      } else if (!e.shiftKey && document.activeElement === last) {
+      } else if (!e.shiftKey && active === last) {
         e.preventDefault();
         first.focus();
       }

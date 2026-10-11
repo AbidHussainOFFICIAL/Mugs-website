@@ -1,5 +1,6 @@
 "use client";
 
+import { useId } from "react";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { MAX_ITEM_QUANTITY } from "@/lib/pricing";
 import { DURATION } from "@/lib/motion";
@@ -14,6 +15,8 @@ export default function QuantityStepper({
   size?: "sm" | "lg";
 }) {
   const shouldReduceMotion = useReducedMotion();
+  // Unique per stepper — several can be on screen at once (every cart line).
+  const maxNoteId = useId();
   const atMax = quantity >= MAX_ITEM_QUANTITY;
   const circleSize = size === "sm" ? "size-5" : "size-8";
   const iconSize = size === "sm" ? "size-2.5" : "size-4";
@@ -48,7 +51,6 @@ export default function QuantityStepper({
           animate={{ scale: [1, 1.08, 1] }}
           transition={{ duration: 0.15 }}
           className={`${numberClass} text-center font-semibold text-[#090909]`}
-          aria-live="polite"
         >
           {quantity}
         </motion.span>
@@ -59,7 +61,7 @@ export default function QuantityStepper({
           onClick={() => onChange(Math.min(MAX_ITEM_QUANTITY, quantity + 1))}
           disabled={atMax}
           aria-label="Increase quantity"
-          aria-describedby={atMax ? "quantity-max-note" : undefined}
+          aria-describedby={atMax ? maxNoteId : undefined}
           className={`flex items-center justify-center ${circleSize} rounded-full bg-[#F1BF0A] text-[#090909] transition-opacity disabled:opacity-40 disabled:cursor-not-allowed focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#183fad]`}
         >
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className={iconSize} aria-hidden="true">
@@ -71,7 +73,7 @@ export default function QuantityStepper({
       <AnimatePresence>
         {atMax && (
           <motion.p
-            id="quantity-max-note"
+            id={maxNoteId}
             initial={shouldReduceMotion ? false : { opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: "auto" }}
             exit={shouldReduceMotion ? undefined : { opacity: 0, height: 0 }}
@@ -85,3 +87,4 @@ export default function QuantityStepper({
     </div>
   );
 }
+

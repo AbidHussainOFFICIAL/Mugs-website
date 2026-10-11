@@ -19,6 +19,7 @@ import { useReviews } from "@/context/ReviewsContext";
 import { useCartDrawer } from "@/context/CartDrawerContext";
 import { products, type Product } from "@/data/products";
 import { DURATION, EASE } from "@/lib/motion";
+import { FREE_SHIPPING_THRESHOLD } from "@/lib/pricing";
 
 // Capacity in ml for each size the catalog uses. Only the capacity line
 // varies by size — weight and insulation aren't tracked per-size in the
@@ -39,7 +40,7 @@ const STATIC_CARE_ITEMS = [
   {
     title: "Shipping & Returns",
     content:
-      "Orders ship within 3–5 business days. Free shipping on orders over $100. Unused items can be returned within 30 days of delivery for a full refund.",
+      `Orders ship within 3–5 business days. Free shipping on orders over $${FREE_SHIPPING_THRESHOLD}. Unused items can be returned within 30 days of delivery for a full refund.`,
   },
 ];
 
@@ -112,7 +113,7 @@ export default function ProductDetailContent({ product }: { product: Product }) 
       };
 
   return (
-    <PageShell>
+    <PageShell reserveBottomBar>
       {/* Compact blue connector bar — Navbar's logo has a decorative notch
           designed to blend into a blue section immediately below it (as it
           does on Shop/Category via PageHeaderBanner). A plain white
@@ -237,7 +238,7 @@ export default function ProductDetailContent({ product }: { product: Product }) 
                       />
                     </svg>
                   }
-                  label="Free shipping $100+"
+                  label={`Free shipping $${FREE_SHIPPING_THRESHOLD}+`}
                 />
                 <TrustChip
                   icon={

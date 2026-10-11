@@ -4,10 +4,11 @@ import { useEffect, useState } from "react";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { usePersistentState } from "@/lib/usePersistentState";
 import { DURATION, EASE } from "@/lib/motion";
+import { FREE_SHIPPING_THRESHOLD } from "@/lib/pricing";
 
 const MESSAGES = [
   "Only 2,000 units worldwide",
-  "Free shipping over $100",
+  `Free shipping over $${FREE_SHIPPING_THRESHOLD}`,
   "Ships in 3–5 days",
 ];
 
@@ -26,6 +27,8 @@ export default function AnnouncementBar() {
   const shouldReduceMotion = useReducedMotion();
   const visible = isHydrated && !dismissed;
 
+  // With reduced motion the messages don't rotate, so all of them are shown
+  // together instead — otherwise only the first would ever be seen.
   useEffect(() => {
     if (!visible || shouldReduceMotion) return;
     const rotate = setInterval(() => {
@@ -45,20 +48,23 @@ export default function AnnouncementBar() {
           className="overflow-hidden"
         >
           <div className="w-full bg-[#090909] text-white text-xs sm:text-sm">
-            <div className="max-w-[1400px] mx-auto flex items-center justify-center gap-3 px-4 py-2 relative">
-              <AnimatePresence mode="wait">
-                <motion.p
-                  key={index}
-                  initial={shouldReduceMotion ? false : { opacity: 0, y: 4 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={shouldReduceMotion ? undefined : { opacity: 0, y: -4 }}
-                  transition={{ duration: DURATION.fast }}
-                  className="text-center"
-                  aria-live="polite"
-                >
-                  {MESSAGES[index]}
-                </motion.p>
-              </AnimatePresence>
+            <div className="max-w-[1400px] mx-auto flex items-center justify-center gap-3 px-10 py-2 relative">
+              {shouldReduceMotion ? (
+                <p className="text-center">{MESSAGES.join(" · ")}</p>
+              ) : (
+                <AnimatePresence mode="wait">
+                  <motion.p
+                    key={index}
+                    initial={{ opacity: 0, y: 4 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -4 }}
+                    transition={{ duration: DURATION.fast }}
+                    className="text-center"
+                  >
+                    {MESSAGES[index]}
+                  </motion.p>
+                </AnimatePresence>
+              )}
               <button
                 type="button"
                 onClick={() => setDismissed(true)}
@@ -76,3 +82,4 @@ export default function AnnouncementBar() {
     </AnimatePresence>
   );
 }
+

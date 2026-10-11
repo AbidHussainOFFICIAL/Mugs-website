@@ -27,6 +27,8 @@ const title = "Mugsy's Mugs — Limited Edition Travel Mugs";
 const description =
   "Limited edition mugs designed for everyday carry and modern travel. Only 2,000 units worldwide.";
 
+// The favicon comes from app/icon.svg, which Next.js picks up automatically,
+// so there is deliberately no `icons` entry here.
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   title: {
@@ -34,9 +36,6 @@ export const metadata: Metadata = {
     template: "%s | Mugsy's Mugs",
   },
   description,
-  icons: {
-    icon: "/favicon.ico",
-  },
   openGraph: {
     title,
     description,

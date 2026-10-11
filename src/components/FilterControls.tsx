@@ -1,9 +1,9 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import type { ProductCategory } from "@/data/products";
 import { CATEGORY_OPTIONS } from "@/lib/categories";
+import { useDebouncedMaxPrice } from "@/lib/useDebouncedMaxPrice";
 
 export interface FilterControlsProps {
   category: ProductCategory | "all";
@@ -28,28 +28,7 @@ export default function FilterControls({
   setInStockOnly,
   clearAll,
 }: FilterControlsProps) {
-  const [localMaxPrice, setLocalMaxPrice] = useState(maxPrice);
-  // Tracks the maxPrice this component last saw, purely to detect an
-  // EXTERNAL change to it (e.g. "Clear all" resetting the filter) — not to
-  // be read for any other purpose. React's documented pattern for
-  // "adjust state when a prop changes": setting state directly in the
-  // render body, guarded by a comparison, rather than in an effect. Calling
-  // setState during an effect body runs one render behind (the slider
-  // would flash its old position for a frame before snapping); this runs
-  // synchronously as part of the same render React is already doing, so
-  // there's no such flash, and it satisfies the react-hooks/set-state-in-effect
-  // rule, which specifically targets the effect-based version of this.
-  const [prevMaxPrice, setPrevMaxPrice] = useState(maxPrice);
-  if (maxPrice !== prevMaxPrice) {
-    setPrevMaxPrice(maxPrice);
-    setLocalMaxPrice(maxPrice);
-  }
-
-  useEffect(() => {
-    if (localMaxPrice === maxPrice) return;
-    const timeout = setTimeout(() => setMaxPrice(localMaxPrice), 200);
-    return () => clearTimeout(timeout);
-  }, [localMaxPrice, maxPrice, setMaxPrice]);
+  const [localMaxPrice, setLocalMaxPrice] = useDebouncedMaxPrice(maxPrice, setMaxPrice);
 
   return (
     <div className="flex flex-col gap-6">

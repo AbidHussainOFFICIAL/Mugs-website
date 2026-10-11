@@ -14,6 +14,10 @@ const AUTO_DISMISS_MS = 5000;
 // have to out-rank all of them in z-index and risk covering their own
 // controls (the drawer's Checkout button, in particular). The top of the
 // screen has no competing fixed elements anywhere in the app.
+//
+// `data-overlay-companion` adds the Undo button to the cart drawer's Tab
+// cycle (see useOverlay), so keyboard users can reach it while the drawer
+// is open and trapping focus.
 export default function UndoToast() {
   const { pendingUndo, undoRemove, dismissUndo } = useCart();
   const shouldReduceMotion = useReducedMotion();
@@ -35,6 +39,7 @@ export default function UndoToast() {
           key={pendingUndo.id}
           role="status"
           aria-live="polite"
+          data-overlay-companion
           {...entranceProps}
           transition={{ duration: DURATION.base, ease: EASE }}
           className="fixed top-4 left-1/2 -translate-x-1/2 z-[90] flex items-center gap-3 bg-[#F1BF0A] text-[#090909] rounded-full py-2 pl-4 pr-2 shadow-lg max-w-[calc(100%-2rem)]"
@@ -52,3 +57,4 @@ export default function UndoToast() {
     </AnimatePresence>
   );
 }
+

@@ -1,8 +1,7 @@
 import type { MetadataRoute } from "next";
 import { products } from "@/data/products";
+import { CATEGORY_META } from "@/lib/categories";
 import { SITE_URL } from "@/lib/site";
-
-const CATEGORIES = ["travel", "camp", "gift"];
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const staticRoutes = ["", "/about", "/company", "/stores", "/shop", "/search"].map((path) => ({
@@ -10,7 +9,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     lastModified: new Date(),
   }));
 
-  const categoryRoutes = CATEGORIES.map((category) => ({
+  const categoryRoutes = Object.keys(CATEGORY_META).map((category) => ({
     url: `${SITE_URL}/shop/${category}`,
     lastModified: new Date(),
   }));

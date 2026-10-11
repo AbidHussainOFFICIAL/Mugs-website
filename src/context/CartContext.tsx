@@ -1,6 +1,6 @@
 "use client";
 
-import { createContext, useCallback, useContext, useMemo, useState } from "react";
+import { createContext, useCallback, useContext, useMemo, useRef, useState } from "react";
 import { products, type Product } from "@/data/products";
 import { getPromoDiscountPercent, MAX_ITEM_QUANTITY } from "@/lib/pricing";
 import { usePersistentState } from "@/lib/usePersistentState";
@@ -76,6 +76,7 @@ interface CartContextValue {
   addItem: (product: Product, quantity?: number, variant?: CartVariant) => void;
   removeItem: (slug: string, selectedColor?: string, selectedSize?: string) => void;
   updateQuantity: (slug: string, selectedColor: string | undefined, selectedSize: string | undefined, quantity: number) => void;
+  /** Empties the cart and any pending undo with it, so a removal can't be "undone" back into a cart that was just checked out. */
   clearCart: () => void;
   /** Returns true if the code was valid and is now applied. */
   applyPromo: (code: string) => boolean;
@@ -125,9 +126,22 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
   const [pendingUndo, setPendingUndo] = useState<PendingUndo | null>(null);
   const [announcement, setAnnouncement] = useState<Announcement | null>(null);
 
-  const announce = useCallback((message: string) => {
-    setAnnouncement({ message, id: Date.now() });
+  // A counter rather than Date.now(): two events in the same millisecond
+  // (an undo re-add immediately followed by another announcement, say)
+  // would otherwise share an id, and the id is what makes the toast and the
+  // announcer treat them as separate events.
+  const idCounter = useRef(0);
+  const nextId = useCallback(() => {
+    idCounter.current += 1;
+    return idCounter.current;
   }, []);
+
+  const announce = useCallback(
+    (message: string) => {
+      setAnnouncement({ message, id: nextId() });
+    },
+    [nextId]
+  );
 
   const items = useMemo<CartItem[]>(
     () =>
@@ -182,7 +196,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
             quantity: removedLine.quantity,
             selectedColor: removedLine.selectedColor,
             selectedSize: removedLine.selectedSize,
-            id: Date.now(),
+            id: nextId(),
           });
         }
       }
@@ -192,7 +206,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
         lines: prev.lines.filter((line) => !isSameLine(line, slug, selectedColor, selectedSize)),
       }));
     },
-    [cart.lines, setCart]
+    [cart.lines, setCart, nextId]
   );
 
   const updateQuantity = useCallback(
@@ -210,6 +224,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
 
   const clearCart = useCallback(() => {
     setCart(EMPTY_CART);
+    setPendingUndo(null);
   }, [setCart]);
 
   const applyPromo = useCallback(

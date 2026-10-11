@@ -1,6 +1,8 @@
 "use client";
 
+import { useEffect, useRef } from "react";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import CartLineItem from "@/components/CartLineItem";
 import EmptyState from "@/components/EmptyState";
@@ -167,6 +169,18 @@ export default function CartDrawer() {
   const { items, itemCount, subtotal, discountPercent, updateQuantity, removeItem } = useCart();
   const { isOpen, close } = useCartDrawer();
   const shouldReduceMotion = useReducedMotion();
+
+  // Close when the route changes by any means other than the drawer's own
+  // links — browser Back/Forward, or a link elsewhere that was reachable
+  // while the drawer was open. Without this the drawer would stay open on
+  // top of the newly loaded page.
+  const pathname = usePathname();
+  const previousPathname = useRef(pathname);
+  useEffect(() => {
+    if (previousPathname.current === pathname) return;
+    previousPathname.current = pathname;
+    close();
+  }, [pathname, close]);
 
   // Both the desktop (side) and mobile (bottom-sheet) variants below are
   // mounted at once and switched purely with CSS breakpoints — so the focus

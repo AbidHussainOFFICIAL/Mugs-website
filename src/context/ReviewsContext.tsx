@@ -35,6 +35,9 @@ function isReview(value: unknown): value is Review {
     typeof review.productSlug === "string" &&
     typeof review.author === "string" &&
     typeof review.rating === "number" &&
+    Number.isInteger(review.rating) &&
+    review.rating >= 1 &&
+    review.rating <= 5 &&
     typeof review.date === "string" &&
     typeof review.text === "string"
   );

@@ -5,6 +5,7 @@ import OrderTotals from "@/components/OrderTotals";
 import TrustChip from "@/components/TrustChip";
 import { PillLink } from "@/components/PillButton";
 import { fadeRise, VIEWPORT } from "@/lib/motion";
+import { FREE_SHIPPING_THRESHOLD } from "@/lib/pricing";
 
 const CHECKOUT_ICON = (
   <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="size-5" aria-hidden="true">
@@ -49,7 +50,7 @@ export default function OrderSummaryPanel() {
               />
             </svg>
           }
-          label="Free shipping $100+"
+          label={`Free shipping $${FREE_SHIPPING_THRESHOLD}+`}
         />
         <TrustChip
           icon={
@@ -75,3 +76,4 @@ export default function OrderSummaryPanel() {
     </motion.div>
   );
 }
+

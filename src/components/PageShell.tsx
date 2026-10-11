@@ -20,6 +20,11 @@ const OVERFLOW_X = {
 // most noticeably under "You Might Also Need" on the Cart page. Keep <main>
 // free of a bottom margin so this stays the single source of that space.
 //
+// `reserveBottomBar` is for a page with a fixed bar docked to the bottom of
+// the screen on mobile (the product page's sticky add-to-cart bar): it adds
+// bottom padding on those screens so the bar can't sit on top of the
+// Footer's last line when scrolled to the very end.
+//
 // `overflowX="clip"` is for a page that has a `position: sticky` element
 // inside it (the Cart's Order Summary): `hidden` turns this wrapper into a
 // scroll container, which stops sticky from working; `clip` cuts off
@@ -27,13 +32,17 @@ const OVERFLOW_X = {
 export default function PageShell({
   children,
   overflowX = "hidden",
+  reserveBottomBar = false,
 }: {
   children: ReactNode;
   overflowX?: keyof typeof OVERFLOW_X;
+  reserveBottomBar?: boolean;
 }) {
   return (
     <div
-      className={`min-h-dvh w-full ${OVERFLOW_X[overflowX]} text-base font-normal text-[#090909] px-4 sm:px-5 lg:px-6 xl:px-8 pt-3 sm:pt-4 flex flex-col`}
+      className={`min-h-dvh w-full ${OVERFLOW_X[overflowX]} text-base font-normal text-[#090909] px-4 sm:px-5 lg:px-6 xl:px-8 pt-3 sm:pt-4 flex flex-col ${
+        reserveBottomBar ? "pb-24 lg:pb-0" : ""
+      }`}
     >
       <Navbar />
       {children}
@@ -41,3 +50,4 @@ export default function PageShell({
     </div>
   );
 }
+

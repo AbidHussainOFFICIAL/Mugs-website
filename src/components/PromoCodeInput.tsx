@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useId, useState } from "react";
 import type { FormEvent } from "react";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { useCart } from "@/context/CartContext";
@@ -10,6 +10,7 @@ export default function PromoCodeInput() {
   const { promoCode, discountPercent, applyPromo, removePromo } = useCart();
   const [code, setCode] = useState("");
   const [invalid, setInvalid] = useState(false);
+  const errorId = useId();
   const shouldReduceMotion = useReducedMotion();
 
   function handleSubmit(e: FormEvent) {
@@ -45,7 +46,7 @@ export default function PromoCodeInput() {
           transition={{ duration: DURATION.base, ease: EASE }}
           className="flex flex-wrap items-center gap-3"
         >
-          <span className="inline-flex w-fit items-center gap-1.5 rounded-full bg-green-50 px-3 py-1.5 text-sm text-green-700">
+          <span role="status" className="inline-flex w-fit items-center gap-1.5 rounded-full bg-green-50 px-3 py-1.5 text-sm text-green-700">
             {promoCode} applied — {discountPercent}% off
           </span>
           <button
@@ -80,6 +81,8 @@ export default function PromoCodeInput() {
                 onChange={(e) => handleChange(e.target.value)}
                 placeholder="Promo code"
                 aria-label="Promo code"
+                aria-invalid={invalid}
+                aria-describedby={invalid ? errorId : undefined}
                 className="flex-1 min-w-0 bg-transparent outline-none text-sm placeholder:text-[#5b5f6b]"
               />
             </div>
@@ -96,6 +99,8 @@ export default function PromoCodeInput() {
             {invalid && (
               <motion.p
                 key="invalid"
+                id={errorId}
+                role="alert"
                 initial={shouldReduceMotion ? false : { opacity: 0, y: -4 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={shouldReduceMotion ? undefined : { opacity: 0 }}

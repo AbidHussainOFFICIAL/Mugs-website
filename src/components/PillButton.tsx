@@ -104,7 +104,7 @@ function PillContent({ icon, children, layout, size = "md" }: Pick<PillButtonBas
   }
   return (
     <>
-      <div className={`rounded-full relative z-10 ${size === "sm" ? "p-1 sm:p-1.5" : "p-1.5"}`}>{icon}</div>
+      <span className={`rounded-full relative z-10 ${size === "sm" ? "p-1 sm:p-1.5" : "p-1.5"}`}>{icon}</span>
       <span className="relative z-10">{children}</span>
     </>
   );

@@ -5,14 +5,8 @@ import type { ReactNode } from "react";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { products as allProducts, type Product, type ProductCategory } from "@/data/products";
 import ProductCard from "@/components/ProductCard";
+import { CATEGORY_OPTIONS } from "@/lib/categories";
 import { DURATION, EASE, VIEWPORT } from "@/lib/motion";
-
-const FILTERS: { label: string; value: ProductCategory | "all" }[] = [
-  { label: "All", value: "all" },
-  { label: "Travel", value: "travel" },
-  { label: "Camp", value: "camp" },
-  { label: "Gift", value: "gift" },
-];
 
 // How many cards at the top of the grid load eagerly, so the LCP image
 // doesn't wait on a lazy-load trigger. Matches the smallest column count
@@ -54,7 +48,7 @@ export default function ProductGrid({
     <div>
       {!products && (
         <div role="group" aria-label="Filter products by category" className="flex flex-wrap gap-2 mt-6 sm:mt-8">
-          {FILTERS.map((filter) => {
+          {CATEGORY_OPTIONS.map((filter) => {
             const isActive = active === filter.value;
             return (
               <motion.button

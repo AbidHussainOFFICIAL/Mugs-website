@@ -6,6 +6,7 @@ import type { ProductCategory } from "@/data/products";
 import type { SortOption } from "@/lib/useProductFilters";
 import { CATEGORY_OPTIONS, SORT_OPTIONS } from "@/lib/categories";
 import { DURATION } from "@/lib/motion";
+import { useDebouncedMaxPrice } from "@/lib/useDebouncedMaxPrice";
 
 type DropdownKey = "category" | "price" | "stock" | "sort";
 
@@ -73,35 +74,9 @@ export default function DesktopFilterRow({
   const rowRef = useRef<HTMLDivElement>(null);
   const triggerRefs = useRef<Partial<Record<DropdownKey, HTMLButtonElement | null>>>({});
 
-  // The slider's own displayed position updates instantly on every drag tick
-  // (via localMaxPrice) for a responsive feel, but the value actually passed
-  // to setMaxPrice — which cascades into re-filtering and re-animating the
-  // whole product grid — is debounced. Without this, dragging the slider
-  // fires a fresh grid re-filter/re-animation on every pixel of movement,
-  // and those overlapping, half-finished animations are what looked like a
-  // "flash" during rearrangement.
-  const [localMaxPrice, setLocalMaxPrice] = useState(maxPrice);
-  // Tracks the maxPrice this component last saw, purely to detect an
-  // EXTERNAL change to it (e.g. "Clear all" resetting the filter) — not to
-  // be read for any other purpose. React's documented pattern for
-  // "adjust state when a prop changes": setting state directly in the
-  // render body, guarded by a comparison, rather than in an effect. Calling
-  // setState during an effect body runs one render behind (the slider
-  // would flash its old position for a frame before snapping); this runs
-  // synchronously as part of the same render React is already doing, so
-  // there's no such flash, and it satisfies the react-hooks/set-state-in-effect
-  // rule, which specifically targets the effect-based version of this.
-  const [prevMaxPrice, setPrevMaxPrice] = useState(maxPrice);
-  if (maxPrice !== prevMaxPrice) {
-    setPrevMaxPrice(maxPrice);
-    setLocalMaxPrice(maxPrice);
-  }
-
-  useEffect(() => {
-    if (localMaxPrice === maxPrice) return;
-    const timeout = setTimeout(() => setMaxPrice(localMaxPrice), 200);
-    return () => clearTimeout(timeout);
-  }, [localMaxPrice, maxPrice, setMaxPrice]);
+  // The slider thumb follows the drag instantly; the grid re-filters on a
+  // short debounce. See useDebouncedMaxPrice.
+  const [localMaxPrice, setLocalMaxPrice] = useDebouncedMaxPrice(maxPrice, setMaxPrice);
 
   useEffect(() => {
     if (!open) return;
@@ -120,18 +95,15 @@ export default function DesktopFilterRow({
   }, [open]);
 
   function toggle(key: DropdownKey) {
-    setOpen((current) => {
-      const next = current === key ? null : key;
-      if (next) {
-        const trigger = triggerRefs.current[next];
-        if (trigger && rowRef.current) {
-          const rowRect = rowRef.current.getBoundingClientRect();
-          const triggerRect = trigger.getBoundingClientRect();
-          setPanelLeft(triggerRect.left - rowRect.left);
-        }
-      }
-      return next;
-    });
+    if (open === key) {
+      setOpen(null);
+      return;
+    }
+    const trigger = triggerRefs.current[key];
+    if (trigger && rowRef.current) {
+      setPanelLeft(trigger.getBoundingClientRect().left - rowRef.current.getBoundingClientRect().left);
+    }
+    setOpen(key);
   }
 
   function close() {

@@ -20,6 +20,14 @@ const PLUS_ICON = (
   </svg>
 );
 
+// Review dates are calendar days ("2025-03-14"), which JavaScript reads as
+// midnight UTC. Formatting in UTC keeps the day the same for every visitor
+// and for the server render — in a timezone behind UTC, local formatting
+// would show the day before and mismatch what the server rendered.
+function formatReviewDate(date: string) {
+  return new Date(date).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric", timeZone: "UTC" });
+}
+
 export default function ReviewsSection({ productSlug }: { productSlug: string }) {
   const { getReviewsForProduct, getRatingSummary, addReview } = useReviews();
   const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
@@ -112,7 +120,7 @@ export default function ReviewsSection({ productSlug }: { productSlug: string })
               <div className="flex items-center justify-between gap-3 mb-1.5">
                 <span className="font-semibold text-sm">{review.author}</span>
                 <span className="text-xs text-[#090909]/50">
-                  {new Date(review.date).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}
+                  {formatReviewDate(review.date)}
                 </span>
               </div>
               <RatingStars rating={review.rating} />
