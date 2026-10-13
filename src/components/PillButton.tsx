@@ -39,8 +39,16 @@ const MotionLink = motion.create(Link);
 // icon drawn smaller than the circle (size-5, size-4) still centres exactly
 // on it instead of drifting.
 //
-// The 1600ms duration and easing curve are fixed — every pill in the app
-// uses the same one, so no case here or overriding class should change it.
+// The 1600ms duration and easing curve are fixed for mouse users — every
+// pill in the app uses the same one, so no case here or overriding class
+// should change it.
+//
+// Touch screens have no hover, so a phone never sees the expanding circle
+// that way. On a coarse pointer (a finger) the pill instead: wears a soft
+// halo around the white circle so it reads as pressable, fills with the
+// circle the moment it is pressed (a quick 300ms, not the slow spring), and
+// shrinks very slightly under the finger. All of that is under
+// `pointer-coarse:` or `active:`, so desktop hover is exactly as it was.
 
 // Only the parts every pill shares unconditionally live here — anything
 // that varies by size (padding, gap, circle size, text size) is looked up
@@ -50,7 +58,7 @@ const MotionLink = motion.create(Link);
 // has an unpredictable winner — full per-size class sets avoid that class
 // of bug entirely, rather than relying on override ordering.
 const BASE =
-  "rounded-full whitespace-nowrap relative after:content-[''] after:absolute after:top-1/2 after:-translate-y-1/2 after:rounded-full after:bg-white hover:after:w-full after:transition-[width] after:duration-[1600ms] after:ease-[linear(0,0.029_0.8%,0.13_1.8%,0.908_7.2%,1.051_9.1%,1.112_11.2%,1.116_12.2%,1.106_13.4%,1.007_19.5%,0.987_23.1%,1.001_35%,1)] overflow-hidden hover:after:h-full hover:after:left-0 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 bg-[#F1BF0A] text-[#090909]";
+  "rounded-full whitespace-nowrap relative after:content-[''] after:absolute after:top-1/2 after:-translate-y-1/2 after:rounded-full after:bg-white hover:after:w-full after:transition-[width] after:duration-[1600ms] after:ease-[linear(0,0.029_0.8%,0.13_1.8%,0.908_7.2%,1.051_9.1%,1.112_11.2%,1.116_12.2%,1.106_13.4%,1.007_19.5%,0.987_23.1%,1.001_35%,1)] overflow-hidden hover:after:h-full hover:after:left-0 active:after:w-full active:after:h-full active:after:left-0 pointer-coarse:after:duration-300 pointer-coarse:after:ease-out pointer-coarse:after:shadow-[0_0_0_3px_rgba(255,255,255,0.45)] pointer-coarse:transition-[scale] pointer-coarse:duration-150 pointer-coarse:active:scale-[0.97] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 bg-[#F1BF0A] text-[#090909]";
 
 // size -> [circle position/size, padding + gap, text size]
 const SIZES = {

@@ -22,7 +22,12 @@ function subscribe(onChange: () => void) {
 // discontinuous jump (Back, "back to top").
 function getSnapshot() {
   const footer = document.querySelector("footer");
-  return footer ? footer.getBoundingClientRect().top < window.innerHeight + NEAR_MARGIN_PX : false;
+  if (!footer) return false;
+  const rect = footer.getBoundingClientRect();
+  // A Footer that is hidden (display: none on phones, on the pages that use
+  // the tab bar instead) has no box, so it can never be "near".
+  if (rect.height === 0) return false;
+  return rect.top < window.innerHeight + NEAR_MARGIN_PX;
 }
 
 const getServerSnapshot = () => false;

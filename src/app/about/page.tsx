@@ -68,13 +68,13 @@ export default function AboutPage() {
               </p>
             </div>
 
-            <div className="order-1 md:order-2 relative overflow-hidden rounded-3xl bg-[#e9ecf6] aspect-[5/4] sm:aspect-[4/3] md:aspect-square">
+            <div className="order-1 md:order-2 relative overflow-hidden rounded-3xl bg-[#e9ecf6] aspect-[4/5] sm:aspect-[4/3] md:aspect-square">
               <Image
                 src={featured.image}
                 alt={featured.name}
                 fill
                 sizes="(max-width: 768px) 100vw, 45vw"
-                className="object-cover"
+                className="object-contain p-4 sm:p-6"
               />
               <div className="absolute bottom-0 left-0 rounded-tr-3xl bg-white pr-2 pt-2">
                 <div className="rounded-2xl bg-[#abb9de] px-4 py-2 text-[#090909]">

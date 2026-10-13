@@ -40,10 +40,11 @@ const getOverlayOpen = () => document.body.style.overflow === "hidden";
 const getServerFalse = () => false;
 
 // Pages that dock their own bar to the bottom of the screen on mobile: the
-// cart and checkout order bar, and the product page's add-to-cart bar. The
-// tab row stays away from them.
+// checkout and the product page's add-to-cart bar. The tab row stays away
+// from them. (The Cart page's order bar sits ABOVE the tab row instead; it
+// reads --dock-h to do so.)
 function hasOwnBottomBar(pathname: string) {
-  if (pathname === "/cart" || pathname === "/checkout") return true;
+  if (pathname === "/checkout") return true;
   if (!pathname.startsWith("/shop/")) return false;
   const segment = pathname.split("/")[2];
   if (!segment) return false;
@@ -51,10 +52,12 @@ function hasOwnBottomBar(pathname: string) {
 }
 
 // The one fixed surface at the bottom of the screen: the cookie notice (until
-// a choice is made) stacked on the mobile tab row, sharing a single blue
-// shape with rounded top corners so they read as one piece. Each row slides
-// in and out by height, and the whole dock publishes its height as the CSS
-// variable --dock-h for the pieces that stack above it (Back to top).
+// a choice is made, and never over the top banner) stacked on the mobile tab
+// row, sharing a single blue shape with rounded top corners so they read as
+// one piece. Each row slides in and out by height, and the whole dock
+// publishes its height as the CSS variable --dock-h for the pieces that stack
+// above it (Back to top, the Cart's order bar) and for the bottom padding of
+// pages that have no Footer on a phone.
 export default function BottomDock() {
   const pathname = usePathname();
   const { choice, isHydrated } = useCookieConsent();
@@ -64,7 +67,10 @@ export default function BottomDock() {
   const shouldReduceMotion = useReducedMotion();
 
   const cookieShown = isHydrated && choice === null && pastBanner && !overlayOpen;
-  // Hidden before the Footer arrives so the Footer is seen clearly.
+  // Nothing docks to the bottom while the page's top banner (the Hero, or the
+  // blue page header) is on screen. The tab row then slides out again just
+  // before the Footer arrives, so the Footer is seen clearly (the pages that
+  // have no phone Footer never get that far).
   const tabShown = pastBanner && !overlayOpen && !footerNear && !hasOwnBottomBar(pathname);
 
   const dockRef = useRef<HTMLDivElement | null>(null);

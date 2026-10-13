@@ -13,8 +13,8 @@ import Link from "next/link";
 const BASE =
   "items-center justify-center gap-2 rounded-full border border-[#F1BF0A] bg-transparent px-6 text-base transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2";
 const TONES = {
-  light: "text-[#090909] hover:bg-[#F1BF0A]/10 focus-visible:outline-[#183fad]",
-  dark: "text-white hover:bg-white/10 focus-visible:outline-white",
+  light: "text-[#090909] hover:bg-[#F1BF0A]/10 active:bg-[#F1BF0A]/25 focus-visible:outline-[#183fad]",
+  dark: "text-white hover:bg-white/10 active:bg-white/20 focus-visible:outline-white",
 } as const;
 const SHAPES = {
   hug: "inline-flex h-12",

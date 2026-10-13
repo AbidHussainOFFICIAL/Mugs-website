@@ -44,21 +44,30 @@ export default function EmptyState({
       <div className="flex items-center justify-center bg-[#F1BF0A] rounded-full size-16 mb-5">{icon}</div>
       <h2 className="font-anton text-2xl sm:text-3xl">{title}</h2>
       <p className="mt-2 text-[#090909]/70 max-w-sm">{description}</p>
-      <div
-        className={`mt-6 grid w-full max-w-sm grid-cols-1 gap-3 min-[480px]:w-auto min-[480px]:max-w-none min-[480px]:[&>*]:w-full ${
-          secondaryLabel && secondaryHref ? "min-[480px]:grid-cols-2" : ""
-        }`}
-      >
-        {onCtaClick ? (
-          <PillButtonElement onClick={onCtaClick} icon={ARROW_ICON} layout="fluid" focusRing="dark" tapFeedback>
-            {ctaLabel}
-          </PillButtonElement>
-        ) : ctaHref ? (
-          <PillLink href={ctaHref} icon={ARROW_ICON} layout="fluid" focusRing="dark" tapFeedback>
-            {ctaLabel}
-          </PillLink>
-        ) : null}
-        {secondaryLabel && secondaryHref && <OutlineLink href={secondaryHref} fluid>{secondaryLabel}</OutlineLink>}
+      {/* A container, so the buttons choose their layout from the room they
+          actually have: stacked in a narrow box (the cart drawer), side by
+          side in a wide one (a page), whatever the screen size. */}
+      <div className="@container mt-6 flex w-full justify-center">
+        <div
+          className={`grid w-full max-w-xs grid-cols-1 gap-3 @min-[28rem]:w-auto @min-[28rem]:max-w-none ${
+            secondaryLabel && secondaryHref ? "@min-[28rem]:grid-cols-2" : ""
+          }`}
+        >
+          {onCtaClick ? (
+            <PillButtonElement onClick={onCtaClick} icon={ARROW_ICON} layout="full" focusRing="dark" tapFeedback>
+              {ctaLabel}
+            </PillButtonElement>
+          ) : ctaHref ? (
+            <PillLink href={ctaHref} icon={ARROW_ICON} layout="full" focusRing="dark" tapFeedback>
+              {ctaLabel}
+            </PillLink>
+          ) : null}
+          {secondaryLabel && secondaryHref && (
+            <OutlineLink href={secondaryHref}>
+              {secondaryLabel}
+            </OutlineLink>
+          )}
+        </div>
       </div>
     </motion.div>
   );

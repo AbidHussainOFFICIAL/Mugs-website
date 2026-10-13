@@ -2,6 +2,7 @@
 
 import { useSyncExternalStore } from "react";
 import { ArrowUpIcon } from "@/components/icons";
+import { useFooterNear } from "@/lib/useFooterNear";
 
 const SHOW_AFTER_PX = 800;
 
@@ -13,12 +14,14 @@ const getScrolledFar = () => window.scrollY > SHOW_AFTER_PX;
 const getServerFalse = () => false;
 
 // A round yellow "back to top" button for long pages. Appears after the
-// reader has scrolled a while and stacks above the mobile tab bar via the
-// --dock-h variable the tab bar publishes.
+// reader has scrolled a while, stacks above the mobile tab bar via the
+// --dock-h variable the tab bar publishes, and steps aside once the Footer
+// is on screen so it never sits on top of it.
 export default function BackToTop() {
-  const visible = useSyncExternalStore(subscribeToScroll, getScrolledFar, getServerFalse);
+  const scrolledFar = useSyncExternalStore(subscribeToScroll, getScrolledFar, getServerFalse);
+  const footerNear = useFooterNear();
 
-  if (!visible) return null;
+  if (!scrolledFar || footerNear) return null;
 
   return (
     <button

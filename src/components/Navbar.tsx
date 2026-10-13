@@ -51,7 +51,7 @@ export default function Navbar() {
         <div className="flex items-center justify-end min-[480px]:justify-between gap-4 flex-1 bg-[#183fad] text-white p-3.5 rounded-t-4xl">
           <div className="hidden md:block"></div>
 
-          <ul className="hidden md:flex items-center gap-6 py-2.5">
+          <ul className="hidden md:flex items-center gap-1 py-1">
             {NAV_LINKS.map((link) => {
               const active = isActivePath(pathname, link.href);
               return (
@@ -59,8 +59,8 @@ export default function Navbar() {
                   <Link
                     href={link.href}
                     aria-current={active ? "page" : undefined}
-                    className={`rounded transition-colors hover:text-[#F1BF0A] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#F1BF0A] ${
-                      active ? "text-[#F1BF0A] underline decoration-2 underline-offset-8" : ""
+                    className={`block rounded-full px-4 py-2 transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#F1BF0A] ${
+                      active ? "bg-[#F1BF0A] font-medium text-white" : "hover:bg-[#F1BF0A] hover:text-white"
                     }`}
                   >
                     {link.label}
@@ -70,11 +70,11 @@ export default function Navbar() {
             })}
           </ul>
 
-          <div className="flex items-center gap-0.5 sm:gap-2">
+          <div className="flex items-center gap-0.5 sm:gap-1.5">
             <Link
               href="/search"
               aria-label="Search"
-              className="relative flex items-center justify-center rounded-full p-1.5 sm:p-2 hover:text-[#F1BF0A] transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#F1BF0A]"
+              className="relative flex size-9 items-center justify-center rounded-full transition-colors sm:size-10 hover:bg-white/10 hover:text-[#F1BF0A] active:bg-white/20 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#F1BF0A]"
             >
               <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="size-5 sm:size-6" aria-hidden="true">
                 <path strokeLinecap="round" strokeLinejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />
@@ -84,7 +84,7 @@ export default function Navbar() {
             <Link
               href="/wishlist"
               aria-label={`View wishlist, ${wishlistCount} item${wishlistCount === 1 ? "" : "s"}`}
-              className="relative flex items-center justify-center rounded-full p-1.5 sm:p-2 hover:text-[#F1BF0A] transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#F1BF0A]"
+              className="relative flex size-9 items-center justify-center rounded-full transition-colors sm:size-10 hover:bg-white/10 hover:text-[#F1BF0A] active:bg-white/20 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#F1BF0A]"
             >
               <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="size-5 sm:size-6" aria-hidden="true">
                 <path
@@ -117,7 +117,7 @@ export default function Navbar() {
               type="button"
               onClick={openCartDrawer}
               aria-label={`Open cart, ${itemCount} item${itemCount === 1 ? "" : "s"}`}
-              className="relative flex items-center justify-center rounded-full p-1.5 sm:p-2 hover:text-[#F1BF0A] transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#F1BF0A]"
+              className="relative flex size-9 items-center justify-center rounded-full transition-colors sm:size-10 hover:bg-white/10 hover:text-[#F1BF0A] active:bg-white/20 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#F1BF0A]"
             >
               <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="size-5 sm:size-6" aria-hidden="true">
                 <path
@@ -145,14 +145,14 @@ export default function Navbar() {
             <motion.button
               type="button"
               whileTap={{ scale: 0.9 }}
-              className="md:hidden cursor-pointer rounded focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#F1BF0A]"
+              className="md:hidden ml-0.5 flex size-9 cursor-pointer sm:size-10 items-center justify-center rounded-full bg-white/10 transition-colors active:bg-white/20 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#F1BF0A]"
               aria-label="Open menu"
               aria-haspopup="dialog"
               aria-expanded={menuOpen}
               aria-controls="mobile-menu"
               onClick={() => setMenuOpen(true)}
             >
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="size-7 sm:size-9" aria-hidden="true">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="size-6" aria-hidden="true">
                 <path
                   fillRule="evenodd"
                   d="M3 6.75A.75.75 0 0 1 3.75 6h16.5a.75.75 0 0 1 0 1.5H3.75A.75.75 0 0 1 3 6.75ZM3 12a.75.75 0 0 1 .75-.75h16.5a.75.75 0 0 1 0 1.5H3.75A.75.75 0 0 1 3 12Zm0 5.25a.75.75 0 0 1 .75-.75h16.5a.75.75 0 0 1 0 1.5H3.75a.75.75 0 0 1-.75-.75Z"

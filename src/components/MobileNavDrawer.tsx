@@ -7,14 +7,20 @@ import LogoMark from "@/components/LogoMark";
 import { PillLink } from "@/components/PillButton";
 import { ArrowRightIcon, CloseIcon } from "@/components/icons";
 import { SOCIAL_LINKS } from "@/data/social";
-import { HELP_LINKS, NAV_LINKS, isActivePath, type NavLink } from "@/lib/nav";
+import { useCookieConsent } from "@/context/CookieConsentContext";
+import { DEVELOPER_LINK, HELP_LINKS, LEGAL_LINKS, NAV_LINKS, isActivePath, type NavLink } from "@/lib/nav";
 import { useOverlay } from "@/lib/useOverlay";
 import { DURATION, EASE } from "@/lib/motion";
 
+const SMALL_LINK_CLASS =
+  "rounded text-xs text-white/70 transition-colors hover:text-[#F1BF0A] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#F1BF0A]";
+
+// One group of links in its own rounded panel, so the links sit on something
+// instead of floating on the blue. The current page is a solid yellow chip.
 function LinkGroup({ title, links, pathname, onClose }: { title: string; links: NavLink[]; pathname: string; onClose: () => void }) {
   return (
-    <div className="min-w-0">
-      <p className="px-2 pb-2 text-xs uppercase tracking-wide text-white/60">{title}</p>
+    <div className="min-w-0 rounded-3xl bg-white/10 p-2">
+      <p className="px-3 pb-1 pt-2 font-anton text-sm tracking-wide text-[#F1BF0A]">{title.toUpperCase()}</p>
       <ul className="flex flex-col gap-1">
         {links.map((link) => {
           const active = isActivePath(pathname, link.href);
@@ -24,8 +30,8 @@ function LinkGroup({ title, links, pathname, onClose }: { title: string; links: 
                 href={link.href}
                 onClick={onClose}
                 aria-current={active ? "page" : undefined}
-                className={`block break-words rounded-2xl px-2 py-3 text-lg leading-snug transition-colors hover:bg-white/10 hover:text-[#F1BF0A] focus-visible:outline focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-[#F1BF0A] ${
-                  active ? "font-semibold text-[#F1BF0A]" : "font-medium"
+                className={`block break-words rounded-2xl px-3 py-2.5 text-base leading-snug transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-[#F1BF0A] ${
+                  active ? "bg-[#F1BF0A] font-semibold text-[#090909]" : "font-medium hover:bg-white/10 active:bg-white/20"
                 }`}
               >
                 {link.label}
@@ -42,6 +48,7 @@ function DrawerPanel({ onClose }: { onClose: () => void }) {
   const pathname = usePathname();
   const shouldReduceMotion = useReducedMotion();
   const panelRef = useOverlay<HTMLDivElement>(true, onClose);
+  const { openPreferences } = useCookieConsent();
 
   const panelProps = shouldReduceMotion
     ? { initial: { opacity: 0 }, animate: { opacity: 1 }, exit: { opacity: 0 } }
@@ -78,12 +85,34 @@ function DrawerPanel({ onClose }: { onClose: () => void }) {
       </div>
 
       {/* Two groups side by side so every link is on screen at once. */}
-      <nav aria-label="Main" className="grid flex-1 grid-cols-2 content-start gap-x-4 px-4 pt-2">
+      <nav aria-label="Main" className="grid flex-1 grid-cols-2 content-start gap-3 px-4 pt-2">
         <LinkGroup title="Menu" links={NAV_LINKS} pathname={pathname} onClose={onClose} />
         <LinkGroup title="Help" links={HELP_LINKS} pathname={pathname} onClose={onClose} />
       </nav>
 
       <div className="shrink-0 p-4">
+        {/* The Footer's legal links: phone pages that use the tab bar have no Footer. */}
+        <ul className="mb-4 flex flex-wrap justify-center gap-x-4 gap-y-1">
+          {[...LEGAL_LINKS, DEVELOPER_LINK].map((link) => (
+            <li key={link.href}>
+              <Link href={link.href} onClick={onClose} className={SMALL_LINK_CLASS}>
+                {link.label}
+              </Link>
+            </li>
+          ))}
+          <li>
+            <button
+              type="button"
+              onClick={() => {
+                onClose();
+                openPreferences();
+              }}
+              className={SMALL_LINK_CLASS}
+            >
+              Cookie settings
+            </button>
+          </li>
+        </ul>
         <PillLink href="/shop" onClick={onClose} icon={<ArrowRightIcon className="size-6" />} layout="fluid" focusRing="light">
           Explore Collection
         </PillLink>

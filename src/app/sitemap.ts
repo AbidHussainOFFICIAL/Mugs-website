@@ -16,6 +16,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     "/gift-cards",
     "/shipping-returns",
     "/press",
+    "/developer",
     "/privacy",
     "/terms",
     "/sitemap",

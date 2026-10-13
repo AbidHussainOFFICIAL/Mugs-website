@@ -60,6 +60,101 @@ input[type="search"]::-webkit-search-decoration {
   background: #e9ecf6;
 }
 
+/* Rows that scroll sideways by swipe or drag (the chip and tab rows) show no
+   scrollbar at all. This lives here, outside Tailwind's layers, on purpose:
+   the universal scrollbar rules above are also outside the layers, and an
+   unlayered rule beats any Tailwind utility, so a utility class could never
+   hide the bar. `.no-scrollbar` is more specific than `*`, so it wins. */
+.no-scrollbar {
+  scrollbar-width: none;
+}
+
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+/* The phone splash screen (SplashScreen.tsx). Plain CSS keyframes, not a
+   JavaScript animation, so it starts at the very first paint instead of
+   waiting for the page's scripts to load. Delays for the letters are set
+   inline; everything uses `both` so an element waits invisible until its
+   turn and then stays in its final state. */
+@keyframes splash-ring {
+  0% {
+    transform: scale(0.3);
+    opacity: 0;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 0.6;
+  }
+}
+
+@keyframes splash-logo {
+  0% {
+    transform: scale(0.4) rotate(-14deg);
+    opacity: 0;
+  }
+  55% {
+    transform: scale(1.12) rotate(3deg);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1) rotate(0deg);
+    opacity: 1;
+  }
+}
+
+@keyframes splash-float {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-6px);
+  }
+}
+
+@keyframes splash-letter {
+  0% {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes splash-bar {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
+  }
+}
+
+.splash-ring {
+  animation: splash-ring 1.4s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.splash-logo {
+  animation: splash-logo 0.9s cubic-bezier(0.34, 1.2, 0.64, 1) 0.1s both;
+}
+
+.splash-float {
+  animation: splash-float 2.4s ease-in-out 1s infinite;
+}
+
+.splash-letter {
+  animation: splash-letter 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.splash-bar {
+  transform-origin: left center;
+  animation: splash-bar 2s cubic-bezier(0.65, 0, 0.35, 1) 0.3s both;
+}
+
 /* Respect reduced-motion preferences */
 @media (prefers-reduced-motion: reduce) {
   *,

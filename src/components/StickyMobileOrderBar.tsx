@@ -23,6 +23,7 @@ const SURFACE_LAYOUT_ID = "order-bar-surface";
 // once "You Might Also Need" (and the Footer beyond it) comes into view,
 // where it would otherwise sit on top of unrelated content with nothing
 // left to check out. It also slides away just before the Footer itself.
+// It sits just above the phone's tab bar (--dock-h is the dock's height).
 export default function StickyMobileOrderBar({ anchorId }: { anchorId?: string }) {
   const { subtotal, discountPercent } = useCart();
   const [sheetOpen, setSheetOpen] = useState(false);
@@ -100,7 +101,7 @@ export default function StickyMobileOrderBar({ anchorId }: { anchorId?: string }
             onClick={() => setSheetOpen(true)}
             {...barProps}
             transition={layoutTransition}
-            className="lg:hidden fixed bottom-0 left-0 right-0 z-40 bg-white rounded-t-4xl shadow-[0_-4px_16px_rgba(0,0,0,0.08)] px-4 py-3 flex items-center justify-between gap-3"
+            className="lg:hidden fixed bottom-[var(--dock-h,0px)] left-0 right-0 z-40 bg-white rounded-t-4xl shadow-[0_-4px_16px_rgba(0,0,0,0.08)] px-4 py-3 flex items-center justify-between gap-3"
           >
             {/* This content gets its own quick exit, faster than the
                 surface's own morph — without it, the bar's text would stay

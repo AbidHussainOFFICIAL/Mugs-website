@@ -49,6 +49,7 @@ const GROUPS: SitemapGroup[] = [
       { label: "Company", href: "/company" },
       { label: "Stores", href: "/stores" },
       { label: "Press kit", href: "/press" },
+      { label: "Developer", href: "/developer" },
     ],
   },
   {

@@ -32,7 +32,7 @@ export function ChipRow({ label, children, className = "" }: { label: string; ch
     <div
       role="group"
       aria-label={label}
-      className={`flex flex-nowrap gap-2 overflow-x-auto py-1 px-0.5 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden ${className}`}
+      className={`no-scrollbar flex flex-nowrap gap-2 overflow-x-auto py-1 px-0.5 ${className}`}
     >
       {children}
     </div>
