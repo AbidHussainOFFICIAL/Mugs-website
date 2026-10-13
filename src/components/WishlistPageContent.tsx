@@ -33,9 +33,11 @@ export default function WishlistPageContent() {
                 </svg>
               }
               title="Your wishlist is empty"
-              description="Save mugs you love and they'll show up here."
+              description="Tap the heart on any mug to save it here."
               ctaLabel="Explore Collection"
               ctaHref="/shop"
+              secondaryLabel="Search the shop"
+              secondaryHref="/search"
             />
           }
         />
@@ -43,3 +45,4 @@ export default function WishlistPageContent() {
     </>
   );
 }
+

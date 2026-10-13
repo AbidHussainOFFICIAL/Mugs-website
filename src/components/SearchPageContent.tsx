@@ -129,10 +129,12 @@ export default function SearchPageContent() {
                       <path strokeLinecap="round" strokeLinejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />
                     </svg>
                   }
-                  title={`No mugs match "${query}"`}
-                  description="Try a different search term or browse the full collection."
+                  title={`No mugs match “${query.trim()}”`}
+                  description="Try a broader word like “travel” or “camp”, or loosen your filters."
                   ctaLabel="Browse Shop"
                   ctaHref="/shop"
+                  secondaryLabel="Ask us"
+                  secondaryHref="/contact"
                 />
               }
             />

@@ -9,7 +9,7 @@ import EmptyState from "@/components/EmptyState";
 import { PillLink } from "@/components/PillButton";
 import { useCart, type CartItem } from "@/context/CartContext";
 import { useCartDrawer } from "@/context/CartDrawerContext";
-import { calculateTotals, type OrderTotals } from "@/lib/pricing";
+import { FREE_SHIPPING_THRESHOLD, calculateTotals, type OrderTotals } from "@/lib/pricing";
 import { useOverlay } from "@/lib/useOverlay";
 import { DURATION, EASE } from "@/lib/motion";
 
@@ -97,9 +97,11 @@ function DrawerContent({
               </svg>
             }
             title="Your cart is empty"
-            description="Add a few mugs and they'll show up here."
+            description={`Mugs you add wait for you here. Free shipping on orders over $${FREE_SHIPPING_THRESHOLD}.`}
             ctaLabel="Explore Collection"
             ctaHref="/shop"
+            secondaryLabel="View wishlist"
+            secondaryHref="/wishlist"
           />
         ) : (
           <AnimatePresence initial={false}>

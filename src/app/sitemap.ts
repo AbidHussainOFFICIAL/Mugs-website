@@ -4,7 +4,22 @@ import { CATEGORY_META } from "@/lib/categories";
 import { SITE_URL } from "@/lib/site";
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  const staticRoutes = ["", "/about", "/company", "/stores", "/shop", "/search"].map((path) => ({
+  const staticRoutes = [
+    "",
+    "/about",
+    "/company",
+    "/stores",
+    "/shop",
+    "/search",
+    "/contact",
+    "/faq",
+    "/gift-cards",
+    "/shipping-returns",
+    "/press",
+    "/privacy",
+    "/terms",
+    "/sitemap",
+  ].map((path) => ({
     url: `${SITE_URL}${path}`,
     lastModified: new Date(),
   }));

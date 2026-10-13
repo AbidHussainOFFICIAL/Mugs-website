@@ -20,6 +20,10 @@ const OVERFLOW_X = {
 // most noticeably under "You Might Also Need" on the Cart page. Keep <main>
 // free of a bottom margin so this stays the single source of that space.
 //
+// On mobile the bottom tab bar can be showing; it publishes its height as
+// the CSS variable --dock-h (0px whenever it is hidden), and the wrapper's
+// bottom padding uses it so the bar never covers the Footer's last line.
+//
 // `reserveBottomBar` is for a page with a fixed bar docked to the bottom of
 // the screen on mobile (the product page's sticky add-to-cart bar): it adds
 // bottom padding on those screens so the bar can't sit on top of the
@@ -41,7 +45,7 @@ export default function PageShell({
   return (
     <div
       className={`min-h-dvh w-full ${OVERFLOW_X[overflowX]} text-base font-normal text-[#090909] px-4 sm:px-5 lg:px-6 xl:px-8 pt-3 sm:pt-4 flex flex-col ${
-        reserveBottomBar ? "pb-24 lg:pb-0" : ""
+        reserveBottomBar ? "pb-24 lg:pb-0" : "pb-[var(--dock-h,0px)]"
       }`}
     >
       <Navbar />

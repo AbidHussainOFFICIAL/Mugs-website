@@ -9,6 +9,7 @@ import PriceBadge from "@/components/PriceBadge";
 import RatingStars from "@/components/RatingStars";
 import VariantSelectors from "@/components/VariantSelectors";
 import AddToCartButton from "@/components/AddToCartButton";
+import NotifyMeBlock from "@/components/NotifyMeBlock";
 import TrustChip from "@/components/TrustChip";
 import Accordion from "@/components/Accordion";
 import ReviewsSection from "@/components/ReviewsSection";
@@ -136,7 +137,7 @@ export default function ProductDetailContent({ product }: { product: Product }) 
           on why a second margin here stacked into an oversized gap. */}
       <main className="max-w-[1400px] w-full mx-auto mt-6 sm:mt-8 flex-1">
         <div className="grid gap-8 lg:grid-cols-[55%_1fr]">
-          <ProductGallery images={product.images} productName={product.name} />
+          <ProductGallery images={product.images} productName={product.name} soldOut={!product.inStock} />
 
           <div className="flex flex-col gap-3 max-w-lg">
             <motion.h1 {...nameProps} className="font-anton text-3xl sm:text-4xl lg:text-5xl leading-tight">
@@ -224,6 +225,8 @@ export default function ProductDetailContent({ product }: { product: Product }) 
                   </motion.span>
                 </motion.button>
               </div>
+
+              {!product.inStock && <NotifyMeBlock productName={product.name} />}
 
               <div className="border-t border-[#e9ecf6]" />
 

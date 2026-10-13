@@ -3,15 +3,19 @@
 import { useState } from "react";
 import Image from "next/image";
 import { AnimatePresence, motion } from "framer-motion";
+import SoldOutChip from "@/components/SoldOutChip";
 import { useOverlay } from "@/lib/useOverlay";
 import { DURATION, EASE } from "@/lib/motion";
 
 export default function ProductGallery({
   images,
   productName,
+  soldOut = false,
 }: {
   images: string[];
   productName: string;
+  /** Lays a "Sold out" tag over the main photo and softens it. */
+  soldOut?: boolean;
 }) {
   const [activeIndex, setActiveIndex] = useState(0);
   const [lightboxOpen, setLightboxOpen] = useState(false);
@@ -46,8 +50,9 @@ export default function ProductGallery({
           type="button"
           onClick={() => setLightboxOpen(true)}
           aria-label="Open full-screen image"
-          className="flex-1 bg-[#e9ecf6] rounded-3xl overflow-hidden focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#183fad]"
+          className="relative flex-1 bg-[#e9ecf6] rounded-3xl overflow-hidden focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#183fad]"
         >
+          {soldOut && <SoldOutChip className="absolute left-3 top-3 z-10" />}
           <AnimatePresence mode="wait">
             <motion.div
               key={activeIndex}
@@ -63,7 +68,7 @@ export default function ProductGallery({
                 height={700}
                 loading="eager"
                 fetchPriority="high"
-                className="w-full h-auto lg:h-[580px] object-cover lg:object-contain"
+                className={`w-full h-auto lg:h-[580px] object-cover lg:object-contain ${soldOut ? "opacity-60" : ""}`}
               />
             </motion.div>
           </AnimatePresence>

@@ -13,10 +13,13 @@ export default function PageHeaderBanner({
   title,
   breadcrumb,
   count,
+  description,
 }: {
   title: string;
   breadcrumb: Crumb[];
   count?: string;
+  /** One short line under the title (content pages). Shop-style pages omit it. */
+  description?: string;
 }) {
   return (
     <header className="max-w-[1400px] w-full mx-auto bg-[#183fad] text-white px-3.5 sm:px-6 lg:px-8 py-6 sm:py-8 lg:py-10 rounded-tl-4xl rounded-b-4xl overflow-hidden">
@@ -41,6 +44,8 @@ export default function PageHeaderBanner({
           </AnimatePresence>
         )}
       </div>
+
+      {description && <p className="mt-3 max-w-[60ch] text-sm sm:text-base text-white">{description}</p>}
     </header>
   );
 }

@@ -12,6 +12,7 @@ import SavedForLaterShelf from "@/components/SavedForLaterShelf";
 import ProductGrid from "@/components/ProductGrid";
 import { useCart, type CartItem } from "@/context/CartContext";
 import { products } from "@/data/products";
+import { FREE_SHIPPING_THRESHOLD } from "@/lib/pricing";
 import { DURATION, EASE } from "@/lib/motion";
 
 const CROSS_SELL_ANCHOR_ID = "you-might-also-need";
@@ -115,9 +116,11 @@ export default function CartPageContent() {
                   </svg>
                 }
                 title="Your cart is empty"
-                description="Add a few mugs and they'll show up here."
+                description={`Mugs you add wait for you here. Free shipping on orders over $${FREE_SHIPPING_THRESHOLD}.`}
                 ctaLabel="Explore Collection"
                 ctaHref="/shop"
+                secondaryLabel="View wishlist"
+                secondaryHref="/wishlist"
               />
 
               {/* An empty cart still surfaces anything saved for later, and

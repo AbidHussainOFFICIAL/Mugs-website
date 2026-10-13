@@ -1,0 +1,22 @@
+MUGSY'S MUGS - LOGO USE
+
+Files
+- mugsys-logo-yellow.svg  yellow square, dark mug (default)
+- mugsys-logo-blue.svg    blue square, yellow mug
+- mugsys-logo-ink.svg     near-black square, yellow mug
+- mugsys-logo-white.svg   white square, dark mug (for dark or blue backgrounds)
+
+Colours
+Blue #183fad | Mid blue #4565bc | Yellow #F1BF0A | Ice #e9ecf6 | Ink #090909 | Soft blue #abb9de
+
+Please
+- Keep clear space around the mark equal to a quarter of its width.
+- Use the mark at 24px or larger.
+- Use the files as supplied.
+
+Please don't
+- Stretch, rotate or recolour the mark.
+- Add shadows, outlines or effects.
+- Place it on a busy photograph without a plain backing.
+
+Questions: press@mugsysmugs.com

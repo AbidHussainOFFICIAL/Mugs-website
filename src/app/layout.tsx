@@ -7,6 +7,12 @@ import { CartDrawerProvider } from "@/context/CartDrawerContext";
 import CartDrawer from "@/components/CartDrawer";
 import UndoToast from "@/components/UndoToast";
 import CartAnnouncer from "@/components/CartAnnouncer";
+import BottomTabBar from "@/components/BottomTabBar";
+import CookieBanner from "@/components/CookieBanner";
+import CookiePreferences from "@/components/CookiePreferences";
+import SplashScreen from "@/components/SplashScreen";
+import { CookieConsentProvider } from "@/context/CookieConsentContext";
+import { SPLASH_SEEN_CLASS, SPLASH_SEEN_KEY } from "@/lib/splash";
 import { SITE_URL } from "@/lib/site";
 import "./styles.css";
 
@@ -58,20 +64,41 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className={`${inter.variable} ${anton.variable}`}>
+    // suppressHydrationWarning: the inline script below may add a class to
+    // <html> before React hydrates, which would otherwise log a mismatch.
+    <html lang="en" className={`${inter.variable} ${anton.variable}`} suppressHydrationWarning>
+      <head>
+        {/* Before first paint: if the phone splash already played this visit,
+            hide it with CSS so it doesn't flash on every page load. */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `try{if(sessionStorage.getItem(${JSON.stringify(SPLASH_SEEN_KEY)}))document.documentElement.classList.add(${JSON.stringify(SPLASH_SEEN_CLASS)})}catch(e){}`,
+          }}
+        />
+        {/* No scripts, no splash: it could never be dismissed. */}
+        <noscript>
+          <style>{"[data-splash]{display:none}"}</style>
+        </noscript>
+      </head>
       <body>
-        <CartProvider>
-          <WishlistProvider>
-            <ReviewsProvider>
-              <CartDrawerProvider>
-                {children}
-                <CartDrawer />
-                <UndoToast />
-                <CartAnnouncer />
-              </CartDrawerProvider>
-            </ReviewsProvider>
-          </WishlistProvider>
-        </CartProvider>
+        <CookieConsentProvider>
+          <CartProvider>
+            <WishlistProvider>
+              <ReviewsProvider>
+                <CartDrawerProvider>
+                  <SplashScreen />
+                  {children}
+                  <BottomTabBar />
+                  <CartDrawer />
+                  <UndoToast />
+                  <CartAnnouncer />
+                  <CookieBanner />
+                  <CookiePreferences />
+                </CartDrawerProvider>
+              </ReviewsProvider>
+            </WishlistProvider>
+          </CartProvider>
+        </CookieConsentProvider>
       </body>
     </html>
   );

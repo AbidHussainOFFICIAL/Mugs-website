@@ -32,8 +32,8 @@ export default function AddToCartButton({
 
   if (!product.inStock) {
     return (
-      <div className="flex-1 flex items-center justify-center gap-2 bg-[#e9ecf6] rounded-full py-3 px-6 text-[#5b5f6b] font-semibold cursor-not-allowed">
-        Out of Stock
+      <div className="flex-1 flex items-center justify-center gap-2 bg-[#e9ecf6] rounded-full py-3 px-6 text-[#090909]/60 font-semibold cursor-not-allowed">
+        Sold out
       </div>
     );
   }
