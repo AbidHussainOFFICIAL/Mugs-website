@@ -20,7 +20,7 @@ export default function StatusChip({
     <p
       id={id}
       role={variant === "error" ? "alert" : "status"}
-      className={`inline-flex w-fit max-w-full items-center gap-1.5 rounded-full px-3 py-1 text-xs ${colors} ${className}`}
+      className={`status-in inline-flex w-fit max-w-full items-center gap-1.5 rounded-full px-3 py-1 text-xs ${colors} ${className}`}
     >
       {children}
     </p>

@@ -117,7 +117,7 @@ function PillContent({ icon, children, layout, size = "md" }: Pick<PillButtonBas
         <span className={`absolute left-1.5 top-1/2 -translate-y-1/2 flex items-center justify-center z-10 ${iconWrapperSize(size)}`}>
           {icon}
         </span>
-        <span className="relative z-10 pl-8">{children}</span>
+        <span className="relative z-10 pl-11">{children}</span>
       </>
     );
   }
@@ -128,7 +128,7 @@ function PillContent({ icon, children, layout, size = "md" }: Pick<PillButtonBas
         <span className="absolute left-1.5 top-1/2 -translate-y-1/2 flex size-9 items-center justify-center z-10 min-[480px]:static min-[480px]:translate-y-0 min-[480px]:shrink-0">
           {icon}
         </span>
-        <span className="relative z-10 pl-8 min-[480px]:pl-0">{children}</span>
+        <span className="relative z-10 pl-11 min-[480px]:pl-0">{children}</span>
       </>
     );
   }

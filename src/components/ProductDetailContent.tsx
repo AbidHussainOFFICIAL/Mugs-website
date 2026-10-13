@@ -114,7 +114,7 @@ export default function ProductDetailContent({ product }: { product: Product }) 
       };
 
   return (
-    <PageShell reserveBottomBar>
+    <PageShell>
       {/* Compact blue connector bar — Navbar's logo has a decorative notch
           designed to blend into a blue section immediately below it (as it
           does on Shop/Category via PageHeaderBanner). A plain white
@@ -132,7 +132,7 @@ export default function ProductDetailContent({ product }: { product: Product }) 
         />
       </div>
 
-      {/* No bottom margin here — PageShell's Footer supplies the space
+      {/* No bottom margin here — the Footer supplies the space
           above itself on its own; see CartPageContent for the full note
           on why a second margin here stacked into an oversized gap. */}
       <main className="max-w-[1400px] w-full mx-auto mt-6 sm:mt-8 flex-1">

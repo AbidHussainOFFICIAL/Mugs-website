@@ -75,84 +75,69 @@ input[type="search"]::-webkit-search-decoration {
 
 /* The phone splash screen (SplashScreen.tsx). Plain CSS keyframes, not a
    JavaScript animation, so it starts at the very first paint instead of
-   waiting for the page's scripts to load. Delays for the letters are set
-   inline; everything uses `both` so an element waits invisible until its
-   turn and then stays in its final state. */
-@keyframes splash-ring {
-  0% {
-    transform: scale(0.3);
-    opacity: 0;
-  }
-  100% {
-    transform: scale(1);
-    opacity: 0.6;
-  }
-}
-
+   waiting for the page's scripts to load. Both pieces use `both`, so each
+   waits invisible until its turn and then stays in its final state. */
 @keyframes splash-logo {
-  0% {
-    transform: scale(0.4) rotate(-14deg);
-    opacity: 0;
-  }
-  55% {
-    transform: scale(1.12) rotate(3deg);
-    opacity: 1;
-  }
-  100% {
-    transform: scale(1) rotate(0deg);
-    opacity: 1;
-  }
-}
-
-@keyframes splash-float {
-  0%,
-  100% {
-    transform: translateY(0);
-  }
-  50% {
-    transform: translateY(-6px);
-  }
-}
-
-@keyframes splash-letter {
-  0% {
-    opacity: 0;
-    transform: translateY(16px);
-  }
-  100% {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-@keyframes splash-bar {
   from {
-    transform: scaleX(0);
+    transform: scale(0.85);
+    opacity: 0;
   }
   to {
-    transform: scaleX(1);
+    transform: scale(1);
+    opacity: 1;
   }
 }
 
-.splash-ring {
-  animation: splash-ring 1.4s cubic-bezier(0.22, 1, 0.36, 1) both;
+@keyframes splash-word {
+  from {
+    transform: translateY(8px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
 }
 
 .splash-logo {
-  animation: splash-logo 0.9s cubic-bezier(0.34, 1.2, 0.64, 1) 0.1s both;
+  animation: splash-logo 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 
-.splash-float {
-  animation: splash-float 2.4s ease-in-out 1s infinite;
+.splash-word {
+  animation: splash-word 0.5s cubic-bezier(0.22, 1, 0.36, 1) 0.15s both;
 }
 
-.splash-letter {
-  animation: splash-letter 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
+/* Message and panel entrances. Short and opacity-led, ending on their resting
+   state. There is deliberately no page-level entrance: the header and the
+   banner under it must never fade on a navigation. */
+@keyframes status-in {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
-.splash-bar {
-  transform-origin: left center;
-  animation: splash-bar 2s cubic-bezier(0.65, 0, 0.35, 1) 0.3s both;
+@keyframes pop-in {
+  from {
+    opacity: 0;
+    transform: scale(0.97) translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+.status-in {
+  animation: status-in 0.22s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.pop-in {
+  animation: pop-in 0.4s cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 
 /* Respect reduced-motion preferences */

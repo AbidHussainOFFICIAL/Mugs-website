@@ -81,7 +81,6 @@ export default function PickerShell({
         aria-haspopup="dialog"
         aria-expanded={open}
         aria-controls={open ? panelId : undefined}
-        aria-invalid={error ? true : undefined}
         aria-describedby={error ? `${id}-error` : undefined}
         className={`flex h-12 w-full items-center gap-2 rounded-full border bg-white pl-2 pr-4 text-left text-base transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#183fad] sm:text-sm ${
           error ? "border-red-300" : open ? "border-[#F1BF0A]" : "border-[#183fad]/20 hover:border-[#F1BF0A]"

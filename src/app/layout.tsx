@@ -8,6 +8,7 @@ import CartDrawer from "@/components/CartDrawer";
 import UndoToast from "@/components/UndoToast";
 import CartAnnouncer from "@/components/CartAnnouncer";
 import BottomDock from "@/components/BottomDock";
+import SiteFrame from "@/components/SiteFrame";
 import CookiePreferences from "@/components/CookiePreferences";
 import SplashScreen from "@/components/SplashScreen";
 import { CookieConsentProvider } from "@/context/CookieConsentContext";
@@ -86,7 +87,7 @@ export default function RootLayout({
               <ReviewsProvider>
                 <CartDrawerProvider>
                   <SplashScreen />
-                  {children}
+                  <SiteFrame>{children}</SiteFrame>
                   <CartDrawer />
                   <UndoToast />
                   <CartAnnouncer />

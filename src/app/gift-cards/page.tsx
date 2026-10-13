@@ -11,9 +11,7 @@ export const metadata: Metadata = {
 
 export default function GiftCardsPage() {
   return (
-    // overflowX="clip": the card preview on this page is position: sticky,
-    // which the default overflow-x-hidden wrapper would stop from working.
-    <PageShell overflowX="clip">
+    <PageShell>
       <PageHeaderBanner
         title="GIFT CARDS"
         breadcrumb={[{ label: "Home", href: "/" }, { label: "Gift cards" }]}

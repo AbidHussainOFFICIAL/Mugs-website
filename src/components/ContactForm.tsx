@@ -100,7 +100,7 @@ export default function ContactForm({ initialTopic }: { initialTopic: ContactTop
 
   if (status === "sent") {
     return (
-      <div className="flex min-w-0 flex-col items-center rounded-4xl bg-[#e9ecf6] p-5 text-center sm:p-10">
+      <div className="pop-in flex min-w-0 flex-col items-center rounded-4xl bg-[#e9ecf6] p-5 text-center sm:p-10">
         <span className="flex size-16 items-center justify-center rounded-full bg-[#F1BF0A] text-[#090909]">
           <CheckIcon className="size-8" />
         </span>

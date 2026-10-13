@@ -1,9 +1,12 @@
 import type { ReactNode } from "react";
+import Reveal from "@/components/Reveal";
 
 // The standard section wrapper for the content pages: the same container and
 // vertical rhythm the landing page uses (mt-12 sm:mt-16 lg:mt-20 between
 // sections), with an optional Anton heading. Pass `first` for the section that
 // directly follows the page banner, which uses the banner's own tighter gap.
+// Every other section fades up once as it scrolls into view; the first one is
+// already on screen under the banner, so it doesn't animate.
 export default function ContentSection({
   title,
   id,
@@ -18,14 +21,19 @@ export default function ContentSection({
   className?: string;
 }) {
   const spacing = first ? "mt-8 sm:mt-10" : "mt-12 sm:mt-16 lg:mt-20";
-  return (
-    <section id={id} aria-labelledby={id && title ? `${id}-heading` : undefined} className={`${spacing} ${className}`}>
+  const content = (
+    <>
       {title && (
         <h2 id={id ? `${id}-heading` : undefined} className="font-anton text-2xl sm:text-3xl mb-6">
           {title}
         </h2>
       )}
       {children}
+    </>
+  );
+  return (
+    <section id={id} aria-labelledby={id && title ? `${id}-heading` : undefined} className={`${spacing} ${className}`}>
+      {first ? content : <Reveal>{content}</Reveal>}
     </section>
   );
 }

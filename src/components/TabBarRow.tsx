@@ -3,6 +3,7 @@
 import type { ReactNode } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { motion, useReducedMotion } from "framer-motion";
 import { CartIcon, HeartIcon, HomeIcon, SearchIcon, ShoppingBagIcon } from "@/components/icons";
 import { useCart } from "@/context/CartContext";
 import { useWishlist } from "@/context/WishlistContext";
@@ -11,12 +12,24 @@ import { isActivePath } from "@/lib/nav";
 const ITEM_CLASS =
   "relative flex flex-1 flex-col items-center gap-0.5 rounded-2xl py-1.5 text-[11px] transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-[#F1BF0A]";
 
+// The yellow pill behind the current tab's icon is one shared element (a
+// layoutId), so moving between tabs slides it across instead of swapping it.
 function TabIcon({ active, children, badge = 0 }: { active: boolean; children: ReactNode; badge?: number }) {
+  const shouldReduceMotion = useReducedMotion();
   return (
-    <span className={`relative flex h-7 w-12 items-center justify-center rounded-full transition-colors ${active ? "bg-[#F1BF0A] text-[#090909]" : ""}`}>
-      {children}
+    <span className={`relative flex h-7 w-12 items-center justify-center rounded-full ${active ? "text-[#090909]" : ""}`}>
+      {active && (
+        <motion.span
+          layoutId="tab-active-pill"
+          transition={shouldReduceMotion ? { duration: 0 } : { type: "spring", stiffness: 500, damping: 38 }}
+          className="absolute inset-0 rounded-full bg-[#F1BF0A]"
+        />
+      )}
+      <motion.span whileTap={shouldReduceMotion ? undefined : { scale: 0.85 }} className="relative z-10 flex">
+        {children}
+      </motion.span>
       {badge > 0 && (
-        <span className="absolute -right-1.5 -top-1 flex h-4 min-w-4 items-center justify-center rounded-full bg-[#F1BF0A] px-1 text-[10px] font-semibold leading-none text-[#090909]">
+        <span className="absolute -right-1.5 -top-1 z-20 flex h-4 min-w-4 items-center justify-center rounded-full bg-[#F1BF0A] px-1 text-[10px] font-semibold leading-none text-[#090909]">
           {badge}
         </span>
       )}

@@ -15,7 +15,7 @@ export function Chip({
       type="button"
       onClick={onClick}
       aria-pressed={selected}
-      className={`shrink-0 whitespace-nowrap rounded-full border border-[#F1BF0A] px-4 py-1.5 text-sm font-medium text-[#090909] transition-colors duration-150 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#183fad] ${
+      className={`shrink-0 whitespace-nowrap rounded-full border border-[#F1BF0A] px-4 py-1.5 text-sm font-medium text-[#090909] transition-[color,background-color,scale] duration-150 active:scale-95 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#183fad] ${
         selected ? "bg-[#F1BF0A]" : "bg-transparent hover:bg-[#F1BF0A]/10"
       }`}
     >

@@ -112,8 +112,7 @@ export default function LegalPage({ doc }: { doc: LegalDocument }) {
   const navSections = doc.sections.map(({ id, title }) => ({ id, title }));
 
   return (
-    // overflowX="clip": the "On this page" rail is position: sticky.
-    <PageShell overflowX="clip">
+    <PageShell>
       <PageHeaderBanner
         title={doc.title}
         breadcrumb={[{ label: "Home", href: "/" }, { label: doc.title.charAt(0) + doc.title.slice(1).toLowerCase() }]}

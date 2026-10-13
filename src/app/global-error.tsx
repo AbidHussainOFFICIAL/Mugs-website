@@ -41,7 +41,9 @@ export default function GlobalError({ error, reset }: { error: Error & { digest?
               >
                 Try again
               </button>
-              {/* A plain <a>: a full page load, so a broken layout starts over clean. */}
+              {/* A plain <a> on purpose: a full page load, so a broken layout starts over clean.
+                  next/link needs the app's router, which may be what just failed. */}
+              {/* eslint-disable-next-line @next/next/no-html-link-for-pages */}
               <a
                 href="/"
                 className="flex h-12 items-center justify-center rounded-full border border-[#F1BF0A] px-6 text-base text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"

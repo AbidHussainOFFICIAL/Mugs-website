@@ -76,7 +76,7 @@ export default function CartPageContent() {
   const hasItems = items.length > 0;
 
   return (
-    <PageShell overflowX="clip">
+    <PageShell>
       <PageHeaderBanner
         title="YOUR CART"
         breadcrumb={[{ label: "Home", href: "/" }, { label: "Cart" }]}

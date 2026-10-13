@@ -126,7 +126,7 @@ export default function Footer() {
 
           <div className="border-t border-white/20">
             {PHONE_COLUMNS.map((column) => (
-              <FooterGroup key={column.title} title={column.title} links={column.links} />
+              <FooterGroup key={`${pathname}-${column.title}`} title={column.title} links={column.links} />
             ))}
           </div>
 

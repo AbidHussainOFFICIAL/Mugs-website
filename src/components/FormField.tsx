@@ -54,7 +54,7 @@ function FieldMessages({ id, error, helper }: { id: string; error?: string; help
 
 function borderClass(error?: string, disabled?: boolean) {
   if (disabled) return "border-[#183fad]/10 bg-[#e9ecf6]";
-  return `bg-white ${error ? "border-red-300" : "border-[#183fad]/20 focus-within:border-[#F1BF0A]"}`;
+  return `bg-white ${error ? "border-red-300" : "border-[#183fad]/20 focus-within:border-[#F1BF0A] focus-within:shadow-[0_0_0_3px_rgba(241,191,10,0.3)]"}`;
 }
 
 export function TextField({
@@ -89,7 +89,7 @@ export function TextField({
   return (
     <div className={className}>
       <FieldLabel id={id} label={label} optional={optional} />
-      <div className={`flex h-12 items-center gap-2 rounded-full border transition-colors ${leading ? "pl-2" : "pl-5"} ${trailing ? "pr-2" : "pr-5"} ${borderClass(error, disabled)}`}>
+      <div className={`flex h-12 items-center gap-2 rounded-full border transition-[border-color,box-shadow] duration-200 ${leading ? "pl-2" : "pl-5"} ${trailing ? "pr-2" : "pr-5"} ${borderClass(error, disabled)}`}>
         {leading}
         <input
           id={id}
@@ -134,7 +134,7 @@ export function TextAreaField({
   return (
     <div className={className}>
       <FieldLabel id={id} label={label} optional={optional} />
-      <div className={`rounded-3xl border px-5 py-3.5 transition-colors ${borderClass(error, disabled)}`}>
+      <div className={`rounded-3xl border px-5 py-3.5 transition-[border-color,box-shadow] duration-200 ${borderClass(error, disabled)}`}>
         <textarea
           id={id}
           value={value}

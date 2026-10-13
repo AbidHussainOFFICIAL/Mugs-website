@@ -130,18 +130,24 @@ export default function Hero() {
       </motion.div>
 
       <motion.div {...mugProps} className="hidden md:block absolute -bottom-0 sm:-bottom-1 lg:-bottom-1 left-[51%] -translate-x-1/2 z-100">
-        <Image
-          src="https://i.postimg.cc/YqVLr48H/mug.png"
-          alt=""
-          role="presentation"
-          width={780}
-          height={780}
-          loading="eager"
-          fetchPriority="high"
-          className="object-contain h-[62vh] sm:h-[66vh] md:h-[70vh] lg:h-[71vh] max-h-[720px] lg:max-h-[780px] select-none pointer-events-none w-auto"
-          draggable={false}
-          style={{ filter: "drop-shadow(5px 5px 10px rgba(0, 0, 0, 0.5))" }}
-        />
+        {/* A slow, small float once it has landed; none for reduced motion. */}
+        <motion.div
+          animate={shouldReduceMotion ? undefined : { y: [0, -10, 0] }}
+          transition={{ duration: 6, ease: "easeInOut", repeat: Infinity, delay: 1.2 }}
+        >
+          <Image
+            src="https://i.postimg.cc/YqVLr48H/mug.png"
+            alt=""
+            role="presentation"
+            width={780}
+            height={780}
+            loading="eager"
+            fetchPriority="high"
+            className="object-contain h-[62vh] sm:h-[66vh] md:h-[70vh] lg:h-[71vh] max-h-[720px] lg:max-h-[780px] select-none pointer-events-none w-auto"
+            draggable={false}
+            style={{ filter: "drop-shadow(5px 5px 10px rgba(0, 0, 0, 0.5))" }}
+          />
+        </motion.div>
       </motion.div>
     </header>
   );

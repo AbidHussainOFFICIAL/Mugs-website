@@ -3,7 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { AnimatePresence, motion } from "framer-motion";
+import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import LogoMark from "@/components/LogoMark";
 import MobileNavDrawer from "@/components/MobileNavDrawer";
 import { PillLink } from "@/components/PillButton";
@@ -33,6 +33,7 @@ export default function Navbar() {
   const { itemCount } = useCart();
   const { count: wishlistCount } = useWishlist();
   const { open: openCartDrawer } = useCartDrawer();
+  const shouldReduceMotion = useReducedMotion();
 
   return (
     <>
@@ -59,11 +60,21 @@ export default function Navbar() {
                   <Link
                     href={link.href}
                     aria-current={active ? "page" : undefined}
-                    className={`block rounded-full px-4 py-2 transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#F1BF0A] ${
-                      active ? "bg-[#F1BF0A] font-medium text-white" : "hover:bg-[#F1BF0A] hover:text-white"
+                    className={`relative block rounded-full px-4 py-2 transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#F1BF0A] ${
+                      active ? "font-medium text-white" : "hover:bg-[#F1BF0A] hover:text-white"
                     }`}
                   >
-                    {link.label}
+                    {/* One shared pill (a layoutId): the Navbar stays mounted
+                        between pages, so the yellow highlight slides from the
+                        old link to the new one instead of swapping. */}
+                    {active && (
+                      <motion.span
+                        layoutId="nav-active-pill"
+                        transition={shouldReduceMotion ? { duration: 0 } : { type: "spring", stiffness: 500, damping: 38 }}
+                        className="absolute inset-0 rounded-full bg-[#F1BF0A]"
+                      />
+                    )}
+                    <span className="relative z-10">{link.label}</span>
                   </Link>
                 </li>
               );

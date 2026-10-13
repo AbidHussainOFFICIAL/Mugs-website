@@ -38,7 +38,7 @@ export default function FeatureCard({
     return (
       <Link
         href={href}
-        className={`${baseClass} sm:items-stretch transition-colors hover:bg-[#abb9de]/60 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#183fad]`}
+        className={`${baseClass} sm:items-stretch transition-[background-color,translate] duration-200 hover:-translate-y-1 hover:bg-[#abb9de]/60 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#183fad]`}
       >
         {content}
       </Link>

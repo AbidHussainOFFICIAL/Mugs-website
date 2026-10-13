@@ -15,9 +15,7 @@ export const metadata: Metadata = {
 
 export default function FaqPage() {
   return (
-    // overflowX="clip": the category rail on this page is position: sticky,
-    // which the default overflow-x-hidden wrapper would stop from working.
-    <PageShell overflowX="clip">
+    <PageShell>
       <PageHeaderBanner
         title="FAQ"
         breadcrumb={[{ label: "Home", href: "/" }, { label: "FAQ" }]}
