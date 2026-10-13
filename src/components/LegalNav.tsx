@@ -142,7 +142,9 @@ export default function LegalNav({ sections }: { sections: LegalNavSection[] }) 
       </nav>
 
       <div className="lg:hidden">
-        <OutlineButton onClick={() => setSheetOpen(true)}>On this page</OutlineButton>
+        <OutlineButton onClick={() => setSheetOpen(true)} fluid>
+          On this page
+        </OutlineButton>
       </div>
       {sheetOpen && <TocSheet sections={sections} activeId={activeId} onClose={() => setSheetOpen(false)} />}
     </>

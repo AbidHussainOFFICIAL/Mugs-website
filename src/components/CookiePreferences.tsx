@@ -97,14 +97,17 @@ function PreferencesDialog({ initial, onClose }: { initial: CookieChoice; onClos
             <PillButtonElement
               onClick={() => save(draft)}
               icon={<CheckIcon className="size-6" />}
-              layout="hug"
+              layout="fluid"
               focusRing="dark"
-              className="justify-center min-[480px]:justify-start"
             >
               Save choices
             </PillButtonElement>
-            <OutlineButton onClick={acceptAll}>Accept all</OutlineButton>
-            <OutlineButton onClick={rejectNonEssential}>Reject non-essential</OutlineButton>
+            <OutlineButton onClick={acceptAll} fluid>
+              Accept all
+            </OutlineButton>
+            <OutlineButton onClick={rejectNonEssential} fluid>
+              Reject non-essential
+            </OutlineButton>
           </div>
         </motion.div>
       </div>

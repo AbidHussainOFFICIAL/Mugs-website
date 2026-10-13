@@ -28,6 +28,17 @@ const MotionLink = motion.create(Link);
 //   layout. This bug hit twice before the rule was locked in; "full" bakes
 //   the fix in so it can't recur.
 //
+// - "fluid" — full-width below 480px (icon pinned exactly like "full"), and
+//   a content-sized "hug" button from 480px up. This is the shape for any CTA
+//   that stretches across a phone screen but hugs its label on larger ones.
+//   Do NOT fake it with `justify-center` on a "hug" button: the white circle
+//   is pinned to the left edge, so centring the icon and label in a wide
+//   button leaves the circle stranded beside the icon instead of behind it.
+//
+// In every shape the icon sits in a fixed circle-sized box (size-9), so an
+// icon drawn smaller than the circle (size-5, size-4) still centres exactly
+// on it instead of drifting.
+//
 // The 1600ms duration and easing curve are fixed — every pill in the app
 // uses the same one, so no case here or overriding class should change it.
 
@@ -63,7 +74,7 @@ type PillSize = keyof typeof SIZES;
 type PillButtonBaseProps = {
   icon: ReactNode;
   children: ReactNode;
-  layout?: "hug" | "full";
+  layout?: "hug" | "full" | "fluid";
   size?: PillSize;
   /** The pill sits on a dark (blue) background by default, so the focus ring is white; pass "dark" when the pill sits on a light background instead. */
   focusRing?: "light" | "dark";
@@ -81,8 +92,8 @@ type PillButtonBaseProps = {
    * that whole wrapper. Pass `inline` there so the button becomes an
    * inline-level box (`inline-flex`) instead, which never stretches to
    * fill its container regardless of what kind of container it's in.
-   * No effect on "full" layout, which is always meant to span its
-   * container's width.
+   * No effect on "full" or "fluid" layouts, which span their container's
+   * width (fluid only below 480px).
    */
   inline?: boolean;
 };
@@ -102,9 +113,20 @@ function PillContent({ icon, children, layout, size = "md" }: Pick<PillButtonBas
       </>
     );
   }
+  if (layout === "fluid") {
+    // Pinned like "full" below 480px, back in normal flow (like "hug") above.
+    return (
+      <>
+        <span className="absolute left-1.5 top-1/2 -translate-y-1/2 flex size-9 items-center justify-center z-10 min-[480px]:static min-[480px]:translate-y-0 min-[480px]:shrink-0">
+          {icon}
+        </span>
+        <span className="relative z-10 pl-8 min-[480px]:pl-0">{children}</span>
+      </>
+    );
+  }
   return (
     <>
-      <span className={`rounded-full relative z-10 ${size === "sm" ? "p-1 sm:p-1.5" : "p-1.5"}`}>{icon}</span>
+      <span className={`relative z-10 flex shrink-0 items-center justify-center rounded-full ${iconWrapperSize(size)}`}>{icon}</span>
       <span className="relative z-10">{children}</span>
     </>
   );
@@ -123,6 +145,9 @@ function PillContent({ icon, children, layout, size = "md" }: Pick<PillButtonBas
 // same element — layout is chosen first, so there's nothing to conflict.
 const FULL_LAYOUT_PADDING = "py-3 pl-1.5 pr-4";
 
+// "fluid": the "full" padding below 480px, the "hug" md padding and gap above.
+const FLUID_LAYOUT_PADDING = "py-3 pl-1.5 pr-4 min-[480px]:py-1.5 min-[480px]:gap-2";
+
 function pillClassName({
   layout,
   size = "md",
@@ -130,15 +155,24 @@ function pillClassName({
   className,
   inline,
 }: Pick<PillButtonBaseProps, "layout" | "size" | "focusRing" | "className" | "inline">) {
-  const { circle, pad, text } = SIZES[size];
+  const { circle, pad, text } = SIZES[layout === "fluid" ? "md" : size];
   // Both branches below include the complete literal class names
   // ("flex", "inline-flex") Tailwind's content scanner needs to see, even
   // though only one is ever used on a given element — building this from
   // pieces (e.g. `${inline ? "inline-" : ""}flex`) would hide the full
   // token from the scanner and silently produce no CSS for it.
-  const display = layout === "full" ? "flex" : inline ? "inline-flex" : "flex";
-  const justify = layout === "full" ? `${display} items-center justify-center` : `${display} items-center`;
-  const padding = layout === "full" ? FULL_LAYOUT_PADDING : pad;
+  const display = layout === "full" || layout === "fluid" ? "flex" : inline ? "inline-flex" : "flex";
+  // A <button> does not stretch to its container the way a block-level <a>
+  // does, even with display: flex, so the wide shapes ask for their width
+  // explicitly. Without this a "full" button hugged its label while its icon
+  // stayed pinned to the left edge, and the two overlapped.
+  const justify =
+    layout === "full"
+      ? `${display} w-full items-center justify-center`
+      : layout === "fluid"
+        ? `${display} w-full min-[480px]:w-fit items-center justify-center min-[480px]:justify-start`
+        : `${display} items-center`;
+  const padding = layout === "full" ? FULL_LAYOUT_PADDING : layout === "fluid" ? FLUID_LAYOUT_PADDING : pad;
   const ring = focusRing === "dark" ? "focus-visible:outline-[#183fad]" : "focus-visible:outline-white";
   return [BASE, justify, padding, circle, text, ring, className].filter(Boolean).join(" ");
 }

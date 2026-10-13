@@ -83,11 +83,11 @@ export default function SitemapPage() {
 
       <main className="max-w-[1400px] w-full mx-auto flex-1">
         <ContentSection first>
-          <div className="grid gap-3 sm:grid-cols-2 sm:gap-4 lg:grid-cols-3">
+          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-4 lg:grid-cols-3">
             {GROUPS.map((group) => (
               <nav key={group.title} aria-label={group.title} className="rounded-3xl bg-[#e9ecf6] p-5 sm:p-6">
                 <h2 className="font-anton text-2xl">{group.title}</h2>
-                <ul className="mt-3 flex flex-col">
+                <ul className="mt-3 grid grid-cols-1 gap-x-4 min-[420px]:grid-cols-2 sm:grid-cols-1 lg:grid-cols-1">
                   {group.links.map((link) => (
                     <li key={link.href}>
                       <Link href={link.href} className={LINK_CLASS}>
@@ -101,7 +101,7 @@ export default function SitemapPage() {
 
             <nav aria-label="All mugs" className="rounded-3xl bg-[#e9ecf6] p-5 sm:p-6 sm:col-span-2 lg:col-span-3">
               <h2 className="font-anton text-2xl">ALL MUGS</h2>
-              <ul className="mt-3 grid gap-x-6 sm:grid-cols-2 lg:grid-cols-3">
+              <ul className="mt-3 grid grid-cols-1 gap-x-6 min-[420px]:grid-cols-2 lg:grid-cols-3">
                 {products.map((product) => (
                   <li key={product.slug}>
                     <Link href={`/shop/${product.slug}`} className={LINK_CLASS}>

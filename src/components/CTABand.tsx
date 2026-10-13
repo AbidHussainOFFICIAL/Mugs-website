@@ -19,7 +19,7 @@ export default function CTABand({
         <h2 className="font-anton text-3xl sm:text-4xl lg:text-5xl text-[#F1BF0A]">{title}</h2>
         {text && <p className="max-w-xl text-white/90">{text}</p>}
       </div>
-      <div className="w-full min-[480px]:w-auto shrink-0">{children}</div>
+      <div className="w-full shrink-0 min-[480px]:w-auto">{children}</div>
     </div>
   );
 }

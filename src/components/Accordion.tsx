@@ -2,7 +2,7 @@
 
 import { useId, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { DURATION } from "@/lib/motion";
+import { DURATION, EASE } from "@/lib/motion";
 
 interface AccordionItem {
   title: string;
@@ -45,7 +45,7 @@ export default function Accordion({
         // aren't valid in an id referenced by aria-controls.
         const panelId = `${baseId}-panel-${index}`;
         return (
-          <div key={key} id={item.id} className="border-b border-[#e9ecf6] scroll-mt-24">
+          <div key={key} id={item.id} className="min-w-0 border-b border-[#e9ecf6] scroll-mt-24">
             <button
               type="button"
               onClick={() => toggle(key)}
@@ -53,7 +53,7 @@ export default function Accordion({
               aria-controls={panelId}
               className="w-full flex items-center justify-between gap-4 py-4 text-left focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#183fad] rounded"
             >
-              <span className="font-semibold text-sm sm:text-base">{item.title}</span>
+              <span className="min-w-0 break-words font-semibold text-sm sm:text-base">{item.title}</span>
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 viewBox="0 0 24 24"
@@ -74,10 +74,10 @@ export default function Accordion({
                   initial={{ height: 0, opacity: 0 }}
                   animate={{ height: "auto", opacity: 1 }}
                   exit={{ height: 0, opacity: 0 }}
-                  transition={{ duration: DURATION.base }}
+                  transition={{ height: { duration: DURATION.base, ease: EASE }, opacity: { duration: DURATION.fast } }}
                   className="overflow-hidden"
                 >
-                  <p className="pb-4 text-sm text-[#090909]/80">{item.content}</p>
+                  <p className="break-words pb-4 text-sm text-[#090909]/80">{item.content}</p>
                 </motion.div>
               )}
             </AnimatePresence>

@@ -91,13 +91,7 @@ export default function Hero() {
 
         <div className="flex items-stretch justify-between relative z-5 after:content-[''] after:absolute after:-top-1/2 after:left-0 after:h-20 after:w-24 after:bg-[#183fad] after:-z-5 before:content-[''] before:absolute before:-top-1/2 before:right-0 before:h-20 before:w-24 before:bg-[#183fad] before:-z-5 after:hidden sm:after:block before:hidden sm:before:block">
           <div className="w-full min-[480px]:w-auto flex-1 min-[480px]:flex-none sm:bg-[#183fad] pb-3 pl-3 pr-3 min-[480px]:pr-0 sm:p-6 rounded-tr-4xl rounded-bl-4xl relative after:content-[''] after:absolute after:bottom-0 after:-right-1/2 after:h-1/2 after:w-full after:bg-[#183fad] after:-z-5 after:hidden sm:after:block">
-            <PillLink
-              href="/shop"
-              icon={SHOP_ICON}
-              layout="hug"
-              focusRing="light"
-              className="justify-center min-[480px]:justify-start"
-            >
+            <PillLink href="/shop" icon={SHOP_ICON} layout="fluid" focusRing="light">
               Shop Now
             </PillLink>
           </div>

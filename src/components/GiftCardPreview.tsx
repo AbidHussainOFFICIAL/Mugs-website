@@ -16,17 +16,17 @@ export default function GiftCardPreview({
     <div
       role="group"
       aria-label="Gift card preview"
-      className="relative aspect-[1.6/1] w-full overflow-hidden rounded-4xl bg-[#183fad] p-5 text-white sm:p-7"
+      className="relative min-h-48 w-full overflow-hidden rounded-4xl bg-[#183fad] p-5 text-white sm:aspect-[1.6/1] sm:min-h-0 sm:p-7"
     >
       <span className="absolute -bottom-16 -right-16 size-48 rounded-full bg-[#4565bc] sm:-bottom-20 sm:-right-20 sm:size-64" aria-hidden="true" />
 
-      <div className="relative flex h-full flex-col justify-between">
-        <div className="flex items-start justify-between gap-3">
+      <div className="relative flex h-full min-h-36 flex-col justify-between gap-4 sm:min-h-0">
+        <div className="flex flex-wrap items-start justify-between gap-x-3 gap-y-2">
           <div className="flex items-center gap-2">
             <LogoMark className="size-8" />
             <span className="font-anton text-lg">MUGSY&apos;S MUGS</span>
           </div>
-          <span className="rounded-full bg-[#abb9de] px-3 py-1 text-xs text-[#090909]">Digital · Instant</span>
+          <span className="shrink-0 whitespace-nowrap rounded-full bg-[#abb9de] px-3 py-1 text-xs text-[#090909]">Digital · Instant</span>
         </div>
 
         <div>

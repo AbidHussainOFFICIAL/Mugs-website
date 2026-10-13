@@ -90,7 +90,7 @@ export default function PressPage() {
             ))}
           </ul>
           <div className="mt-5">
-            <OutlineLink href="/press/mugsys-press-kit.zip" download>
+            <OutlineLink href="/press/mugsys-press-kit.zip" download fluid>
               <DownloadIcon className="size-4" />
               Download all logos (.zip)
             </OutlineLink>
@@ -138,7 +138,7 @@ export default function PressPage() {
 
         <ContentSection>
           <CTABand title="PRESS ENQUIRIES" text={`Review units, interviews and images: ${PRESS_EMAIL}`}>
-            <PillLink href={`mailto:${PRESS_EMAIL}`} icon={<MailIcon className="size-6" />} layout="hug" focusRing="light" className="justify-center min-[480px]:justify-start">
+            <PillLink href={`mailto:${PRESS_EMAIL}`} icon={<MailIcon className="size-6" />} layout="fluid" focusRing="light">
               Email press team
             </PillLink>
           </CTABand>

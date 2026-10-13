@@ -27,21 +27,28 @@ export default function FaqContent() {
   // A deep link to a question opens it, in its own category. Adjusting state
   // during render, guarded by a comparison, is React's documented pattern for
   // "change state when something it depends on changes".
+  //
+  // `scrollTarget` is only set for a hash that came from outside (a link, the
+  // address bar, Back). When this page writes the hash itself, because a
+  // question was opened by hand, `openId` already matches it and nothing
+  // scrolls, so opening a question never moves the screen.
   const [handledHash, setHandledHash] = useState("");
+  const [scrollTarget, setScrollTarget] = useState<string | null>(null);
   if (hash !== handledHash) {
     setHandledHash(hash);
     const linkedCategoryId = findFaqCategoryId(hash);
-    if (linkedCategoryId) {
+    if (linkedCategoryId && hash !== openId) {
       setCategoryId(linkedCategoryId);
       setOpenId(hash);
+      setScrollTarget(hash);
     }
   }
 
   // Bring a deep-linked question into view once it has rendered.
   useEffect(() => {
-    if (!hash || openId !== hash) return;
-    document.getElementById(hash)?.scrollIntoView({ block: "start" });
-  }, [hash, openId, categoryId]);
+    if (!scrollTarget) return;
+    document.getElementById(scrollTarget)?.scrollIntoView({ block: "start" });
+  }, [scrollTarget]);
 
   const category = FAQ_CATEGORIES.find((c) => c.id === categoryId) ?? FAQ_CATEGORIES[0];
 
@@ -61,7 +68,7 @@ export default function FaqContent() {
   }
 
   return (
-    <div className="grid gap-6 lg:grid-cols-[240px_1fr] lg:gap-10">
+    <div className="grid grid-cols-1 gap-6 lg:grid-cols-[240px_minmax(0,1fr)] lg:gap-10">
       {/* Desktop: a sticky rail, like the Shop filter sidebar. */}
       <nav aria-label="FAQ categories" className="hidden lg:block self-start sticky top-6">
         <ul className="flex flex-col gap-1">
@@ -86,7 +93,7 @@ export default function FaqContent() {
       </nav>
 
       {/* Mobile and tablet: the same categories as a sticky chip row. */}
-      <div className="lg:hidden sticky top-0 z-20 -mx-1 bg-white px-1 py-2">
+      <div className="lg:hidden sticky top-0 z-20 min-w-0 bg-white py-2">
         <ChipRow label="FAQ categories">
           {FAQ_CATEGORIES.map((c) => (
             <Chip key={c.id} selected={c.id === categoryId} onClick={() => handleSelectCategory(c.id)}>

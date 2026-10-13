@@ -105,7 +105,7 @@ export function TextField({
           required={!optional}
           aria-invalid={error ? true : undefined}
           aria-describedby={describedBy(id, error, helper)}
-          className={`min-w-0 flex-1 bg-transparent text-sm outline-none placeholder:text-[#090909]/50 disabled:cursor-not-allowed ${inputClassName}`}
+          className={`min-w-0 flex-1 bg-transparent text-base outline-none sm:text-sm placeholder:text-[#090909]/50 disabled:cursor-not-allowed ${inputClassName}`}
         />
         {trailing}
       </div>
@@ -147,7 +147,7 @@ export function TextAreaField({
           required={!optional}
           aria-invalid={error ? true : undefined}
           aria-describedby={describedBy(id, error, helper, showCounter ? counterId : undefined)}
-          className="block min-h-32 w-full resize-none bg-transparent text-sm outline-none placeholder:text-[#090909]/50 disabled:cursor-not-allowed"
+          className="block min-h-32 w-full resize-none bg-transparent text-base outline-none sm:text-sm placeholder:text-[#090909]/50 disabled:cursor-not-allowed"
         />
       </div>
       <div className="flex items-start justify-between gap-3">

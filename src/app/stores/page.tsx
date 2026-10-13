@@ -36,20 +36,20 @@ export default function StoresPage() {
 
       <main className="max-w-[1400px] w-full mx-auto flex-1">
         <ContentSection first>
-          <div className="grid gap-6 rounded-4xl bg-[#183fad] p-6 text-white sm:p-10 lg:grid-cols-2 lg:items-center lg:gap-10">
-            <div className="flex flex-col items-start gap-4">
+          <div className="grid grid-cols-1 gap-6 rounded-4xl bg-[#183fad] p-5 text-white sm:p-10 lg:grid-cols-2 lg:items-center lg:gap-10">
+            <div className="flex flex-col items-stretch gap-4 min-[480px]:items-start">
               <h2 className="font-anton text-3xl text-[#F1BF0A] sm:text-4xl lg:text-5xl">SHOP ONLINE</h2>
               <p className="max-w-md text-white/90">
                 The whole collection is a click away and ships straight to your door — no map needed.
               </p>
-              <PillLink href="/shop" icon={<ArrowRightIcon className="size-6" />} layout="hug" focusRing="light">
+              <PillLink href="/shop" icon={<ArrowRightIcon className="size-6" />} layout="fluid" focusRing="light">
                 Explore Collection
               </PillLink>
             </div>
-            <div className="grid grid-cols-3 gap-2 sm:gap-4">
+            <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 sm:gap-4">
               <StatChip value={`$${FREE_SHIPPING_THRESHOLD}+`} label="Free shipping" />
               <StatChip value={`${DISPATCH_DAYS} days`} label="Business days to ship" />
-              <StatChip value={`${RETURN_WINDOW_DAYS} days`} label="Easy returns" />
+              <StatChip value={`${RETURN_WINDOW_DAYS} days`} label="Easy returns" className="col-span-2 sm:col-span-1" />
             </div>
           </div>
         </ContentSection>
@@ -113,7 +113,7 @@ export default function StoresPage() {
 
         <ContentSection>
           <CTABand title="BECOME A STOCKIST" text="Run a shop that would suit our mugs? We'd love to hear from you.">
-            <PillLink href="/contact?topic=wholesale" icon={<ArrowRightIcon className="size-6" />} layout="hug" focusRing="light" className="justify-center min-[480px]:justify-start">
+            <PillLink href="/contact?topic=wholesale" icon={<ArrowRightIcon className="size-6" />} layout="fluid" focusRing="light">
               Get in touch
             </PillLink>
           </CTABand>

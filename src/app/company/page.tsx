@@ -28,7 +28,7 @@ export default function CompanyPage() {
         <ContentSection first>
           <div className="rounded-4xl bg-[#4565bc] p-6 text-white sm:p-10 lg:p-14">
             <h2 className="max-w-4xl font-anton text-3xl leading-tight text-[#F1BF0A] sm:text-5xl lg:text-6xl">{MISSION}</h2>
-            <div className="mt-8 grid gap-6 sm:grid-cols-2 sm:gap-10">
+            <div className="mt-8 grid grid-cols-1 gap-6 sm:grid-cols-2 sm:gap-10">
               <div>
                 <h3 className="font-anton text-xl">MISSION</h3>
                 <p className="mt-2 text-white/90">{MISSION_TEXT}</p>
@@ -50,7 +50,7 @@ export default function CompanyPage() {
         </ContentSection>
 
         <ContentSection>
-          <div className="flex flex-col gap-5 rounded-4xl bg-[#e9ecf6] p-6 sm:flex-row sm:items-center sm:justify-between sm:p-10">
+          <div className="flex flex-col gap-5 rounded-4xl bg-[#e9ecf6] p-5 sm:flex-row sm:items-center sm:justify-between sm:p-10">
             <div className="min-w-0">
               <h2 className="font-anton text-2xl sm:text-3xl">PRESS &amp; MEDIA</h2>
               <p className="mt-2 max-w-xl text-sm text-[#090909]/80 sm:text-base">
@@ -62,7 +62,7 @@ export default function CompanyPage() {
                 .
               </p>
             </div>
-            <OutlineLink href="/press" className="shrink-0">
+            <OutlineLink href="/press" fluid className="shrink-0">
               Visit press kit
             </OutlineLink>
           </div>
@@ -70,7 +70,7 @@ export default function CompanyPage() {
 
         <ContentSection>
           <CTABand title="GET IN TOUCH" text="Questions, ideas or a hello — we read everything.">
-            <PillLink href="/contact" icon={<ArrowRightIcon className="size-6" />} layout="hug" focusRing="light" className="justify-center min-[480px]:justify-start">
+            <PillLink href="/contact" icon={<ArrowRightIcon className="size-6" />} layout="fluid" focusRing="light">
               Contact us
             </PillLink>
           </CTABand>

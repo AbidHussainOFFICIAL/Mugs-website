@@ -15,7 +15,7 @@ export default function Error({ error, reset }: { error: Error & { digest?: stri
 
   return (
     <ErrorScreen code="500" title="SOMETHING WENT WRONG" text="That's on us, not you. Try again, or head back home.">
-      <PillButtonElement onClick={reset} icon={<RefreshIcon className="size-6" />} layout="hug" focusRing="light" className="justify-center min-[480px]:justify-start">
+      <PillButtonElement onClick={reset} icon={<RefreshIcon className="size-6" />} layout="fluid" focusRing="light">
         Try again
       </PillButtonElement>
       <OutlineLink href="/" onDark>

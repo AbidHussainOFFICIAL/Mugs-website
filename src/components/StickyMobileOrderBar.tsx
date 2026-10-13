@@ -6,6 +6,7 @@ import OrderSummaryPanel from "@/components/OrderSummaryPanel";
 import { useCart } from "@/context/CartContext";
 import { calculateTotals } from "@/lib/pricing";
 import { useOverlay } from "@/lib/useOverlay";
+import { useFooterNear } from "@/lib/useFooterNear";
 import { DURATION, EASE } from "@/lib/motion";
 
 // Both the collapsed bar and the expanded sheet below share this layoutId,
@@ -21,12 +22,13 @@ const SURFACE_LAYOUT_ID = "order-bar-surface";
 // while scrolling through the cart items and Saved For Later, and hides
 // once "You Might Also Need" (and the Footer beyond it) comes into view,
 // where it would otherwise sit on top of unrelated content with nothing
-// left to check out.
+// left to check out. It also slides away just before the Footer itself.
 export default function StickyMobileOrderBar({ anchorId }: { anchorId?: string }) {
   const { subtotal, discountPercent } = useCart();
   const [sheetOpen, setSheetOpen] = useState(false);
   const [pastAnchor, setPastAnchor] = useState(false);
   const shouldReduceMotion = useReducedMotion();
+  const footerNear = useFooterNear();
 
   const sheetRef = useOverlay<HTMLDivElement>(sheetOpen, () => setSheetOpen(false));
 
@@ -86,7 +88,7 @@ export default function StickyMobileOrderBar({ anchorId }: { anchorId?: string }
   const { total } = calculateTotals(subtotal, discountPercent);
   // The sheet, once opened, stays open regardless of scroll position — only
   // the collapsed trigger bar hides itself past the anchor.
-  const showCollapsedBar = !sheetOpen && !pastAnchor;
+  const showCollapsedBar = !sheetOpen && !pastAnchor && !footerNear;
 
   return (
     <>
@@ -172,3 +174,4 @@ export default function StickyMobileOrderBar({ anchorId }: { anchorId?: string }
     </>
   );
 }
+

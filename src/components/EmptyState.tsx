@@ -44,17 +44,21 @@ export default function EmptyState({
       <div className="flex items-center justify-center bg-[#F1BF0A] rounded-full size-16 mb-5">{icon}</div>
       <h2 className="font-anton text-2xl sm:text-3xl">{title}</h2>
       <p className="mt-2 text-[#090909]/70 max-w-sm">{description}</p>
-      <div className="mt-6 flex flex-col items-stretch gap-3 min-[480px]:flex-row min-[480px]:items-center">
+      <div
+        className={`mt-6 grid w-full max-w-sm grid-cols-1 gap-3 min-[480px]:w-auto min-[480px]:max-w-none min-[480px]:[&>*]:w-full ${
+          secondaryLabel && secondaryHref ? "min-[480px]:grid-cols-2" : ""
+        }`}
+      >
         {onCtaClick ? (
-          <PillButtonElement onClick={onCtaClick} icon={ARROW_ICON} layout="hug" focusRing="dark" className="justify-center min-[480px]:justify-start" tapFeedback>
+          <PillButtonElement onClick={onCtaClick} icon={ARROW_ICON} layout="fluid" focusRing="dark" tapFeedback>
             {ctaLabel}
           </PillButtonElement>
         ) : ctaHref ? (
-          <PillLink href={ctaHref} icon={ARROW_ICON} layout="hug" focusRing="dark" className="justify-center min-[480px]:justify-start" tapFeedback>
+          <PillLink href={ctaHref} icon={ARROW_ICON} layout="fluid" focusRing="dark" tapFeedback>
             {ctaLabel}
           </PillLink>
         ) : null}
-        {secondaryLabel && secondaryHref && <OutlineLink href={secondaryHref}>{secondaryLabel}</OutlineLink>}
+        {secondaryLabel && secondaryHref && <OutlineLink href={secondaryHref} fluid>{secondaryLabel}</OutlineLink>}
       </div>
     </motion.div>
   );

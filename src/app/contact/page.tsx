@@ -3,7 +3,7 @@ import Link from "next/link";
 import PageShell from "@/components/PageShell";
 import PageHeaderBanner from "@/components/PageHeaderBanner";
 import ContentSection from "@/components/ContentSection";
-import ContactForm from "@/components/ContactForm";
+import ContactPanel from "@/components/ContactPanel";
 import { ArrowRightIcon, ClockIcon, MailIcon, PhoneIcon, SparklesIcon } from "@/components/icons";
 import { parseContactTopic } from "@/lib/contact";
 import { SUPPORT } from "@/lib/policies";
@@ -44,13 +44,13 @@ export default async function ContactPage({
 
       <main className="max-w-[1400px] w-full mx-auto flex-1">
         <ContentSection first>
-          <div className="grid gap-6 lg:grid-cols-[58fr_42fr] lg:gap-10 lg:items-start">
-            <div className="order-2 lg:order-1">
-              <ContactForm key={initialTopic} initialTopic={initialTopic} />
+          <div className="grid grid-cols-1 gap-6 lg:grid-cols-[minmax(0,58fr)_minmax(0,42fr)] lg:items-start lg:gap-10">
+            <div className="min-w-0">
+              <ContactPanel initialTopic={initialTopic} />
             </div>
 
-            <aside aria-label="Support details" className="order-1 lg:order-2 flex flex-col gap-3">
-              <ul className="grid grid-cols-2 gap-3 lg:grid-cols-1">
+            <aside aria-label="Support details" className="flex min-w-0 flex-col gap-3">
+              <ul className="grid grid-cols-1 gap-3 min-[480px]:grid-cols-2 lg:grid-cols-1">
                 {SUPPORT_DETAILS.map((detail) => (
                   <li key={detail.label} className="flex items-center gap-3 rounded-2xl bg-[#abb9de] p-3 sm:p-4">
                     <span className="flex size-10 shrink-0 items-center justify-center rounded-full bg-[#F1BF0A] text-[#090909]">{detail.icon}</span>

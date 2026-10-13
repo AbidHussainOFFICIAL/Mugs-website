@@ -54,7 +54,7 @@ export default function AboutPage() {
 
       <main className="max-w-[1400px] w-full mx-auto flex-1">
         <ContentSection first>
-          <div className="grid gap-6 md:grid-cols-[55fr_45fr] md:gap-10 md:items-center">
+          <div className="grid grid-cols-1 gap-6 md:grid-cols-[55fr_45fr] md:gap-10 md:items-center">
             <div className="order-2 md:order-1 flex flex-col gap-4">
               <h2 className="font-anton text-3xl sm:text-4xl lg:text-5xl">A MUG THAT KEEPS UP</h2>
               <p className="text-sm sm:text-base leading-7 text-[#090909]/80">
@@ -68,7 +68,7 @@ export default function AboutPage() {
               </p>
             </div>
 
-            <div className="order-1 md:order-2 relative overflow-hidden rounded-3xl bg-[#e9ecf6] aspect-[4/5] md:aspect-square">
+            <div className="order-1 md:order-2 relative overflow-hidden rounded-3xl bg-[#e9ecf6] aspect-[5/4] sm:aspect-[4/3] md:aspect-square">
               <Image
                 src={featured.image}
                 alt={featured.name}
@@ -95,7 +95,7 @@ export default function AboutPage() {
         </ContentSection>
 
         <ContentSection title="WHAT WE STAND FOR">
-          <ul className="grid gap-3 sm:gap-5 md:grid-cols-3">
+          <ul className="grid grid-cols-1 gap-3 sm:gap-5 md:grid-cols-3">
             {VALUES.map((value) => (
               <li key={value.title}>
                 <FeatureCard icon={value.icon} title={value.title}>
@@ -107,7 +107,7 @@ export default function AboutPage() {
         </ContentSection>
 
         <ContentSection>
-          <div className="grid gap-6 lg:grid-cols-[1fr_2fr] lg:gap-10">
+          <div className="grid grid-cols-1 gap-6 lg:grid-cols-[1fr_2fr] lg:gap-10">
             <h2 className="font-anton text-2xl sm:text-3xl">HOW WE GOT HERE</h2>
             <ol className="ml-2 border-l-2 border-[#e9ecf6]">
               {MILESTONES.map((milestone) => (
@@ -142,7 +142,7 @@ export default function AboutPage() {
 
         <ContentSection>
           <CTABand title="FIND YOUR MUG" text={`${products.length} designs, each in a limited run. See which one is yours.`}>
-            <PillLink href="/shop" icon={<ArrowRightIcon className="size-6" />} layout="hug" focusRing="light" className="justify-center min-[480px]:justify-start">
+            <PillLink href="/shop" icon={<ArrowRightIcon className="size-6" />} layout="fluid" focusRing="light">
               Explore Collection
             </PillLink>
           </CTABand>

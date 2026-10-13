@@ -5,6 +5,7 @@ import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import Image from "next/image";
 import type { Product } from "@/data/products";
 import { useCart } from "@/context/CartContext";
+import { useFooterNear } from "@/lib/useFooterNear";
 import { DURATION, EASE } from "@/lib/motion";
 
 const CART_ICON = (
@@ -44,6 +45,7 @@ export default function StickyMobileCartBar({
   const [added, setAdded] = useState(false);
   const { addItem } = useCart();
   const shouldReduceMotion = useReducedMotion();
+  const footerNear = useFooterNear();
 
   useEffect(() => {
     const target = document.getElementById(anchorId);
@@ -66,7 +68,7 @@ export default function StickyMobileCartBar({
 
   return (
     <AnimatePresence>
-      {visible && (
+      {visible && !footerNear && (
         <motion.div
           {...barProps}
           transition={{ duration: DURATION.base, ease: EASE }}
@@ -117,3 +119,4 @@ export default function StickyMobileCartBar({
     </AnimatePresence>
   );
 }
+

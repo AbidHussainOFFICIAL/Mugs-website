@@ -100,7 +100,7 @@ export default function ContactForm({ initialTopic }: { initialTopic: ContactTop
 
   if (status === "sent") {
     return (
-      <div className="rounded-4xl bg-[#e9ecf6] p-6 sm:p-10 flex flex-col items-center text-center">
+      <div className="flex min-w-0 flex-col items-center rounded-4xl bg-[#e9ecf6] p-5 text-center sm:p-10">
         <span className="flex size-16 items-center justify-center rounded-full bg-[#F1BF0A] text-[#090909]">
           <CheckIcon className="size-8" />
         </span>
@@ -112,10 +112,12 @@ export default function ContactForm({ initialTopic }: { initialTopic: ContactTop
         </p>
         <StatChip value={reference} label="Reference number" className="mt-6 w-full max-w-xs" />
         <div className="mt-6 flex w-full flex-col items-stretch gap-3 min-[480px]:w-auto min-[480px]:flex-row min-[480px]:items-center">
-          <PillLink href="/shop" icon={<ArrowRightIcon className="size-6" />} layout="hug" focusRing="dark">
+          <PillLink href="/shop" icon={<ArrowRightIcon className="size-6" />} layout="fluid" focusRing="dark">
             Back to Shop
           </PillLink>
-          <OutlineButton onClick={handleSendAnother}>Send another</OutlineButton>
+          <OutlineButton onClick={handleSendAnother} fluid>
+            Send another
+          </OutlineButton>
         </div>
       </div>
     );
@@ -124,7 +126,7 @@ export default function ContactForm({ initialTopic }: { initialTopic: ContactTop
   const submitting = status === "submitting";
 
   return (
-    <form onSubmit={handleSubmit} noValidate className="rounded-4xl bg-[#e9ecf6] p-4 sm:p-8 flex flex-col gap-5">
+    <form onSubmit={handleSubmit} noValidate className="flex min-w-0 flex-col gap-5 rounded-4xl bg-[#e9ecf6] p-4 sm:p-8">
       <div>
         <p className="mb-1.5 ml-4 text-sm font-semibold">
           What&apos;s this about?
@@ -138,7 +140,7 @@ export default function ContactForm({ initialTopic }: { initialTopic: ContactTop
         </ChipRow>
       </div>
 
-      <div className="grid gap-5 sm:grid-cols-2">
+      <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
         <TextField
           id={FIELD_IDS.name}
           label="Name"

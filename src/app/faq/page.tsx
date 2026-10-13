@@ -31,11 +31,11 @@ export default function FaqPage() {
 
         <ContentSection>
           <CTABand title="STILL NEED HELP?" text="Send us a message and we'll get back to you.">
-            <div className="flex flex-col items-stretch gap-3 min-[480px]:items-end">
-              <PillLink href="/contact" icon={<ArrowRightIcon className="size-6" />} layout="hug" focusRing="light" className="justify-center min-[480px]:justify-start">
+            <div className="flex flex-col items-stretch gap-3">
+              <PillLink href="/contact" icon={<ArrowRightIcon className="size-6" />} layout="fluid" focusRing="light">
                 Contact us
               </PillLink>
-              <Link href="/shipping-returns" className="text-center text-sm text-white underline underline-offset-2 hover:text-[#F1BF0A] transition-colors">
+              <Link href="/shipping-returns" className="text-center text-sm text-white underline underline-offset-2 transition-colors hover:text-[#F1BF0A]">
                 Shipping &amp; Returns
               </Link>
             </div>
