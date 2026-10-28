@@ -14,11 +14,20 @@ Browse the collections, search, save favourites, fill a cart and check out. Ever
 
 On a phone, navigation moves to a bottom tab bar and the add-to-cart button sticks to the bottom of the product page.
 
-![Product page and home grid on a phone, with the bottom tab bar](docs/screenshots/mobile.jpg)
+<table>
+  <tr>
+    <td><img src="docs/screenshots/mobile-product.jpg" width="320" alt="Mugsy's Mugs product page on a phone"></td>
+    <td><img src="docs/screenshots/mobile-home.jpg" width="320" alt="Mugsy's Mugs home grid on a phone with the bottom tab bar"></td>
+  </tr>
+</table>
 
-| Shop with filters | Search |
-| --- | --- |
-| ![Shop page with price filter chips and product cards](docs/screenshots/shop.jpg) | ![Search results with filters](docs/screenshots/search.jpg) |
+Shop page with filters:
+
+![Shop page with price filter chips and product cards](docs/screenshots/shop.jpg)
+
+Search with filters:
+
+![Search results with filters](docs/screenshots/search.jpg)
 
 ## What's inside
 
